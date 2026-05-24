@@ -6,7 +6,7 @@ A full-stack portfolio project for analyzing CoinPoker `.txt` hand history files
 
 - **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
 - **Backend:** FastAPI, SQLModel, Supabase
-- **Solver:** Rust → WebAssembly (`solver-wasm/`, built from `postflop-solver/`)
+- **Solver:** Rust → WebAssembly (`solver-wasm/`, built from `postflop-solver/`; see [solver-wasm/README.md](./solver-wasm/README.md))
 - **Hosting:** Vercel (frontend), AWS Lambda container (backend)
 - **Auth:** Supabase magic link
 - **LLM:** Anthropic Claude
@@ -124,3 +124,19 @@ npm run dev
 ```
 
 Backend runs on `http://localhost:8000`, MCP server at `http://localhost:8000/mcp`.
+
+### Building the WASM solver
+
+```bash
+# One-time toolchain setup
+rustup target add wasm32-unknown-unknown
+cargo install wasm-pack
+
+# From the repo root
+cd frontend
+npm run build:wasm
+```
+
+Artifacts land in `frontend/public/wasm/`. See
+[`solver-wasm/README.md`](./solver-wasm/README.md) for the JS API, the
+strategy-export JSON shape, and known limitations.

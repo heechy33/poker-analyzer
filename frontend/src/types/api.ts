@@ -108,6 +108,38 @@ export interface CompleteUploadRequest {
 
 export type Street = "flop" | "turn" | "river";
 
+export interface BetTreeConfig {
+  flop: string[];
+  turn: string[];
+  river: string[];
+  allin_always?: boolean;
+}
+
+export interface ScenarioEnvelope {
+  board: string[];
+  pot_bb: number;
+  effective_stack_bb: number;
+  oop_player: string;
+  ip_player: string;
+  hero_range: Record<string, number>;
+  villain_range: Record<string, number>;
+  bet_tree: BetTreeConfig;
+  hero_position?: string;
+  oop_range?: Record<string, number>;
+  ip_range?: Record<string, number>;
+}
+
+export interface ScenarioResponse {
+  hand_id: string;
+  street: Street;
+  scenario_hash: string;
+  confidence: string;
+  cached: boolean;
+  scenario: ScenarioEnvelope;
+  metadata: Record<string, unknown>;
+  cached_output: Record<string, unknown> | null;
+}
+
 export interface ScenarioResult {
   hand_id: string;
   street: Street;

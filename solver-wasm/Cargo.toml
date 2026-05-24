@@ -1,0 +1,61 @@
+[package]
+name = "solver-wasm"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+authors = ["Poker Analyzer Contributors"]
+description = "Thin wasm-bindgen glue around b-inary/postflop-solver"
+repository = "https://github.com/heechy33/poker-analyzer"
+publish = false
+
+# AGPL-3.0-or-later: this crate links against postflop-solver (AGPL-3.0-or-later)
+# and inherits its licence. The compiled wasm bundle, the JS bindings produced
+# by wasm-pack, and the strategy JSON it emits are all derived works.
+# Distributing them requires offering the corresponding source under AGPL.
+#
+# The fork SHA we pin is exposed at runtime through `solver_version` in the
+# strategy export JSON so consumers can locate the exact engine commit.
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+# Native default-features (rayon, bincode, bincode_derive) are pulled in via
+# the `native` feature below. For wasm builds we disable all postflop-solver
+# default features (rayon does not compile on wasm32-unknown-unknown without
+# atomics + nightly; bincode pulls in unnecessary deps).
+postflop-solver = { path = "../postflop-solver", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+wasm-bindgen = "0.2"
+
+[features]
+default = ["native"]
+
+# Enable rayon-backed parallel solving + bincode codecs in the upstream crate.
+# Used by `cargo test` and any native binary that links against this glue.
+native = [
+    "postflop-solver/rayon",
+    "postflop-solver/bincode",
+    "postflop-solver/bincode_derive",
+]
+
+# T11+ wasm threading. Requires nightly + `-Z build-std` + a SharedArrayBuffer
+# host (COOP/COEP). Not enabled in the v1 wasm-pack build script; ship single
+# threaded first, flip this on once the worker pool is wired up.
+parallel = ["postflop-solver/rayon"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+# Small wasm bundle: drop panic unwinding (we never recover from panics).
+panic = "abort"
+
+[profile.dev]
+# Solver iterations are slow in debug without at least opt-level=1.
+opt-level = 1
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O3"]
