@@ -1,0 +1,6122 @@
+{
+  "all_in_preflop.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "AllinCaller",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "4.5000",
+        "is_all_in": true,
+        "raise_to": "5.0000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "AllinCaller",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "AllinCaller",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "10.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000001,
+    "flags": {
+      "all_in": true,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ac",
+      "Kd",
+      "Qh"
+    ],
+    "hero_cards": [
+      "As",
+      "Ah"
+    ],
+    "hero_collected": "10.0000",
+    "hero_invested": "5.0000",
+    "hero_net": "5.0000",
+    "hero_net_bb": "5.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:01:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "As",
+          "Ah"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "5.0000"
+      },
+      {
+        "final_cards": [
+          "Ks",
+          "Kh"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "AllinCaller",
+        "seat": 2,
+        "starting_stack": "20.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000001: NLH (₮0.50/₮1.00) - 2026/05/23 16:01:00 PDT\nTable 'all-in-preflop' heads-up Seat #1 is the button\nSeat 1: Hero (₮5.00 in chips)\nSeat 2: AllinCaller (₮20.00 in chips)\nHero: posts small blind ₮0.50\nAllinCaller: posts big blind ₮1.00\n*** HOLE CARDS ***\nDealt to Hero [As Ah]\nHero: raises ₮4.50 to ₮5.00 and is all-in\nAllinCaller: calls ₮4.00\n*** FLOP *** [Ac Kd Qh]\n*** TURN *** [Ac Kd Qh] [2s]\n*** RIVER *** [Ac Kd Qh 2s] [2d]\n*** SHOWDOWN ***\nHero: shows [As Ah] (Full House)\nAllinCaller: shows [Ks Kh] (Full House)\nHero collected ₮10.00 from pot\n*** SUMMARY ***\nTotal pot ₮10.00 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "2d",
+    "splash_fee": "0.0000",
+    "stake_bb": "1.0000",
+    "stake_sb": "0.5000",
+    "table_name": "all-in-preflop",
+    "table_size": 2,
+    "total_pot": "10.0000",
+    "turn": "2s",
+    "went_to_showdown": true,
+    "won_at_showdown": true
+  },
+  "dead_blind_post.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "PostedOutOfOrder",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.7500",
+        "is_all_in": false,
+        "raise_to": "1.0000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "PostedOutOfOrder",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000008,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Ac",
+      "Js"
+    ],
+    "hero_collected": "1.3500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.6000",
+    "hero_net_bb": "2.4000",
+    "hero_position": "BTN",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:08:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "PostedOutOfOrder",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000008: NLH (₮0.10/₮0.25) - 2026/05/23 16:08:00 PDT\nTable 'dead-blind-post' 6-max Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: SmallBlind (₮25.00 in chips)\nSeat 4: PostedOutOfOrder (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nPostedOutOfOrder: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ac Js]\nHero: raises ₮0.75 to ₮1.00\nSmallBlind: folds\nPostedOutOfOrder: folds\nHero collected ₮1.35 from pot\n*** SUMMARY ***\nTotal pot ₮1.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "dead-blind-post",
+    "table_size": 6,
+    "total_pot": "1.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_001.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain001",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain001",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000001,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "As",
+      "Kd"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:01:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain001",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000001: NLH (₮0.10/₮0.25) - 2026/05/23 15:01:00 PDT\nTable 'hand-001' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain001 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain001: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [As Kd]\nHero: raises ₮0.65 to ₮0.90\nVillain001: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-001",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_002.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain002",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain002",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000002,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Qh",
+      "Qs"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:02:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain002",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000002: NLH (₮0.10/₮0.25) - 2026/05/23 15:02:00 PDT\nTable 'hand-002' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain002 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain002: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Qh Qs]\nHero: raises ₮0.65 to ₮0.90\nVillain002: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-002",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_003.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9100000003,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ac",
+      "Kc",
+      "Qd"
+    ],
+    "hero_cards": [
+      "Jc",
+      "Tc"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:03:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000003: NLH (₮0.10/₮0.25) - 2026/05/23 15:03:00 PDT\nTable 'hand-003' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Jc Tc]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [Ac Kc Qd]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-003",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_004.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain004",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain004",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain004",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000004,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "5s",
+      "6s",
+      "7d"
+    ],
+    "hero_cards": [
+      "9d",
+      "9s"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:04:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain004",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9100000004: NLH (₮0.10/₮0.25) - 2026/05/23 15:04:00 PDT\nTable 'hand-004' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain004 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain004: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [9d 9s]\nHero: raises ₮0.65 to ₮0.90\nVillain004: calls ₮0.65\n*** FLOP *** [5s 6s 7d]\nHero: bets ₮1.20\nVillain004: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-004",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_005.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "1.7500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain005",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000005,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Qc",
+      "3d",
+      "3s"
+    ],
+    "hero_cards": [
+      "Ah",
+      "5h"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "0.7500",
+    "hero_net": "-0.7500",
+    "hero_net_bb": "-3.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:05:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Ah",
+          "5h"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Td"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain005",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000005: NLH (₮0.10/₮0.25) - 2026/05/23 15:05:00 PDT\nTable 'hand-005' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain005 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain005: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ah 5h]\nHero: calls ₮0.15\nVillain005: checks\n*** FLOP *** [Qc 3d 3s]\nVillain005: checks\nHero: checks\n*** TURN *** [Qc 3d 3s] [Ah]\nVillain005: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [Qc 3d 3s Ah] [Ts]\nVillain005: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [Ah 5h] (High Card)\nVillain005: shows [Jc Td] (Pair)\nVillain005 collected ₮1.75 from pot\n*** SUMMARY ***\nTotal pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Ts",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-005",
+    "table_size": 2,
+    "total_pot": "1.7500",
+    "turn": "Ah",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "hand_006.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9100000006,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "2c",
+      "7d",
+      "Jh"
+    ],
+    "hero_cards": [
+      "Kc",
+      "Qc"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:06:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000006: NLH (₮0.10/₮0.25) - 2026/05/23 15:06:00 PDT\nTable 'hand-006' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Kc Qc]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [2c 7d Jh]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-006",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_007.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain007",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain007",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000007,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "7s",
+      "6s"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:07:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain007",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000007: NLH (₮0.10/₮0.25) - 2026/05/23 15:07:00 PDT\nTable 'hand-007' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain007 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain007: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [7s 6s]\nHero: raises ₮0.65 to ₮0.90\nVillain007: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-007",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_008.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain008",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain008",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain008",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000008,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ac",
+      "Kc",
+      "Qd"
+    ],
+    "hero_cards": [
+      "Ad",
+      "Ac"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:08:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain008",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9100000008: NLH (₮0.10/₮0.25) - 2026/05/23 15:08:00 PDT\nTable 'hand-008' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain008 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain008: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ad Ac]\nHero: raises ₮0.65 to ₮0.90\nVillain008: calls ₮0.65\n*** FLOP *** [Ac Kc Qd]\nHero: bets ₮1.20\nVillain008: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-008",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_009.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9100000009,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "5s",
+      "6s",
+      "7d"
+    ],
+    "hero_cards": [
+      "Th",
+      "Td"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:09:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000009: NLH (₮0.10/₮0.25) - 2026/05/23 15:09:00 PDT\nTable 'hand-009' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Th Td]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [5s 6s 7d]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-009",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_010.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "1.7500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain010",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000010,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Qc",
+      "3d",
+      "3s"
+    ],
+    "hero_cards": [
+      "8c",
+      "8h"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "0.7500",
+    "hero_net": "-0.7500",
+    "hero_net_bb": "-3.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:10:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "8c",
+          "8h"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Td"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain010",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000010: NLH (₮0.10/₮0.25) - 2026/05/23 15:10:00 PDT\nTable 'hand-010' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain010 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain010: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [8c 8h]\nHero: calls ₮0.15\nVillain010: checks\n*** FLOP *** [Qc 3d 3s]\nVillain010: checks\nHero: checks\n*** TURN *** [Qc 3d 3s] [Ah]\nVillain010: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [Qc 3d 3s Ah] [Ts]\nVillain010: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [8c 8h] (High Card)\nVillain010: shows [Jc Td] (Pair)\nVillain010 collected ₮1.75 from pot\n*** SUMMARY ***\nTotal pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Ts",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-010",
+    "table_size": 2,
+    "total_pot": "1.7500",
+    "turn": "Ah",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "hand_011.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain011",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain011",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000011,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "As",
+      "Kd"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:11:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain011",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000011: NLH (₮0.10/₮0.25) - 2026/05/23 15:11:00 PDT\nTable 'hand-011' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain011 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain011: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [As Kd]\nHero: raises ₮0.65 to ₮0.90\nVillain011: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-011",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_012.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain012",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain012",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain012",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000012,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Kd",
+      "9c",
+      "Td"
+    ],
+    "hero_cards": [
+      "Qh",
+      "Qs"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:12:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain012",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9100000012: NLH (₮0.10/₮0.25) - 2026/05/23 15:12:00 PDT\nTable 'hand-012' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain012 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain012: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Qh Qs]\nHero: raises ₮0.65 to ₮0.90\nVillain012: calls ₮0.65\n*** FLOP *** [Kd 9c Td]\nHero: bets ₮1.20\nVillain012: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-012",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_013.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain013",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain013",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000013,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Jc",
+      "Tc"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:13:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain013",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000013: NLH (₮0.10/₮0.25) - 2026/05/23 15:13:00 PDT\nTable 'hand-013' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain013 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain013: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Jc Tc]\nHero: raises ₮0.65 to ₮0.90\nVillain013: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-013",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_014.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain014",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain014",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000014,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "9d",
+      "9s"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:14:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain014",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000014: NLH (₮0.10/₮0.25) - 2026/05/23 15:14:00 PDT\nTable 'hand-014' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain014 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain014: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [9d 9s]\nHero: raises ₮0.65 to ₮0.90\nVillain014: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-014",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_015.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "1.7500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain015",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000015,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Qc",
+      "3d",
+      "3s"
+    ],
+    "hero_cards": [
+      "Ah",
+      "5h"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "0.7500",
+    "hero_net": "-0.7500",
+    "hero_net_bb": "-3.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:15:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Ah",
+          "5h"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Td"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain015",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000015: NLH (₮0.10/₮0.25) - 2026/05/23 15:15:00 PDT\nTable 'hand-015' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain015 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain015: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ah 5h]\nHero: calls ₮0.15\nVillain015: checks\n*** FLOP *** [Qc 3d 3s]\nVillain015: checks\nHero: checks\n*** TURN *** [Qc 3d 3s] [Ah]\nVillain015: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [Qc 3d 3s Ah] [Ts]\nVillain015: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [Ah 5h] (High Card)\nVillain015: shows [Jc Td] (Pair)\nVillain015 collected ₮1.75 from pot\n*** SUMMARY ***\nTotal pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Ts",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-015",
+    "table_size": 2,
+    "total_pot": "1.7500",
+    "turn": "Ah",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "hand_016.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain016",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain016",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain016",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000016,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "2c",
+      "7d",
+      "Jh"
+    ],
+    "hero_cards": [
+      "Kc",
+      "Qc"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:16:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain016",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9100000016: NLH (₮0.10/₮0.25) - 2026/05/23 15:16:00 PDT\nTable 'hand-016' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain016 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain016: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Kc Qc]\nHero: raises ₮0.65 to ₮0.90\nVillain016: calls ₮0.65\n*** FLOP *** [2c 7d Jh]\nHero: bets ₮1.20\nVillain016: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-016",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_017.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain017",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain017",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000017,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "7s",
+      "6s"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:17:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain017",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000017: NLH (₮0.10/₮0.25) - 2026/05/23 15:17:00 PDT\nTable 'hand-017' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain017 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain017: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [7s 6s]\nHero: raises ₮0.65 to ₮0.90\nVillain017: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-017",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_018.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9100000018,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ac",
+      "Kc",
+      "Qd"
+    ],
+    "hero_cards": [
+      "Ad",
+      "Ac"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:18:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000018: NLH (₮0.10/₮0.25) - 2026/05/23 15:18:00 PDT\nTable 'hand-018' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ad Ac]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [Ac Kc Qd]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-018",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_019.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain019",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain019",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000019,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Th",
+      "Td"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:19:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain019",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000019: NLH (₮0.10/₮0.25) - 2026/05/23 15:19:00 PDT\nTable 'hand-019' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain019 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain019: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Th Td]\nHero: raises ₮0.65 to ₮0.90\nVillain019: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-019",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_020.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "1.7500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain020",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000020,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Qc",
+      "3d",
+      "3s"
+    ],
+    "hero_cards": [
+      "8c",
+      "8h"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "0.7500",
+    "hero_net": "-0.7500",
+    "hero_net_bb": "-3.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:20:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "8c",
+          "8h"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Td"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain020",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000020: NLH (₮0.10/₮0.25) - 2026/05/23 15:20:00 PDT\nTable 'hand-020' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain020 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain020: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [8c 8h]\nHero: calls ₮0.15\nVillain020: checks\n*** FLOP *** [Qc 3d 3s]\nVillain020: checks\nHero: checks\n*** TURN *** [Qc 3d 3s] [Ah]\nVillain020: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [Qc 3d 3s Ah] [Ts]\nVillain020: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [8c 8h] (High Card)\nVillain020: shows [Jc Td] (Pair)\nVillain020 collected ₮1.75 from pot\n*** SUMMARY ***\nTotal pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Ts",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-020",
+    "table_size": 2,
+    "total_pot": "1.7500",
+    "turn": "Ah",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "hand_021.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9100000021,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "2c",
+      "7d",
+      "Jh"
+    ],
+    "hero_cards": [
+      "As",
+      "Kd"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:21:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000021: NLH (₮0.10/₮0.25) - 2026/05/23 15:21:00 PDT\nTable 'hand-021' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [As Kd]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [2c 7d Jh]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-021",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_022.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain022",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain022",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000022,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Qh",
+      "Qs"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:22:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain022",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000022: NLH (₮0.10/₮0.25) - 2026/05/23 15:22:00 PDT\nTable 'hand-022' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain022 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain022: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Qh Qs]\nHero: raises ₮0.65 to ₮0.90\nVillain022: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-022",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_023.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain023",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain023",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000023,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Jc",
+      "Tc"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:23:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain023",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000023: NLH (₮0.10/₮0.25) - 2026/05/23 15:23:00 PDT\nTable 'hand-023' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain023 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain023: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Jc Tc]\nHero: raises ₮0.65 to ₮0.90\nVillain023: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-023",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_024.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain024",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain024",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain024",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000024,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "5s",
+      "6s",
+      "7d"
+    ],
+    "hero_cards": [
+      "9d",
+      "9s"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:24:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain024",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9100000024: NLH (₮0.10/₮0.25) - 2026/05/23 15:24:00 PDT\nTable 'hand-024' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain024 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain024: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [9d 9s]\nHero: raises ₮0.65 to ₮0.90\nVillain024: calls ₮0.65\n*** FLOP *** [5s 6s 7d]\nHero: bets ₮1.20\nVillain024: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-024",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_025.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "1.7500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain025",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000025,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Qc",
+      "3d",
+      "3s"
+    ],
+    "hero_cards": [
+      "Ah",
+      "5h"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "0.7500",
+    "hero_net": "-0.7500",
+    "hero_net_bb": "-3.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:25:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Ah",
+          "5h"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Td"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain025",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000025: NLH (₮0.10/₮0.25) - 2026/05/23 15:25:00 PDT\nTable 'hand-025' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain025 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain025: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ah 5h]\nHero: calls ₮0.15\nVillain025: checks\n*** FLOP *** [Qc 3d 3s]\nVillain025: checks\nHero: checks\n*** TURN *** [Qc 3d 3s] [Ah]\nVillain025: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [Qc 3d 3s Ah] [Ts]\nVillain025: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [Ah 5h] (High Card)\nVillain025: shows [Jc Td] (Pair)\nVillain025 collected ₮1.75 from pot\n*** SUMMARY ***\nTotal pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Ts",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-025",
+    "table_size": 2,
+    "total_pot": "1.7500",
+    "turn": "Ah",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "hand_026.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain026",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain026",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000026,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Kc",
+      "Qc"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:26:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain026",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000026: NLH (₮0.10/₮0.25) - 2026/05/23 15:26:00 PDT\nTable 'hand-026' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain026 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain026: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Kc Qc]\nHero: raises ₮0.65 to ₮0.90\nVillain026: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-026",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_027.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9100000027,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Kd",
+      "9c",
+      "Td"
+    ],
+    "hero_cards": [
+      "7s",
+      "6s"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:27:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000027: NLH (₮0.10/₮0.25) - 2026/05/23 15:27:00 PDT\nTable 'hand-027' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [7s 6s]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [Kd 9c Td]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-027",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_028.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain028",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain028",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain028",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000028,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ac",
+      "Kc",
+      "Qd"
+    ],
+    "hero_cards": [
+      "Ad",
+      "Ac"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:28:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain028",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9100000028: NLH (₮0.10/₮0.25) - 2026/05/23 15:28:00 PDT\nTable 'hand-028' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain028 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain028: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ad Ac]\nHero: raises ₮0.65 to ₮0.90\nVillain028: calls ₮0.65\n*** FLOP *** [Ac Kc Qd]\nHero: bets ₮1.20\nVillain028: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-028",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_029.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain029",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain029",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000029,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Th",
+      "Td"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.7500",
+    "hero_net": "0.4000",
+    "hero_net_bb": "1.6000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:29:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain029",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000029: NLH (₮0.10/₮0.25) - 2026/05/23 15:29:00 PDT\nTable 'hand-029' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain029 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain029: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Th Td]\nHero: raises ₮0.65 to ₮0.90\nVillain029: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-029",
+    "table_size": 2,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "hand_030.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "1.7500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain030",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9100000030,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Qc",
+      "3d",
+      "3s"
+    ],
+    "hero_cards": [
+      "8c",
+      "8h"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "0.7500",
+    "hero_net": "-0.7500",
+    "hero_net_bb": "-3.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:30:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "8c",
+          "8h"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Td"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain030",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9100000030: NLH (₮0.10/₮0.25) - 2026/05/23 15:30:00 PDT\nTable 'hand-030' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Villain030 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain030: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [8c 8h]\nHero: calls ₮0.15\nVillain030: checks\n*** FLOP *** [Qc 3d 3s]\nVillain030: checks\nHero: checks\n*** TURN *** [Qc 3d 3s] [Ah]\nVillain030: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [Qc 3d 3s Ah] [Ts]\nVillain030: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [8c 8h] (High Card)\nVillain030: shows [Jc Td] (Pair)\nVillain030 collected ₮1.75 from pot\n*** SUMMARY ***\nTotal pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Ts",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "hand-030",
+    "table_size": 2,
+    "total_pot": "1.7500",
+    "turn": "Ah",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "muck_no_showdown.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Mucker",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "0.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Mucker",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Mucker",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Mucker",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Mucker",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "muck",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 1,
+        "amount": "3.3000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Mucker",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000007,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "2s",
+      "3d",
+      "4h"
+    ],
+    "hero_cards": [
+      "8c",
+      "8d"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "1.7500",
+    "hero_net": "-1.7500",
+    "hero_net_bb": "-7.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:07:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Mucker",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000007: NLH (₮0.10/₮0.25) - 2026/05/23 16:07:00 PDT\nTable 'muck-no-showdown' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Mucker (₮25.00 in chips)\nHero: posts small blind ₮0.10\nMucker: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [8c 8d]\nHero: calls ₮0.15\nMucker: checks\n*** FLOP *** [2s 3d 4h]\nMucker: checks\nHero: checks\n*** TURN *** [2s 3d 4h] [5c]\nMucker: bets ₮0.50\nHero: calls ₮0.50\n*** RIVER *** [2s 3d 4h 5c] [6s]\nMucker: bets ₮1.00\nHero: calls ₮1.00\n*** SHOWDOWN ***\nHero: mucks hand\nMucker collected ₮3.30 from pot\n*** SUMMARY ***\nTotal pot ₮3.30 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "6s",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "muck-no-showdown",
+    "table_size": 2,
+    "total_pot": "3.3000",
+    "turn": "5c",
+    "went_to_showdown": true,
+    "won_at_showdown": false
+  },
+  "run_it_twice.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "TwiceVillain",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "2.5000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "47.0000",
+        "is_all_in": true,
+        "raise_to": "50.0000",
+        "screen_name": "TwiceVillain",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 4,
+        "amount": "47.0000",
+        "is_all_in": true,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "TwiceVillain",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "50.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 3,
+        "amount": "50.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "TwiceVillain",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 4,
+        "amount": "10.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000004,
+    "flags": {
+      "all_in": true,
+      "run_it_twice": true,
+      "second_board": [
+        "Ac",
+        "Kd",
+        "Qh",
+        "2s",
+        "Jc"
+      ],
+      "side_pots": true,
+      "split_pot": true
+    },
+    "flop": [
+      "Ac",
+      "Kd",
+      "Qh"
+    ],
+    "hero_cards": [
+      "As",
+      "Ah"
+    ],
+    "hero_collected": "60.0000",
+    "hero_invested": "50.0000",
+    "hero_net": "10.0000",
+    "hero_net_bb": "10.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:04:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "As",
+          "Ah"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "50.0000"
+      },
+      {
+        "final_cards": [
+          "Tc",
+          "Js"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "TwiceVillain",
+        "seat": 2,
+        "starting_stack": "50.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000004: NLH (₮0.50/₮1.00) - 2026/05/23 16:04:00 PDT\nTable 'run-it-twice' heads-up Seat #1 is the button\nSeat 1: Hero (₮50.00 in chips)\nSeat 2: TwiceVillain (₮50.00 in chips)\nHero: posts small blind ₮0.50\nTwiceVillain: posts big blind ₮1.00\n*** HOLE CARDS ***\nDealt to Hero [As Ah]\nHero: raises ₮2.50 to ₮3.00\nTwiceVillain: raises ₮47.00 to ₮50.00 and is all-in\nHero: calls ₮47.00 and is all-in\n*** FLOP *** [Ac Kd Qh]\n*** TURN *** [Ac Kd Qh] [2s]\n*** FIRST RIVER *** [Ac Kd Qh 2s] [2d]\n*** SECOND RIVER *** [Ac Kd Qh 2s] [Jc]\n*** SHOWDOWN ***\nHero: shows [As Ah] (Full House)\nTwiceVillain: shows [Tc Js] (Straight)\nHero collected ₮50.00 from main pot\nTwiceVillain collected ₮50.00 from main pot\nHero collected ₮10.00 from side pot\n*** SUMMARY ***\nTotal pot ₮110.00 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "2d",
+    "splash_fee": "0.0000",
+    "stake_bb": "1.0000",
+    "stake_sb": "0.5000",
+    "table_name": "run-it-twice",
+    "table_size": 2,
+    "total_pot": "110.0000",
+    "turn": "2s",
+    "went_to_showdown": true,
+    "won_at_showdown": true
+  },
+  "side_pot.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ShortStack",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "3.0000",
+        "is_all_in": false,
+        "raise_to": "4.0000",
+        "screen_name": "BigStack",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "3.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 4,
+        "amount": "4.0000",
+        "is_all_in": true,
+        "raise_to": null,
+        "screen_name": "ShortStack",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "10.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "10.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigStack",
+        "seat": 3,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigStack",
+        "seat": 3,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigStack",
+        "seat": 3,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ShortStack",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigStack",
+        "seat": 3,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 3,
+        "amount": "15.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ShortStack",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 4,
+        "amount": "20.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000002,
+    "flags": {
+      "all_in": true,
+      "run_it_twice": false,
+      "side_pots": true,
+      "split_pot": false
+    },
+    "flop": [
+      "2c",
+      "7d",
+      "Jh"
+    ],
+    "hero_cards": [
+      "Ad",
+      "Ac"
+    ],
+    "hero_collected": "20.0000",
+    "hero_invested": "14.0000",
+    "hero_net": "6.0000",
+    "hero_net_bb": "6.0000",
+    "hero_position": "BTN",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:02:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Ad",
+          "Ac"
+        ],
+        "is_hero": true,
+        "position": "BTN",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "20.0000"
+      },
+      {
+        "final_cards": [
+          "Kc",
+          "Qc"
+        ],
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "ShortStack",
+        "seat": 2,
+        "starting_stack": "5.0000"
+      },
+      {
+        "final_cards": [
+          "Jc",
+          "Tc"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigStack",
+        "seat": 3,
+        "starting_stack": "30.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000002: NLH (₮0.50/₮1.00) - 2026/05/23 16:02:00 PDT\nTable 'side-pot' 6-max Seat #1 is the button\nSeat 1: Hero (₮20.00 in chips)\nSeat 2: ShortStack (₮5.00 in chips)\nSeat 3: BigStack (₮30.00 in chips)\nHero: posts small blind ₮0.50\nShortStack: posts big blind ₮1.00\n*** HOLE CARDS ***\nDealt to Hero [Ad Ac]\nBigStack: raises ₮3.00 to ₮4.00\nHero: calls ₮3.50\nShortStack: calls ₮4.00 and is all-in\n*** FLOP *** [2c 7d Jh]\nHero: bets ₮10.00\nBigStack: calls ₮10.00\n*** TURN *** [2c 7d Jh] [Ks]\nHero: checks\nBigStack: checks\n*** RIVER *** [2c 7d Jh Ks] [3c]\nHero: checks\nBigStack: checks\n*** SHOWDOWN ***\nHero: shows [Ad Ac] (Pair)\nShortStack: shows [Kc Qc] (Pair)\nBigStack: shows [Jc Tc] (Pair)\nShortStack collected ₮15.00 from main pot\nHero collected ₮20.00 from side pot\n*** SUMMARY ***\nTotal pot ₮35.00 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "3c",
+    "splash_fee": "0.0000",
+    "stake_bb": "1.0000",
+    "stake_sb": "0.5000",
+    "table_name": "side-pot",
+    "table_size": 6,
+    "total_pot": "35.0000",
+    "turn": "Ks",
+    "went_to_showdown": true,
+    "won_at_showdown": true
+  },
+  "sitout_timeout.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6000",
+        "is_all_in": false,
+        "raise_to": "0.8500",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.1500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 2,
+    "coinpoker_hand_id": 9200000005,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": null,
+    "hero_cards": [
+      "Qs",
+      "Qh"
+    ],
+    "hero_collected": "1.1500",
+    "hero_invested": "0.6000",
+    "hero_net": "0.5500",
+    "hero_net_bb": "2.2000",
+    "hero_position": "CO",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:05:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000005: NLH (₮0.10/₮0.25) - 2026/05/23 16:05:00 PDT\nTable 'sitout-timeout' 6-max Seat #2 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Button (₮25.00 in chips)\nSeat 3: SmallBlind (₮25.00 in chips)\nSeat 4: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Qs Qh]\nHero: raises ₮0.60 to ₮0.85\nButton: has timed out\nSmallBlind: is sitting out\nBigBlind: folds\nHero collected ₮1.15 from pot\n*** SUMMARY ***\nTotal pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "sitout-timeout",
+    "table_size": 6,
+    "total_pot": "1.1500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "splash_fee_summary.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Splashy",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "3.6000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000010,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Kh",
+      "7d",
+      "2s"
+    ],
+    "hero_cards": [
+      "Kc",
+      "Qc"
+    ],
+    "hero_collected": "3.6000",
+    "hero_invested": "1.7500",
+    "hero_net": "1.8500",
+    "hero_net_bb": "7.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:10:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Kc",
+          "Qc"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": [
+          "Qh",
+          "Jh"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Splashy",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.1800",
+    "raw_text": "CoinPoker Hand #9200000010: NLH (₮0.10/₮0.25) - 2026/05/23 16:10:00 PDT\nTable 'splash-fee' heads-up Seat #1 is the button\nSeat 1: Hero (₮25.00 in chips)\nSeat 2: Splashy (₮25.00 in chips)\nHero: posts small blind ₮0.10\nSplashy: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Kc Qc]\nHero: raises ₮0.65 to ₮0.90\nSplashy: calls ₮0.65\n*** FLOP *** [Kh 7d 2s]\nSplashy: checks\nHero: bets ₮1.00\nSplashy: calls ₮1.00\n*** TURN *** [Kh 7d 2s] [3c]\nSplashy: checks\nHero: checks\n*** RIVER *** [Kh 7d 2s 3c] [9h]\nSplashy: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [Kc Qc] (Pair)\nSplashy: shows [Qh Jh] (High Card)\nHero collected ₮3.60 from pot\n*** SUMMARY ***\nTotal pot ₮3.80 | Rake ₮0.18 | Splash Fee ₮0.02",
+    "river": "9h",
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "splash-fee",
+    "table_size": 2,
+    "total_pot": "3.8000",
+    "turn": "3c",
+    "went_to_showdown": true,
+    "won_at_showdown": true
+  },
+  "split_pot.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "2.5000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "2.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "2.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "2.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "check",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "5.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 3,
+        "amount": "5.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000003,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": true
+    },
+    "flop": [
+      "Ad",
+      "Kd",
+      "2c"
+    ],
+    "hero_cards": [
+      "Ah",
+      "Qh"
+    ],
+    "hero_collected": "5.0000",
+    "hero_invested": "5.0000",
+    "hero_net": "0.0000",
+    "hero_net_bb": "0.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T16:03:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Ah",
+          "Qh"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "20.0000"
+      },
+      {
+        "final_cards": [
+          "As",
+          "Qs"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "ChopShop",
+        "seat": 2,
+        "starting_stack": "20.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000003: NLH (₮0.50/₮1.00) - 2026/05/23 16:03:00 PDT\nTable 'split-pot' heads-up Seat #1 is the button\nSeat 1: Hero (₮20.00 in chips)\nSeat 2: ChopShop (₮20.00 in chips)\nHero: posts small blind ₮0.50\nChopShop: posts big blind ₮1.00\n*** HOLE CARDS ***\nDealt to Hero [Ah Qh]\nHero: raises ₮2.50 to ₮3.00\nChopShop: calls ₮2.00\n*** FLOP *** [Ad Kd 2c]\nChopShop: checks\nHero: bets ₮2.00\nChopShop: calls ₮2.00\n*** TURN *** [Ad Kd 2c] [2s]\nChopShop: checks\nHero: checks\n*** RIVER *** [Ad Kd 2c 2s] [Kc]\nChopShop: checks\nHero: checks\n*** SHOWDOWN ***\nHero: shows [Ah Qh] (Two Pair)\nChopShop: shows [As Qs] (Two Pair)\nHero collected ₮5.00 from pot\nChopShop collected ₮5.00 from pot\n*** SUMMARY ***\nTotal pot ₮10.00 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "Kc",
+    "splash_fee": "0.0000",
+    "stake_bb": "1.0000",
+    "stake_sb": "0.5000",
+    "table_name": "split-pot",
+    "table_size": 2,
+    "total_pot": "10.0000",
+    "turn": "2s",
+    "went_to_showdown": true,
+    "won_at_showdown": true
+  },
+  "three_bet_raise_sizing.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 3,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": "3.0000",
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 6,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 7,
+        "amount": "2.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "4.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "6.3500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9200000009,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ac",
+      "7s",
+      "2d"
+    ],
+    "hero_cards": [
+      "Ah",
+      "Kh"
+    ],
+    "hero_collected": "6.3500",
+    "hero_invested": "2.1000",
+    "hero_net": "4.2500",
+    "hero_net_bb": "17.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-05-23T15:39:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "25.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9200000009: NLH (₮0.10/₮0.25) - 2026/05/23 15:39:00 PDT\nTable 'three-bet-sizing' 6-max Seat #3 is the button\nSeat 1: Opener (₮25.00 in chips)\nSeat 2: Hero (₮25.00 in chips)\nSeat 3: Button (₮25.00 in chips)\nSeat 4: SmallBlind (₮25.00 in chips)\nSeat 5: BigBlind (₮25.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ah Kh]\nOpener: raises ₮0.65 to ₮0.90\nHero: raises ₮2.10 to ₮3.00\nButton: folds\nSmallBlind: folds\nBigBlind: folds\nOpener: calls ₮2.10\n*** FLOP *** [Ac 7s 2d]\nOpener: checks\nHero: bets ₮4.00\nOpener: folds\nUncalled bet (₮4.00) returned to Hero\nHero collected ₮6.35 from pot\n*** SUMMARY ***\nTotal pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": null,
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "three-bet-sizing",
+    "table_size": 6,
+    "total_pot": "6.3500",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  },
+  "uncalled_bet.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain006",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain006",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "1.2000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Villain006",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "1.8000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9200000006,
+    "flags": {
+      "all_in": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Kd",
+      "9c",
+      "Td"
+    ],
+    "hero_cards": [
+      "Kc",
+      "9d"
+    ],
+    "hero_collected": "1.8000",
+    "hero_invested": "1.4500",
+    "hero_net": "0.3500",
+    "hero_net_bb": "1.4000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-05-23T15:36:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "26.8500"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "Villain006",
+        "seat": 2,
+        "starting_stack": "25.0000"
+      }
+    ],
+    "rake": "0.4800",
+    "raw_text": "CoinPoker Hand #9200000006: NLH (₮0.10/₮0.25) - 2026/05/23 15:36:00 PDT\nTable 'uncalled-bet' heads-up Seat #1 is the button\nSeat 1: Hero (₮26.85 in chips)\nSeat 2: Villain006 (₮25.00 in chips)\nHero: posts small blind ₮0.10\nVillain006: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Kc 9d]\nHero: raises ₮0.65 to ₮0.90\nVillain006: calls ₮0.65\n*** FLOP *** [Kd 9c Td]\nHero: bets ₮1.20\nVillain006: folds\nUncalled bet (₮0.50) returned to Hero\nHero collected ₮1.80 from pot\n*** SUMMARY ***\nTotal pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02",
+    "river": null,
+    "splash_fee": "0.0200",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "uncalled-bet",
+    "table_size": 2,
+    "total_pot": "2.3000",
+    "turn": null,
+    "went_to_showdown": false,
+    "won_at_showdown": null
+  }
+}

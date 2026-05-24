@@ -1,0 +1,17 @@
+CoinPoker Hand #9200000005: NLH (₮0.10/₮0.25) - 2026/05/23 16:05:00 PDT
+Table 'sitout-timeout' 6-max Seat #2 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Button (₮25.00 in chips)
+Seat 3: SmallBlind (₮25.00 in chips)
+Seat 4: BigBlind (₮25.00 in chips)
+SmallBlind: posts small blind ₮0.10
+BigBlind: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Qs Qh]
+Hero: raises ₮0.60 to ₮0.85
+Button: has timed out
+SmallBlind: is sitting out
+BigBlind: folds
+Hero collected ₮1.15 from pot
+*** SUMMARY ***
+Total pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00

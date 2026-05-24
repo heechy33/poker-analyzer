@@ -1,0 +1,61 @@
+CoinPoker Hand #9300000001: NLH (₮0.10/₮0.25) - 2026/05/23 15:41:00 PDT
+Table 'multi-a' heads-up Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Villain001 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain001: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Ad Kc]
+Hero: raises ₮0.65 to ₮0.90
+Villain001: folds
+Hero collected ₮1.15 from pot
+*** SUMMARY ***
+Total pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00
+
+
+
+CoinPoker Hand #9300000002: NLH (₮0.10/₮0.25) - 2026/05/23 15:42:00 PDT
+Table 'multi-b' heads-up Seat #1 is the button
+Seat 1: Hero (₮26.85 in chips)
+Seat 2: Villain002 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain002: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Qd Qh]
+Hero: raises ₮0.65 to ₮0.90
+Villain002: calls ₮0.65
+*** FLOP *** [Qs 8d 2c]
+Hero: bets ₮1.20
+Villain002: folds
+Uncalled bet (₮0.50) returned to Hero
+Hero collected ₮1.80 from pot
+*** SUMMARY ***
+Total pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02
+
+
+
+CoinPoker Hand #9300000003: NLH (₮0.10/₮0.25) - 2026/05/23 15:43:00 PDT
+Table 'multi-c' heads-up Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Villain003 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain003: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Jd Td]
+Hero: calls ₮0.15
+Villain003: checks
+*** FLOP *** [2h 7c Js]
+Villain003: checks
+Hero: checks
+*** TURN *** [2h 7c Js] [4d]
+Villain003: bets ₮0.50
+Hero: calls ₮0.50
+*** RIVER *** [2h 7c Js 4d] [9s]
+Villain003: checks
+Hero: checks
+*** SHOWDOWN ***
+Hero: shows [Jd Td] (High Card)
+Villain003: shows [Jc Td] (Pair)
+Villain003 collected ₮1.75 from pot
+*** SUMMARY ***
+Total pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00

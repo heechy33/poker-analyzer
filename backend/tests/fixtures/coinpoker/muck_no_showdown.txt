@@ -1,0 +1,24 @@
+CoinPoker Hand #9200000007: NLH (₮0.10/₮0.25) - 2026/05/23 16:07:00 PDT
+Table 'muck-no-showdown' heads-up Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Mucker (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Mucker: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [8c 8d]
+Hero: calls ₮0.15
+Mucker: checks
+*** FLOP *** [2s 3d 4h]
+Mucker: checks
+Hero: checks
+*** TURN *** [2s 3d 4h] [5c]
+Mucker: bets ₮0.50
+Hero: calls ₮0.50
+*** RIVER *** [2s 3d 4h 5c] [6s]
+Mucker: bets ₮1.00
+Hero: calls ₮1.00
+*** SHOWDOWN ***
+Hero: mucks hand
+Mucker collected ₮3.30 from pot
+*** SUMMARY ***
+Total pot ₮3.30 | Rake ₮0.00 | Splash Fee ₮0.00

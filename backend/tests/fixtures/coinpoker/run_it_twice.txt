@@ -1,0 +1,23 @@
+CoinPoker Hand #9200000004: NLH (₮0.50/₮1.00) - 2026/05/23 16:04:00 PDT
+Table 'run-it-twice' heads-up Seat #1 is the button
+Seat 1: Hero (₮50.00 in chips)
+Seat 2: TwiceVillain (₮50.00 in chips)
+Hero: posts small blind ₮0.50
+TwiceVillain: posts big blind ₮1.00
+*** HOLE CARDS ***
+Dealt to Hero [As Ah]
+Hero: raises ₮2.50 to ₮3.00
+TwiceVillain: raises ₮47.00 to ₮50.00 and is all-in
+Hero: calls ₮47.00 and is all-in
+*** FLOP *** [Ac Kd Qh]
+*** TURN *** [Ac Kd Qh] [2s]
+*** FIRST RIVER *** [Ac Kd Qh 2s] [2d]
+*** SECOND RIVER *** [Ac Kd Qh 2s] [Jc]
+*** SHOWDOWN ***
+Hero: shows [As Ah] (Full House)
+TwiceVillain: shows [Tc Js] (Straight)
+Hero collected ₮50.00 from main pot
+TwiceVillain collected ₮50.00 from main pot
+Hero collected ₮10.00 from side pot
+*** SUMMARY ***
+Total pot ₮110.00 | Rake ₮0.00 | Splash Fee ₮0.00

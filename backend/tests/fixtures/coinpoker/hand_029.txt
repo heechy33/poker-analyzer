@@ -1,0 +1,13 @@
+CoinPoker Hand #9100000029: NLH (₮0.10/₮0.25) - 2026/05/23 15:29:00 PDT
+Table 'hand-029' heads-up Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Villain029 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain029: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Th Td]
+Hero: raises ₮0.65 to ₮0.90
+Villain029: folds
+Hero collected ₮1.15 from pot
+*** SUMMARY ***
+Total pot ₮1.15 | Rake ₮0.00 | Splash Fee ₮0.00

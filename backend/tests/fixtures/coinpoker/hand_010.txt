@@ -1,0 +1,25 @@
+CoinPoker Hand #9100000010: NLH (₮0.10/₮0.25) - 2026/05/23 15:10:00 PDT
+Table 'hand-010' heads-up Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Villain010 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain010: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [8c 8h]
+Hero: calls ₮0.15
+Villain010: checks
+*** FLOP *** [Qc 3d 3s]
+Villain010: checks
+Hero: checks
+*** TURN *** [Qc 3d 3s] [Ah]
+Villain010: bets ₮0.50
+Hero: calls ₮0.50
+*** RIVER *** [Qc 3d 3s Ah] [Ts]
+Villain010: checks
+Hero: checks
+*** SHOWDOWN ***
+Hero: shows [8c 8h] (High Card)
+Villain010: shows [Jc Td] (Pair)
+Villain010 collected ₮1.75 from pot
+*** SUMMARY ***
+Total pot ₮1.75 | Rake ₮0.00 | Splash Fee ₮0.00

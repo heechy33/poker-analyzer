@@ -1,0 +1,26 @@
+CoinPoker Hand #9200000010: NLH (₮0.10/₮0.25) - 2026/05/23 16:10:00 PDT
+Table 'splash-fee' heads-up Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: Splashy (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Splashy: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Kc Qc]
+Hero: raises ₮0.65 to ₮0.90
+Splashy: calls ₮0.65
+*** FLOP *** [Kh 7d 2s]
+Splashy: checks
+Hero: bets ₮1.00
+Splashy: calls ₮1.00
+*** TURN *** [Kh 7d 2s] [3c]
+Splashy: checks
+Hero: checks
+*** RIVER *** [Kh 7d 2s 3c] [9h]
+Splashy: checks
+Hero: checks
+*** SHOWDOWN ***
+Hero: shows [Kc Qc] (Pair)
+Splashy: shows [Qh Jh] (High Card)
+Hero collected ₮3.60 from pot
+*** SUMMARY ***
+Total pot ₮3.80 | Rake ₮0.18 | Splash Fee ₮0.02

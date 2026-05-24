@@ -1,0 +1,17 @@
+CoinPoker Hand #9100000028: NLH (₮0.10/₮0.25) - 2026/05/23 15:28:00 PDT
+Table 'hand-028' heads-up Seat #1 is the button
+Seat 1: Hero (₮26.85 in chips)
+Seat 2: Villain028 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain028: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Ad Ac]
+Hero: raises ₮0.65 to ₮0.90
+Villain028: calls ₮0.65
+*** FLOP *** [Ac Kc Qd]
+Hero: bets ₮1.20
+Villain028: folds
+Uncalled bet (₮0.50) returned to Hero
+Hero collected ₮1.80 from pot
+*** SUMMARY ***
+Total pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02

@@ -1,0 +1,15 @@
+CoinPoker Hand #9200000008: NLH (₮0.10/₮0.25) - 2026/05/23 16:08:00 PDT
+Table 'dead-blind-post' 6-max Seat #1 is the button
+Seat 1: Hero (₮25.00 in chips)
+Seat 2: SmallBlind (₮25.00 in chips)
+Seat 4: PostedOutOfOrder (₮25.00 in chips)
+SmallBlind: posts small blind ₮0.10
+PostedOutOfOrder: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Ac Js]
+Hero: raises ₮0.75 to ₮1.00
+SmallBlind: folds
+PostedOutOfOrder: folds
+Hero collected ₮1.35 from pot
+*** SUMMARY ***
+Total pot ₮1.35 | Rake ₮0.00 | Splash Fee ₮0.00

@@ -1,0 +1,19 @@
+CoinPoker Hand #9200000001: NLH (₮0.50/₮1.00) - 2026/05/23 16:01:00 PDT
+Table 'all-in-preflop' heads-up Seat #1 is the button
+Seat 1: Hero (₮5.00 in chips)
+Seat 2: AllinCaller (₮20.00 in chips)
+Hero: posts small blind ₮0.50
+AllinCaller: posts big blind ₮1.00
+*** HOLE CARDS ***
+Dealt to Hero [As Ah]
+Hero: raises ₮4.50 to ₮5.00 and is all-in
+AllinCaller: calls ₮4.00
+*** FLOP *** [Ac Kd Qh]
+*** TURN *** [Ac Kd Qh] [2s]
+*** RIVER *** [Ac Kd Qh 2s] [2d]
+*** SHOWDOWN ***
+Hero: shows [As Ah] (Full House)
+AllinCaller: shows [Ks Kh] (Full House)
+Hero collected ₮10.00 from pot
+*** SUMMARY ***
+Total pot ₮10.00 | Rake ₮0.00 | Splash Fee ₮0.00

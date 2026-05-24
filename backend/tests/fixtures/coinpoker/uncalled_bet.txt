@@ -1,0 +1,17 @@
+CoinPoker Hand #9200000006: NLH (₮0.10/₮0.25) - 2026/05/23 15:36:00 PDT
+Table 'uncalled-bet' heads-up Seat #1 is the button
+Seat 1: Hero (₮26.85 in chips)
+Seat 2: Villain006 (₮25.00 in chips)
+Hero: posts small blind ₮0.10
+Villain006: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Kc 9d]
+Hero: raises ₮0.65 to ₮0.90
+Villain006: calls ₮0.65
+*** FLOP *** [Kd 9c Td]
+Hero: bets ₮1.20
+Villain006: folds
+Uncalled bet (₮0.50) returned to Hero
+Hero collected ₮1.80 from pot
+*** SUMMARY ***
+Total pot ₮2.30 | Rake ₮0.48 | Splash Fee ₮0.02

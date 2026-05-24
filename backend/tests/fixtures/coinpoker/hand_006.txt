@@ -1,0 +1,25 @@
+CoinPoker Hand #9100000006: NLH (₮0.10/₮0.25) - 2026/05/23 15:06:00 PDT
+Table 'hand-006' 6-max Seat #3 is the button
+Seat 1: Opener (₮25.00 in chips)
+Seat 2: Hero (₮25.00 in chips)
+Seat 3: Button (₮25.00 in chips)
+Seat 4: SmallBlind (₮25.00 in chips)
+Seat 5: BigBlind (₮25.00 in chips)
+SmallBlind: posts small blind ₮0.10
+BigBlind: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Kc Qc]
+Opener: raises ₮0.65 to ₮0.90
+Hero: raises ₮2.10 to ₮3.00
+Button: folds
+SmallBlind: folds
+BigBlind: folds
+Opener: calls ₮2.10
+*** FLOP *** [2c 7d Jh]
+Opener: checks
+Hero: bets ₮4.00
+Opener: folds
+Uncalled bet (₮4.00) returned to Hero
+Hero collected ₮6.35 from pot
+*** SUMMARY ***
+Total pot ₮6.35 | Rake ₮0.00 | Splash Fee ₮0.00

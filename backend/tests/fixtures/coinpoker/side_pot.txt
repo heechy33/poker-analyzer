@@ -1,0 +1,29 @@
+CoinPoker Hand #9200000002: NLH (₮0.50/₮1.00) - 2026/05/23 16:02:00 PDT
+Table 'side-pot' 6-max Seat #1 is the button
+Seat 1: Hero (₮20.00 in chips)
+Seat 2: ShortStack (₮5.00 in chips)
+Seat 3: BigStack (₮30.00 in chips)
+Hero: posts small blind ₮0.50
+ShortStack: posts big blind ₮1.00
+*** HOLE CARDS ***
+Dealt to Hero [Ad Ac]
+BigStack: raises ₮3.00 to ₮4.00
+Hero: calls ₮3.50
+ShortStack: calls ₮4.00 and is all-in
+*** FLOP *** [2c 7d Jh]
+Hero: bets ₮10.00
+BigStack: calls ₮10.00
+*** TURN *** [2c 7d Jh] [Ks]
+Hero: checks
+BigStack: checks
+*** RIVER *** [2c 7d Jh Ks] [3c]
+Hero: checks
+BigStack: checks
+*** SHOWDOWN ***
+Hero: shows [Ad Ac] (Pair)
+ShortStack: shows [Kc Qc] (Pair)
+BigStack: shows [Jc Tc] (Pair)
+ShortStack collected ₮15.00 from main pot
+Hero collected ₮20.00 from side pot
+*** SUMMARY ***
+Total pot ₮35.00 | Rake ₮0.00 | Splash Fee ₮0.00

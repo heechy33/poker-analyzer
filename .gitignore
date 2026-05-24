@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Monorepo
+node_modules/
+frontend/.next/
+frontend/node_modules/
+backend/dev.db
+postflop-solver/
+solver-wasm/pkg/
+.env
