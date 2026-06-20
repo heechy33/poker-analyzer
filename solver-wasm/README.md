@@ -74,6 +74,17 @@ Key invariants (see `src/strategy_export.rs` for the full mapping doc):
 
 ## Build
 
+### Prerequisites
+
+`postflop-solver` is a **git submodule** (pinned fork at `3a64f855cf20`). From the
+repo root:
+
+```bash
+git submodule update --init --recursive
+```
+
+Fresh clones should use `git clone --recurse-submodules ...` (see root `README.md`).
+
 ### Native (tests, benches)
 
 ```bash

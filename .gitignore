@@ -228,7 +228,6 @@ frontend/.next/
 frontend/node_modules/
 frontend/tsconfig.tsbuildinfo
 backend/dev.db
-postflop-solver/
 solver-wasm/pkg/
 solver-wasm/target/
 solver-wasm/Cargo.lock

@@ -1,0 +1,124 @@
+name: Solver Regression Suite
+
+on:
+  push:
+    paths:
+      - "solver-wasm/**"
+      - "postflop-solver/**"
+      - ".gitmodules"
+      - "backend/app/scenario/**"
+      - "backend/tests/test_scenario_builder.py"
+      - "backend/schemas/scenario_envelope.json"
+      - ".github/workflows/regression.yml"
+  pull_request:
+    paths:
+      - "solver-wasm/**"
+      - "postflop-solver/**"
+      - ".gitmodules"
+      - "backend/app/scenario/**"
+      - "backend/tests/test_scenario_builder.py"
+      - "backend/schemas/scenario_envelope.json"
+      - ".github/workflows/regression.yml"
+
+concurrency:
+  group: regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Rust native tests (solver-wasm integration + regression fixtures) ──
+  rust-regression:
+    name: Rust regression tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: solver-wasm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Run solver integration tests (including regression)
+        run: cargo test -- --nocapture --test-threads=1
+
+  # ── Python regression tests (builder.py validation layer) ──
+  python-regression:
+    name: Python regression tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Install backend (editable)
+        run: pip install -e ".[dev]"
+        continue-on-error: true
+
+      - name: Run regression fixtures
+        run: |
+          pytest tests/test_scenario_builder.py -k "regression" -v
+
+  # ── JSON Schema validation (schema drift check) ──
+  schema-drift:
+    name: Schema drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate fixtures against schema
+        run: |
+          python -c "
+          import json, pathlib, sys, jsonschema
+
+          schema_path = pathlib.Path('backend/schemas/scenario_envelope.json')
+          assert schema_path.exists(), 'Schema file does not exist!'
+          schema = json.loads(schema_path.read_text())
+
+          fixtures_dir = pathlib.Path('solver-wasm/tests/fixtures/regression')
+          assert fixtures_dir.is_dir(), 'Regression fixture directory does not exist!'
+
+          errors = []
+          for fixture_path in sorted(fixtures_dir.glob('*.json')):
+              try:
+                  data = json.loads(fixture_path.read_text())
+                  jsonschema.validate(instance=data, schema=schema)
+              except json.JSONDecodeError as e:
+                  errors.append(f'{fixture_path.name}: invalid JSON — {e}')
+              except jsonschema.ValidationError as e:
+                  errors.append(f'{fixture_path.name}: schema violation — {e.message}')
+
+          if errors:
+              print('SCHEMA DRIFT DETECTED:')
+              for err in errors:
+                  print(f'  - {err}')
+              sys.exit(1)
+
+          print(f'All {sum(1 for _ in fixtures_dir.glob(\"*.json\"))} fixtures pass schema validation.')
+          "
