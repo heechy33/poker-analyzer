@@ -16,8 +16,9 @@ use std::sync::Mutex;
 use serde::Deserialize;
 use solver_wasm::{
     export_strategy_inner, free_game, get_exploitability_inner, init_game_inner, last_error,
-    preflight_inner, solve_step_inner, StrategyExport,
+    preflight_inner, solve_step_inner,
 };
+use solver_wasm::strategy_export::StrategyExport;
 
 /// Serializes tests that read `last_error()` or hold a handle long enough
 /// for another test to observe stale global state. Each test acquires this

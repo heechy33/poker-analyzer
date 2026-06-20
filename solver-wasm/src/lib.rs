@@ -124,7 +124,7 @@ struct InitOverrides {
     target_exploitability_bb: Option<f32>,
 }
 
-fn init_game_inner(scenario_json: &str) -> Result<u32, String> {
+pub fn init_game_inner(scenario_json: &str) -> Result<u32, String> {
     let envelope: ScenarioEnvelope = serde_json::from_str(scenario_json)
         .map_err(|e| format!("envelope JSON parse error: {e}"))?;
 
@@ -195,7 +195,7 @@ pub fn solve_step(handle: u32, max_iters_this_step: u32) -> String {
     }
 }
 
-fn solve_step_inner(handle: u32, max_iters_this_step: u32) -> Result<String, String> {
+pub fn solve_step_inner(handle: u32, max_iters_this_step: u32) -> Result<String, String> {
     let mut games = GAMES.lock().map_err(|_| "games mutex poisoned")?;
     let state = games
         .get_mut(&handle)
@@ -243,22 +243,25 @@ fn solve_step_inner(handle: u32, max_iters_this_step: u32) -> Result<String, Str
 }
 
 /// Current exploitability for `handle`, in big blinds.
-#[wasm_bindgen]
-pub fn get_exploitability(handle: u32) -> f32 {
-    clear_error();
+pub fn get_exploitability_inner(handle: u32) -> f32 {
     match GAMES.lock() {
         Ok(games) => match games.get(&handle) {
             Some(state) => state.last_exploitability_chips / state.chips_per_bb,
-            None => {
-                set_error(format!("get_exploitability: unknown handle {handle}"));
-                f32::NAN
-            }
+            None => f32::NAN,
         },
-        Err(_) => {
-            set_error("get_exploitability: games mutex poisoned");
-            f32::NAN
-        }
+        Err(_) => f32::NAN,
     }
+}
+
+/// Current exploitability for `handle`, in big blinds.
+#[wasm_bindgen]
+pub fn get_exploitability(handle: u32) -> f32 {
+    clear_error();
+    let expl = get_exploitability_inner(handle);
+    if expl.is_nan() {
+        set_error(format!("get_exploitability: unknown handle {handle}"));
+    }
+    expl
 }
 
 /// Apply a history path (as `[usize, ...]` JSON) and return the
@@ -275,7 +278,7 @@ pub fn export_strategy(handle: u32, history_path_json: &str) -> String {
     }
 }
 
-fn export_strategy_inner(handle: u32, history_path_json: &str) -> Result<String, String> {
+pub fn export_strategy_inner(handle: u32, history_path_json: &str) -> Result<String, String> {
     let history: Vec<usize> = if history_path_json.trim().is_empty() {
         Vec::new()
     } else {
@@ -300,6 +303,46 @@ fn export_strategy_inner(handle: u32, history_path_json: &str) -> Result<String,
     })?;
 
     serde_json::to_string(&export).map_err(|e| format!("serialise StrategyExport: {e}"))
+}
+
+/// Validate an envelope without allocating solver memory.
+///
+/// Rules shared with `backend/app/scenario/builder.py::validate_scenario_envelope`.
+pub fn preflight_inner(envelope_json: &str) -> Result<(), String> {
+    let envelope: ScenarioEnvelope = serde_json::from_str(envelope_json)
+        .map_err(|e| format!("envelope JSON parse error: {e}"))?;
+
+    if !envelope.pot_bb.is_finite() || envelope.pot_bb <= 0.0 {
+        return Err(format!(
+            "scenario invalid: pot_bb ({}) must be positive",
+            envelope.pot_bb
+        ));
+    }
+    if !envelope.effective_stack_bb.is_finite() || envelope.effective_stack_bb <= 0.0 {
+        return Err(format!(
+            "scenario invalid: effective_stack_bb ({}) must be positive",
+            envelope.effective_stack_bb
+        ));
+    }
+
+    const MIN_SPR: f64 = 0.5;
+    let spr = envelope.effective_stack_bb / envelope.pot_bb;
+    if spr < MIN_SPR {
+        return Err(format!(
+            "scenario invalid: SPR ({spr:.2}) is below minimum ({MIN_SPR:.1}); \
+             solver may produce degenerate trees"
+        ));
+    }
+
+    envelope.resolve_ranges()?;
+    build_street_sizes(&envelope.bet_tree)?;
+    bet_tree::validate_bet_tree_degeneracy(
+        &envelope.bet_tree,
+        envelope.pot_bb,
+        envelope.effective_stack_bb,
+    )?;
+
+    Ok(())
 }
 
 /// Drop the game and release its arena. No-op if `handle` is unknown.
