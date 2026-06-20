@@ -13,10 +13,9 @@ use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-use serde::Deserialize;
 use solver_wasm::{
     export_strategy_inner, free_game, get_exploitability_inner, init_game_inner, last_error,
-    preflight_inner, solve_step_inner,
+    preflight_inner, solve_step_inner, SolveProgress,
 };
 use solver_wasm::strategy_export::StrategyExport;
 
@@ -31,16 +30,6 @@ const EXPECTED_MAX_ITERATIONS: u32 = 60;
 const REGRESSION_STEP_SIZE: u32 = 10;
 const REGRESSION_MAX_ITERATIONS: u32 = 10;
 const REGRESSION_MAX_SOLVE_CHUNKS: u32 = 2;
-
-#[derive(Debug, Deserialize)]
-struct ProgressDoc {
-    handle: u32,
-    iterations_done: u32,
-    max_iterations: u32,
-    exploitability_bb: f32,
-    target_exploitability_bb: f32,
-    finished: bool,
-}
 
 fn fixture_path() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -61,10 +50,10 @@ fn init_solve_export_roundtrip() {
 
     // Run chunked steps, recording the exploitability trajectory.
     let mut history: Vec<f32> = Vec::with_capacity(MAX_STEPS as usize);
-    let mut last_progress: Option<ProgressDoc> = None;
+    let mut last_progress: Option<SolveProgress> = None;
     for _ in 0..MAX_STEPS {
         let progress_json = solve_step_inner(handle, STEP_SIZE).expect("solve_step should succeed");
-        let progress: ProgressDoc = serde_json::from_str(&progress_json).unwrap_or_else(|e| {
+        let progress: SolveProgress = serde_json::from_str(&progress_json).unwrap_or_else(|e| {
             panic!(
                 "progress JSON parse failed: {e} (raw={progress_json}, last_error={})",
                 last_error()
@@ -257,7 +246,7 @@ fn regression_smoke_solve(envelope: &str, label: &str) -> u32 {
     for _ in 0..REGRESSION_MAX_SOLVE_CHUNKS {
         let progress_json = solve_step_inner(handle, REGRESSION_STEP_SIZE)
             .unwrap_or_else(|e| panic!("{label} solve_step: {e}"));
-        let progress: ProgressDoc = serde_json::from_str(&progress_json)
+        let progress: SolveProgress = serde_json::from_str(&progress_json)
             .unwrap_or_else(|e| panic!("{label} progress JSON parse failed: {e}"));
         assert_eq!(progress.handle, handle, "{label}");
         assert_eq!(

@@ -125,6 +125,8 @@ struct InitOverrides {
 }
 
 pub fn init_game_inner(scenario_json: &str) -> Result<u32, String> {
+    preflight_inner(scenario_json)?;
+
     let envelope: ScenarioEnvelope = serde_json::from_str(scenario_json)
         .map_err(|e| format!("envelope JSON parse error: {e}"))?;
 
