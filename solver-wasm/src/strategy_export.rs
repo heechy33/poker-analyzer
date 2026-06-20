@@ -57,10 +57,10 @@ use std::collections::BTreeMap;
 use postflop_solver::{
     hole_to_string, Action, BetSize, PostFlopGame,
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// JSON document returned by `export_strategy`.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StrategyExport {
     /// Identifies the solver engine + commit pinned in `Cargo.toml`.
     pub solver_version: String,
