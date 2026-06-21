@@ -70,6 +70,8 @@ def _load_fixture(name: str):
 def mod_low_spr(env):
     env["pot_bb"] = 100.0
     env["effective_stack_bb"] = 80.0
+    # SPR 0.8: flop 33%/75% collapse to all-in with allin_always.
+    env["bet_tree"]["allin_always"] = False
 
 def mod_deep_stack(env):
     env["pot_bb"] = 50.0
@@ -78,6 +80,8 @@ def mod_deep_stack(env):
 def mod_large_pot(env):
     env["pot_bb"] = 600.0
     env["effective_stack_bb"] = 450.0
+    # SPR 0.75: same flop-size collapse as other shallow borderline fixtures.
+    env["bet_tree"]["allin_always"] = False
 
 def mod_near_degen(env):
     env["pot_bb"] = 100.0

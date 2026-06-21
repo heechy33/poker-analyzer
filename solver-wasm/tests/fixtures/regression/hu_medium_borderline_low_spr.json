@@ -133,7 +133,7 @@
       "75%",
       "150%"
     ],
-    "allin_always": true
+    "allin_always": false
   },
   "hero_position": "BTN/SB",
   "max_iterations": 10,
