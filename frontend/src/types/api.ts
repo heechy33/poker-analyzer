@@ -74,6 +74,12 @@ export interface PositionStatsRow {
   bb_per_100: number;
 }
 
+export interface LeakTagRow {
+  tag: string;
+  count: number;
+  pct_of_analyses: number;
+}
+
 /** @deprecated Use StatsSummaryResponse. Kept for backward compatibility. */
 export type StatsResponse = StatsSummaryResponse;
 
@@ -85,6 +91,7 @@ export interface UploadResponse {
   status: string;
   hand_count?: number | null;
   error_message?: string | null;
+  parse_warnings?: string | null;
   bytes?: number | null;
   uploaded_at?: string | null;
 }
@@ -134,6 +141,8 @@ export interface ScenarioResponse {
   street: Street;
   scenario_hash: string;
   confidence: string;
+  confidence_reasons: string[];
+  confidence_detail: string;
   cached: boolean;
   scenario: ScenarioEnvelope;
   metadata: Record<string, unknown>;
@@ -250,4 +259,55 @@ export interface HandsListParams {
   position?: string;
   since?: string;
   only_losses?: boolean;
+  game_mode?: "heads_up" | "multiway";
+  stakes?: string;
 }
+
+export interface SolverTelemetryCreate {
+  hand_id?: string | null;
+  street?: string | null;
+  scenario_hash?: string | null;
+  error_class?: string;
+  message?: string | null;
+  confidence?: string | null;
+  spr?: number | null;
+  pot_bb?: number | null;
+  eff_bb?: number | null;
+  multiway_alive_count?: number | null;
+  hero_lookup_hit?: boolean | null;
+  villain_lookup_hit?: boolean | null;
+  pot_error_pct?: number | null;
+  effective_bet_sizes_flop?: string[] | null;
+  effective_bet_sizes_turn?: string[] | null;
+  effective_bet_sizes_river?: string[] | null;
+  solver_mode?: string | null;
+  duration_ms?: number | null;
+  wasm_memory_used?: number | null;
+}
+
+export interface SolverTelemetryResponse {
+  id: string;
+  error_class: string;
+  created_at: string;
+}
+
+export interface HandsLosersParams {
+  limit?: number;
+  since?: string;
+  position?: string;
+  game_mode?: "heads_up" | "multiway";
+  stakes?: string;
+}
+
+export interface StakeOption {
+  sb: string;
+  bb: string;
+  label: string;
+}
+
+export interface FilterOptionsResponse {
+  stakes: StakeOption[];
+  game_modes: ("heads_up" | "multiway")[];
+}
+
+export type GameMode = "heads_up" | "multiway";
