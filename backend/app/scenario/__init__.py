@@ -19,6 +19,7 @@ from app.scenario.ranges import (
     combos_in_class,
     parse_range_string,
     remove_combo_from_range,
+    tighten_range_for_multiway,
 )
 
 __all__ = [
@@ -33,4 +34,5 @@ __all__ = [
     "combos_in_class",
     "parse_range_string",
     "remove_combo_from_range",
+    "tighten_range_for_multiway",
 ]

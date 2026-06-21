@@ -25,6 +25,10 @@ use postflop_solver::Range;
 
 use crate::envelope::HandClassWeights;
 
+/// Weight filter threshold: entries with weight ≤ this are silently dropped.
+/// Shared with Python `_MIN_RANGE_WEIGHT_THRESHOLD` (0.001).  Keep in sync.
+const MIN_WEIGHT_FILTER: f32 = 0.001;
+
 /// Convert a hand-class weight map into a [`Range`].
 ///
 /// Returns `Ok(empty_range)` for an empty input (caller may want to error on
@@ -41,7 +45,7 @@ pub fn range_from_hand_classes(weights: &HandClassWeights) -> Result<Range, Stri
             return Err(format!("invalid hand class: {hand_class:?}"));
         }
         let mut w = *weight;
-        if !w.is_finite() || w <= 0.0 {
+        if !w.is_finite() || w <= MIN_WEIGHT_FILTER {
             continue;
         }
         if w > 1.0 {
