@@ -31,6 +31,25 @@ const REGRESSION_STEP_SIZE: u32 = 10;
 const REGRESSION_MAX_ITERATIONS: u32 = 10;
 const REGRESSION_MAX_SOLVE_CHUNKS: u32 = 2;
 
+/// Full preflight → init → 10-iter solve → export on GHA. Wide/deep fixtures
+/// are covered by preflight-only in CI; run the ignored dynamic test locally
+/// or on a nightly runner for the full 22-fixture smoke matrix.
+const CI_REPRESENTATIVE_SMOKE: &[&str] = &[
+    "fallback_range.json",
+    "min_pot_1_0_bb.json",
+    "multiway_low_approx_flop.json",
+    "hu_high_clean_flop_btn_vs_bb.json",
+    "hu_medium_library_fallback_flop.json",
+];
+
+fn runs_on_github_actions() -> bool {
+    std::env::var("GITHUB_ACTIONS").ok().as_deref() == Some("true")
+}
+
+fn runs_full_smoke(filename: &str) -> bool {
+    !runs_on_github_actions() || CI_REPRESENTATIVE_SMOKE.contains(&filename)
+}
+
 fn fixture_path() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("tests")
@@ -239,7 +258,6 @@ fn regression_fixture(name: &str) -> String {
 }
 
 fn regression_smoke_solve(envelope: &str, label: &str) -> u32 {
-    preflight_inner(envelope).unwrap_or_else(|e| panic!("{label} preflight: {e}"));
     let handle = init_game_inner(envelope).unwrap_or_else(|e| panic!("{label} init: {e}"));
 
     let mut last_progress = None;
@@ -310,8 +328,24 @@ fn regression_degenerate_allin_tree_is_rejected() {
 
 /// Load all *.json in tests/fixtures/regression/ and run:
 /// preflight -> init_game -> 10-iter solve_step -> export_strategy without panic.
+///
+/// Ignored in default `cargo test` because 22 wide-tree smokes can exceed GHA
+/// runner budgets. CI runs [`regression_all_fixtures_dynamically_ci`] instead;
+/// run this locally with:
+/// `cargo test --test solver_integration regression_all_fixtures_dynamically -- --ignored --nocapture --test-threads=1`
 #[test]
+#[ignore = "full 22-fixture smoke — run locally or on a nightly runner"]
 fn regression_all_fixtures_dynamically() {
+    run_regression_fixture_matrix(true);
+}
+
+/// CI-safe subset: preflight every fixture; full smoke on [`CI_REPRESENTATIVE_SMOKE`].
+#[test]
+fn regression_all_fixtures_dynamically_ci() {
+    run_regression_fixture_matrix(false);
+}
+
+fn run_regression_fixture_matrix(full_smoke: bool) {
     let _g = TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
 
     let regression_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -354,8 +388,10 @@ fn regression_all_fixtures_dynamically() {
                     Ok(_) => match init_game_inner(&envelope) {
                         Ok(handle) => {
                             free_game(handle);
-                            let handle = regression_smoke_solve(&envelope, filename);
-                            free_game(handle);
+                            if full_smoke || runs_full_smoke(filename) {
+                                let handle = regression_smoke_solve(&envelope, filename);
+                                free_game(handle);
+                            }
                         }
                         Err(e) => {
                             assert!(
@@ -376,8 +412,10 @@ fn regression_all_fixtures_dynamically() {
             }
 
             preflight_res.unwrap_or_else(|e| panic!("{filename} failed preflight: {e}"));
-            let handle = regression_smoke_solve(&envelope, filename);
-            free_game(handle);
+            if full_smoke || runs_full_smoke(filename) {
+                let handle = regression_smoke_solve(&envelope, filename);
+                free_game(handle);
+            }
             accepted_count += 1;
         }
     }

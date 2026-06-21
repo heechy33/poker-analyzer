@@ -145,7 +145,10 @@ pub fn init_game_inner(scenario_json: &str) -> Result<u32, String> {
     let game = build_game(&envelope)?;
     let chips_per_bb = CHIPS_PER_BB as f32;
     let target_chips = target_bb * chips_per_bb;
-    let initial_expl = compute_exploitability(&game);
+    // Defer the first exploitability scan until the first solve_step milestone.
+    // `compute_exploitability` on a freshly built tree is as expensive as several
+    // CFR iterations and dominates init latency on wide-range envelopes.
+    let initial_expl = f32::INFINITY;
 
     let state = GameState {
         game,

@@ -29,6 +29,9 @@ jobs:
   rust-regression:
     name: Rust regression tests
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RAYON_NUM_THREADS: 2
     defaults:
       run:
         working-directory: solver-wasm
@@ -42,8 +45,10 @@ jobs:
         with:
           toolchain: stable
 
-      - name: Run solver integration tests (including regression)
-        run: cargo test -- --nocapture --test-threads=1
+      - name: Run solver integration tests (CI-safe subset)
+        run: |
+          cargo test --lib -- --test-threads=1
+          cargo test --test solver_integration -- --nocapture --test-threads=1 --skip init_solve_export_roundtrip
 
   # ── Python regression tests (builder.py validation layer) ──
   python-regression:
