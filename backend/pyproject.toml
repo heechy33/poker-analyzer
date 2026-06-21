@@ -16,6 +16,7 @@ dependencies = [
     "mangum",
     "asyncpg",
     "aiosqlite",
+    "tzdata",
 ]
 
 [project.optional-dependencies]

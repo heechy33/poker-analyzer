@@ -6,6 +6,7 @@ from app.models.tables import (
     RangeLibrary,
     Session,
     SolverRun,
+    SolverTelemetry,
     Upload,
 )
 
@@ -17,5 +18,6 @@ __all__ = [
     "HandAction",
     "RangeLibrary",
     "SolverRun",
+    "SolverTelemetry",
     "LlmAnalysis",
 ]

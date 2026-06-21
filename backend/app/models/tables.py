@@ -34,6 +34,7 @@ class Upload(SQLModel, table=True):
     hand_count: int | None = None
     status: str = Field(default="queued")
     error_message: str | None = None
+    parse_warnings: str | None = None
     uploaded_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False),
@@ -193,6 +194,63 @@ class SolverRun(SQLModel, table=True):
     iterations: int
     exploitability_bb: Decimal = Field(sa_column=Column(Numeric(8, 4), nullable=False))
     output_jsonb: dict[str, Any] = Field(sa_column=Column(JSONB, nullable=False))
+    created_at: datetime = Field(
+        default_factory=utc_now,
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+    )
+
+
+class SolverTelemetry(SQLModel, table=True):
+    """Per-solve telemetry row for failure analysis and performance histograms.
+
+    Written on every solve attempt (success or failure) so we can track
+    error_classes, SPR distributions, and multiway approximation accuracy.
+    """
+
+    __tablename__ = "solver_telemetry"
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: UUID = Field(index=True)
+    hand_id: UUID | None = Field(default=None, foreign_key="hands.id", index=True)
+    street: str | None = None
+    scenario_hash: str | None = Field(default=None, index=True)
+
+    # ── Outcome ──
+    # "success" | "Unreachable" | "timeout" | "worker_crashed" |
+    # "validation_error" | "scenario_build_error" | "unknown"
+    error_class: str = Field(default="success")
+    message: str | None = None
+
+    # ── Scenario snapshot (from builder metadata) ──
+    confidence: str | None = None  # high / medium / low / error
+    spr: float | None = None
+    pot_bb: float | None = None
+    eff_bb: float | None = None
+    multiway_alive_count: int | None = None
+    hero_lookup_hit: bool | None = None  # True if range_library row found for hero
+    villain_lookup_hit: bool | None = None
+
+    # ``pot_error_pct``: how much the HU pot understates the real table pot
+    # (0 % for true HU, > 0 % for multiway).  Computed as
+    #   (table_pot_chips - hu_pot_chips) / table_pot_chips * 100
+    pot_error_pct: float | None = None
+
+    # ── Bet tree shape (effective sizes after force_allin dedup) ──
+    effective_bet_sizes_flop: list[str] | None = Field(
+        default=None, sa_column=Column(ARRAY(String))
+    )
+    effective_bet_sizes_turn: list[str] | None = Field(
+        default=None, sa_column=Column(ARRAY(String))
+    )
+    effective_bet_sizes_river: list[str] | None = Field(
+        default=None, sa_column=Column(ARRAY(String))
+    )
+
+    # ── Solver run metadata ──
+    solver_mode: str | None = None  # "quick" | "full"
+    duration_ms: int | None = None
+    wasm_memory_used: int | None = None  # bytes, if reported by WASM glue
+
     created_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False),
