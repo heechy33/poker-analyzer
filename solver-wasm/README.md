@@ -95,7 +95,7 @@ runner (see `.github/workflows/regression.yml`).
 # Fast compile check (safe on any machine):
 cargo check --tests
 
-# CI-equivalent subset (preflight all fixtures + 5 representative smokes):
+# CI-equivalent subset (preflight all 22 + 3 light smokes in a separate test):
 cargo test --test solver_integration regression_ free_game reinit unknown_handle -- --test-threads=1
 
 # Full 22-fixture smoke (slow — run on a workstation or GHA, not a dev laptop):

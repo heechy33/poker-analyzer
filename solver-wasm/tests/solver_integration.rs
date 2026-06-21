@@ -31,23 +31,16 @@ const REGRESSION_STEP_SIZE: u32 = 10;
 const REGRESSION_MAX_ITERATIONS: u32 = 10;
 const REGRESSION_MAX_SOLVE_CHUNKS: u32 = 2;
 
-/// Full preflight → init → 10-iter solve → export on GHA. Wide/deep fixtures
-/// are covered by preflight-only in CI; run the ignored dynamic test locally
-/// or on a nightly runner for the full 22-fixture smoke matrix.
+/// Memory-light fixtures for init → 10-iter solve → export on GHA (~7 GB RAM).
+/// Avoid min-pot (SPR≈100), wide-range, and deep-stack fixtures — they OOM runners.
 const CI_REPRESENTATIVE_SMOKE: &[&str] = &[
     "fallback_range.json",
-    "min_pot_1_0_bb.json",
-    "multiway_low_approx_flop.json",
-    "hu_high_clean_flop_btn_vs_bb.json",
-    "hu_medium_library_fallback_flop.json",
+    "near_degenerate_spr_1_2.json",
+    "hu_high_clean_3bet_co_vs_utg.json",
 ];
 
-fn runs_on_github_actions() -> bool {
-    std::env::var("GITHUB_ACTIONS").ok().as_deref() == Some("true")
-}
-
-fn runs_full_smoke(filename: &str) -> bool {
-    !runs_on_github_actions() || CI_REPRESENTATIVE_SMOKE.contains(&filename)
+fn runs_full_smoke(full_smoke: bool, _filename: &str) -> bool {
+    full_smoke
 }
 
 fn fixture_path() -> PathBuf {
@@ -339,10 +332,26 @@ fn regression_all_fixtures_dynamically() {
     run_regression_fixture_matrix(true);
 }
 
-/// CI-safe subset: preflight every fixture; full smoke on [`CI_REPRESENTATIVE_SMOKE`].
+/// CI-safe subset: preflight every fixture (no inline smokes).
+/// Solve roundtrip on [`CI_REPRESENTATIVE_SMOKE`] runs in
+/// [`regression_ci_smoke_roundtrip`] so wide fixtures cannot OOM the runner.
 #[test]
 fn regression_all_fixtures_dynamically_ci() {
     run_regression_fixture_matrix(false);
+}
+
+/// GHA: preflight → init → 10-iter solve → export on memory-light fixtures only.
+#[test]
+fn regression_ci_smoke_roundtrip() {
+    let _g = TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+    for name in CI_REPRESENTATIVE_SMOKE {
+        println!("CI smoke: {name}");
+        let envelope = regression_fixture(name);
+        preflight_inner(&envelope)
+            .unwrap_or_else(|e| panic!("{name} failed preflight: {e}"));
+        let handle = regression_smoke_solve(&envelope, name);
+        free_game(handle);
+    }
 }
 
 fn run_regression_fixture_matrix(full_smoke: bool) {
@@ -388,7 +397,7 @@ fn run_regression_fixture_matrix(full_smoke: bool) {
                     Ok(_) => match init_game_inner(&envelope) {
                         Ok(handle) => {
                             free_game(handle);
-                            if full_smoke || runs_full_smoke(filename) {
+                            if runs_full_smoke(full_smoke, filename) {
                                 let handle = regression_smoke_solve(&envelope, filename);
                                 free_game(handle);
                             }
@@ -412,7 +421,7 @@ fn run_regression_fixture_matrix(full_smoke: bool) {
             }
 
             preflight_res.unwrap_or_else(|e| panic!("{filename} failed preflight: {e}"));
-            if full_smoke || runs_full_smoke(filename) {
+            if runs_full_smoke(full_smoke, filename) {
                 let handle = regression_smoke_solve(&envelope, filename);
                 free_game(handle);
             }
