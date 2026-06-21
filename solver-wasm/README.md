@@ -74,11 +74,35 @@ Key invariants (see `src/strategy_export.rs` for the full mapping doc):
 
 ## Build
 
-### Native (tests, benches)
+### Prerequisites
+
+`postflop-solver` is a **git submodule** (pinned fork at `3a64f855cf20`). From the
+repo root:
 
 ```bash
-# All default features (rayon-backed parallel solving, bincode codecs):
-cargo test
+git submodule update --init --recursive
+```
+
+Fresh clones should use `git clone --recurse-submodules ...` (see root `README.md`).
+
+### Native (tests, benches)
+
+**Do not run the full regression suite locally on a laptop** — wide-range
+fixtures peg CPU/RAM for 30–60+ minutes. GitHub Actions is the regression
+runner (see `.github/workflows/regression.yml`).
+
+```bash
+# Fast compile check (safe on any machine):
+cargo check --tests
+
+# CI-equivalent subset (preflight all 22 + 3 light smokes in a separate test):
+cargo test --test solver_integration regression_ free_game reinit unknown_handle -- --test-threads=1
+
+# Full 22-fixture smoke (slow — run on a workstation or GHA, not a dev laptop):
+cargo test --test solver_integration regression_all_fixtures_dynamically -- --ignored --nocapture --test-threads=1
+
+# 60-iter convergence roundtrip (also slow):
+cargo test --test solver_integration init_solve_export_roundtrip -- --nocapture --test-threads=1
 ```
 
 ### WebAssembly (v1: single-threaded)

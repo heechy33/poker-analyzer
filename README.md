@@ -107,10 +107,17 @@ requiring users to paste JWTs into config files.
 ## Running locally
 
 ```bash
-# Clone and install
-git clone https://github.com/heechy33/poker-analyzer.git
+# Clone and install (postflop-solver is a pinned git submodule)
+git clone --recurse-submodules https://github.com/heechy33/poker-analyzer.git
 cd poker-analyzer
+# If you already cloned without submodules:
+#   git submodule update --init --recursive
 cp .env.example .env   # fill in Supabase + Anthropic keys
+
+On Windows (or any IPv4-only network), set `DATABASE_URL` to the **Session pooler**
+connection string from the Supabase dashboard (Connect → Session pooler, port 5432),
+with the async driver prefix `postgresql+asyncpg://`. The direct `db.*.supabase.co`
+host is IPv6-only and often times out locally.
 
 # Backend
 cd backend
@@ -124,6 +131,15 @@ npm run dev
 ```
 
 Backend runs on `http://localhost:8000`, MCP server at `http://localhost:8000/mcp`.
+
+### Supabase Storage (hand history uploads)
+
+1. **API keys** — In `backend/.env`, set `SUPABASE_SERVICE_ROLE_KEY` to the **service_role** secret from Project Settings → API. Do not paste the `anon` / publishable key there; uploads will fail with an RLS error.
+2. **Bucket** — In Storage, create a **private** bucket named `hand-histories` (matches `SUPABASE_STORAGE_BUCKET`).
+3. **Policies** — Run `backend/migrations/007_storage_policies.sql` in the Supabase SQL Editor.
+4. Restart the backend after changing `.env`.
+
+For local dev without Storage, open `/upload` and enable **Send raw text to API** (development only).
 
 ### Building the WASM solver
 
@@ -140,3 +156,18 @@ npm run build:wasm
 Artifacts land in `frontend/public/wasm/`. See
 [`solver-wasm/README.md`](./solver-wasm/README.md) for the JS API, the
 strategy-export JSON shape, and known limitations.
+
+### Hand review UX and solver limitations
+
+The `/hands` page uses an integrated split review: the left pane lists hand
+cards grouped by date, while the right pane shows players, street-by-street
+action, embedded postflop Action Overview grids, an advanced range map, and
+results. Opening a postflop hand starts quick solver runs in the background
+for each available street; cached solver output is reused immediately.
+
+The solver is postflop-only and built around a heads-up scenario envelope. For
+multiway hands the app selects a primary villain and marks ranges as low
+confidence; it does not run true multiway CFR. Preflop hands show the action
+timeline without a solver overview. If `frontend/public/wasm/` is missing, the
+UI will show a "Solver not built" error and prompt you to run
+`cd frontend && npm run build:wasm`.

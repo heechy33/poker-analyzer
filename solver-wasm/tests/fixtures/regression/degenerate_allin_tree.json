@@ -1,0 +1,50 @@
+{
+  "board": [
+    "As",
+    "Kh",
+    "Qd",
+    "Jc",
+    "Ts"
+  ],
+  "pot_bb": 50,
+  "effective_stack_bb": 55,
+  "oop_player": "BB",
+  "ip_player": "BTN",
+  "hero_position": "BTN",
+  "hero_range": {
+    "AA": 1,
+    "KK": 1,
+    "QQ": 1,
+    "JJ": 1,
+    "TT": 1,
+    "AKs": 1,
+    "AQs": 1
+  },
+  "villain_range": {
+    "88": 1,
+    "99": 1,
+    "AA": 1,
+    "KK": 1,
+    "QQ": 1,
+    "JJ": 1,
+    "TT": 1
+  },
+  "bet_tree": {
+    "flop": [
+      "33%",
+      "75%"
+    ],
+    "turn": [
+      "50%",
+      "100%"
+    ],
+    "river": [
+      "33%",
+      "75%",
+      "150%"
+    ],
+    "allin_always": true
+  },
+  "max_iterations": 10,
+  "target_exploitability_bb": 999
+}
