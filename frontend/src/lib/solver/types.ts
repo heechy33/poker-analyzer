@@ -30,4 +30,20 @@ export interface SolveRequest {
 export interface SolveResult {
   output: SolverOutput;
   progress: SolveProgress;
+  /** Numeric action-index path used in `apply_history` to reach the graded node. */
+  historyPath?: number[];
+  /**
+   * `true` when the decision-node path could not be fully reconstructed
+   * from the hand action log — the exported strategy is from a shallower
+   * node than intended (or the root).
+   */
+  historyIncomplete?: boolean;
+  /** 0 = root node; 1+ = depth navigated past villain/hero pre-actions. */
+  nodeDepth?: number;
+  /**
+   * `true` if the original "full" solve timed out and the result is from a
+   * quick approximation. The UI should surface a note:
+   * "Full solve timed out — showing quick approximation".
+   */
+  downgradedToQuick?: boolean;
 }
