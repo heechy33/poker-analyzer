@@ -8,8 +8,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.auth import get_current_user
 from app.database import get_session
-from app.models import Hand, SolverRun
-from app.schemas import SolverRunCreate, SolverRunResponse
+from app.models import Hand, SolverRun, SolverTelemetry
+from app.schemas import SolverRunCreate, SolverRunResponse, SolverTelemetryCreate, SolverTelemetryResponse
 
 router = APIRouter(prefix="/solver-runs", tags=["solver"])
 
@@ -64,4 +64,57 @@ async def create_solver_run(
         scenario_hash=run.scenario_hash,
         street=run.street,
         created_at=run.created_at,
+    )
+
+
+@router.post("/telemetry", response_model=SolverTelemetryResponse, status_code=status.HTTP_201_CREATED)
+async def post_telemetry(
+    body: SolverTelemetryCreate,
+    user_id: str = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> SolverTelemetryResponse:
+    """Persist a solve-attempt telemetry record for reliability monitoring.
+
+    Called by the frontend on every solve attempt (success or failure).
+    The endpoint is intentionally lenient — it accepts partial payloads
+    and never rejects a request, because telemetry must never interfere
+    with the user experience.
+    """
+    hand_id: UUID | None = None
+    if body.hand_id is not None:
+        try:
+            hand_id = UUID(body.hand_id)
+        except ValueError:
+            hand_id = None
+
+    telemetry = SolverTelemetry(
+        user_id=UUID(user_id),
+        hand_id=hand_id,
+        street=body.street,
+        scenario_hash=body.scenario_hash,
+        error_class=body.error_class,
+        message=body.message,
+        confidence=body.confidence,
+        spr=body.spr,
+        pot_bb=body.pot_bb,
+        eff_bb=body.eff_bb,
+        multiway_alive_count=body.multiway_alive_count,
+        hero_lookup_hit=body.hero_lookup_hit,
+        villain_lookup_hit=body.villain_lookup_hit,
+        pot_error_pct=body.pot_error_pct,
+        effective_bet_sizes_flop=body.effective_bet_sizes_flop,
+        effective_bet_sizes_turn=body.effective_bet_sizes_turn,
+        effective_bet_sizes_river=body.effective_bet_sizes_river,
+        solver_mode=body.solver_mode,
+        duration_ms=body.duration_ms,
+        wasm_memory_used=body.wasm_memory_used,
+    )
+    session.add(telemetry)
+    await session.commit()
+    await session.refresh(telemetry)
+
+    return SolverTelemetryResponse(
+        id=str(telemetry.id),
+        error_class=telemetry.error_class,
+        created_at=telemetry.created_at,
     )
