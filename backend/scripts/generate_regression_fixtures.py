@@ -82,6 +82,9 @@ def mod_large_pot(env):
 def mod_near_degen(env):
     env["pot_bb"] = 100.0
     env["effective_stack_bb"] = 60.0
+    # At SPR 0.6, standard 33%/75% flop sizes collapse to all-in with allin_always;
+    # keep the tree solvable while still exercising shallow SPR.
+    env["bet_tree"]["allin_always"] = False
 
 def mod_degen_spr(env):
     env["pot_bb"] = 100.0
