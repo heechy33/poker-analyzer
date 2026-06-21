@@ -1,0 +1,21 @@
+CoinPoker Hand #9300000001: NLH (₮0.50/₮1.00) - 2026/06/19 12:00:00 PDT
+Table 'shallow-spr-hu' heads-up Seat #1 is the button
+Seat 1: Hero (₮12.00 in chips)
+Seat 2: DeepV (₮15.00 in chips)
+Hero: posts small blind ₮0.50
+DeepV: posts big blind ₮1.00
+*** HOLE CARDS ***
+Dealt to Hero [Kh Qh]
+Hero: raises ₮9.50 to ₮10.00
+DeepV: calls ₮9.00
+*** FLOP *** [Js Tc 4d]
+Hero: bets ₮2.00 and is all-in
+DeepV: calls ₮2.00
+*** TURN *** [Js Tc 4d] [8s]
+*** RIVER *** [Js Tc 4d 8s] [2c]
+*** SHOWDOWN ***
+Hero: shows [Kh Qh] (High Card)
+DeepV: shows [As Ad] (Pair)
+DeepV collected ₮24.00 from pot
+*** SUMMARY ***
+Total pot ₮24.00 | Rake ₮0.00 | Splash Fee ₮0.00
