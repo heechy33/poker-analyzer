@@ -3,7 +3,7 @@ from __future__ import annotations
 from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.auth import get_current_user
@@ -29,6 +29,7 @@ def _upload_response(upload: Upload, **extra: object) -> UploadResponse:
         status=upload.status,
         hand_count=upload.hand_count,
         error_message=upload.error_message,
+        parse_warnings=upload.parse_warnings,
         bytes=upload.bytes,
         uploaded_at=upload.uploaded_at,
         **extra,
@@ -52,10 +53,19 @@ async def presign_upload(
     )
     upload = existing.first()
     if upload is not None:
-        return PresignResponse(
-            **_upload_response(upload).model_dump(),
-            deduplicated=True,
-        )
+        extra: dict[str, object] = {"deduplicated": True}
+        # Allow retry when a prior attempt created the row but never finished upload/parse.
+        if upload.status in ("queued", "error") and upload.storage_path:
+            settings = get_settings()
+            try:
+                signed = create_signed_upload_url(upload.storage_path)
+                extra["signed_url"] = signed.get("signedUrl")
+                extra["token"] = signed.get("token")
+                extra["path"] = signed.get("path") or upload.storage_path
+            except Exception:
+                if settings.ENVIRONMENT != "development":
+                    raise
+        return PresignResponse(**_upload_response(upload).model_dump(), **extra)
 
     upload = Upload(
         user_id=user_uuid,
@@ -74,12 +84,28 @@ async def presign_upload(
     await session.commit()
     await session.refresh(upload)
 
-    signed = create_signed_upload_url(storage_path)
+    settings = get_settings()
+    signed: dict[str, object] | None = None
+    if settings.ENVIRONMENT != "development":
+        try:
+            signed = create_signed_upload_url(storage_path)
+        except RuntimeError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=str(exc),
+            ) from exc
+    else:
+        try:
+            signed = create_signed_upload_url(storage_path)
+        except Exception:
+            # Dev raw_content uploads skip Storage; signed URL is optional.
+            signed = None
+
     return PresignResponse(
         **_upload_response(upload).model_dump(),
-        signed_url=signed.get("signedUrl"),
-        token=signed.get("token"),
-        path=signed.get("path") or storage_path,
+        signed_url=signed.get("signedUrl") if signed else None,
+        token=signed.get("token") if signed else None,
+        path=(signed.get("path") if signed else None) or storage_path,
         deduplicated=False,
     )
 

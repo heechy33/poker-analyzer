@@ -7,6 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field, field_validator
 
 Street = Literal["flop", "turn", "river"]
+GameMode = Literal["heads_up", "multiway"]
 UploadStatus = Literal["queued", "parsing", "parsed", "error"]
 
 
@@ -71,6 +72,7 @@ class UploadResponse(BaseModel):
     status: str
     hand_count: int | None = None
     error_message: str | None = None
+    parse_warnings: str | None = None
     bytes: int | None = None
     uploaded_at: datetime | None = None
 
@@ -104,6 +106,8 @@ class HandsListParams(BaseModel):
     position: str | None = None
     since: date | None = None
     only_losses: bool = False
+    game_mode: GameMode | None = None
+    stakes: str | None = None
 
     @field_validator("order")
     @classmethod
@@ -151,6 +155,8 @@ class ScenarioResponse(BaseModel):
     street: Street
     scenario_hash: str
     confidence: str = "low"
+    confidence_reasons: list[str] = Field(default_factory=list)
+    confidence_detail: str = ""
     cached: bool = False
     scenario: ScenarioEnvelope
     metadata: dict[str, Any] = Field(default_factory=dict)
@@ -240,6 +246,59 @@ class AnalysisListItem(BaseModel):
     analysis: str
     leak_tags: list[str]
     created_at: datetime
+
+
+class SolverTelemetryCreate(BaseModel):
+    """Per-solve telemetry payload sent from the browser after each solve attempt.
+
+    All fields are optional so the frontend can fire a partial payload on
+    failure paths where scenario metadata was never fully constructed.
+    """
+
+    hand_id: str | None = None
+    street: str | None = None
+    scenario_hash: str | None = None
+
+    # Outcome
+    error_class: str = "success"
+    message: str | None = None
+
+    # Scenario snapshot
+    confidence: str | None = None
+    spr: float | None = None
+    pot_bb: float | None = None
+    eff_bb: float | None = None
+    multiway_alive_count: int | None = None
+    hero_lookup_hit: bool | None = None
+    villain_lookup_hit: bool | None = None
+    pot_error_pct: float | None = None
+
+    # Bet tree shape
+    effective_bet_sizes_flop: list[str] | None = None
+    effective_bet_sizes_turn: list[str] | None = None
+    effective_bet_sizes_river: list[str] | None = None
+
+    # Solver run metadata
+    solver_mode: str | None = None
+    duration_ms: int | None = None
+    wasm_memory_used: int | None = None
+
+
+class SolverTelemetryResponse(BaseModel):
+    id: str
+    error_class: str
+    created_at: datetime
+
+
+class StakeOption(BaseModel):
+    sb: str
+    bb: str
+    label: str
+
+
+class FilterOptionsResponse(BaseModel):
+    stakes: list[StakeOption]
+    game_modes: list[GameMode] = Field(default_factory=lambda: ["heads_up", "multiway"])
 
 
 class LeakTagRow(BaseModel):

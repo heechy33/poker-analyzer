@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import logging
+import re
 from collections import defaultdict
 from collections.abc import Iterable, Iterator
 from datetime import datetime, timedelta
 from decimal import Decimal
-from io import StringIO
 from typing import Any
 from uuid import UUID
 
@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models import Hand, HandAction, HandPlayer, Session, Upload
-from app.parser.coinpoker import parse_hands
+from app.parser.coinpoker import ParseError, parse_hand
 from app.parser.models import ParsedHand
 
 logger = logging.getLogger(__name__)
@@ -24,6 +24,17 @@ STREET_ORDER = {"preflop": 0, "flop": 1, "turn": 2, "river": 3, "showdown": 4}
 
 def _uuid(value: str | UUID) -> UUID:
     return value if isinstance(value, UUID) else UUID(str(value))
+
+
+def _json_safe(value: Any) -> Any:
+    """Coerce values for PostgreSQL JSONB (asyncpg rejects Decimal, etc.)."""
+    if isinstance(value, Decimal):
+        return str(value)
+    if isinstance(value, list):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    return value
 
 
 def hand_from_parsed(parsed: ParsedHand, user_id: UUID, upload_id: UUID) -> Hand:
@@ -52,7 +63,7 @@ def hand_from_parsed(parsed: ParsedHand, user_id: UUID, upload_id: UUID) -> Hand
         hero_net_bb=parsed.hero_net_bb,
         went_to_showdown=parsed.went_to_showdown,
         won_at_showdown=parsed.won_at_showdown,
-        flags=parsed.flags,
+        flags=_json_safe(parsed.flags),
         raw_text=parsed.raw_text,
     )
 
@@ -107,7 +118,7 @@ async def existing_coinpoker_ids(
             Hand.coinpoker_hand_id.in_(ids),
         )
     )
-    return set(result.all())
+    return set(result.scalars().all())
 
 
 def cluster_hands(hands: list[Hand]) -> list[list[Hand]]:
@@ -240,26 +251,107 @@ async def ingest_parsed_hands(
     return len(inserted_hands), skipped
 
 
+_HEADER_RE = re.compile(
+    r"^CoinPoker Hand #(?P<hand_id>\d+):"
+)
+
+
+def _split_hand_blocks(text: str) -> list[list[str]]:
+    """Split hand history text into per-hand line blocks.
+
+    Replicates the header-detection logic from ``parse_hands()`` so we can
+    call ``parse_hand()`` on each block with per-block error isolation.
+    """
+    blocks: list[list[str]] = []
+    current: list[str] = []
+
+    for line in text.splitlines(keepends=False):
+        stripped = line.strip()
+        if _HEADER_RE.match(stripped):
+            if current:
+                blocks.append(current)
+            current = [line]
+        elif current:
+            current.append(line)
+
+    if current:
+        blocks.append(current)
+
+    return blocks
+
+
+def _build_parse_summary(
+    inserted: int, skipped_duplicates: int, parse_errors: list[str]
+) -> str | None:
+    """Build a human-readable parse warnings string or None if clean."""
+    parts: list[str] = []
+    if parse_errors:
+        parts.append(f"{len(parse_errors)} parse error{'s' if len(parse_errors) != 1 else ''}")
+    if skipped_duplicates:
+        parts.append(f"{skipped_duplicates} duplicate{'s' if skipped_duplicates != 1 else ''} skipped")
+    if not parts:
+        return None
+    return f"Imported {inserted} hand{'s' if inserted != 1 else ''} ({', '.join(parts)})"
+
+
 async def ingest_upload_content(
     db: AsyncSession,
-    upload: Upload,
+    user_id: UUID,
+    upload_id: UUID,
     content: str | bytes,
 ) -> int:
-    user_uuid = _uuid(upload.user_id)
-    upload_uuid = _uuid(upload.id)
+    user_uuid = _uuid(user_id)
+    upload_uuid = _uuid(upload_id)
 
     if isinstance(content, bytes):
         text = content.decode("utf-8")
     else:
         text = content
 
-    source: StringIO = StringIO(text)
-    inserted, _skipped = await ingest_parsed_hands(
+    blocks = _split_hand_blocks(text)
+    if not blocks:
+        upload = await db.get(Upload, upload_uuid)
+        if upload is not None:
+            upload.error_message = "No hands found in file"
+            upload.parse_warnings = None
+            db.add(upload)
+            await db.flush()
+        return 0
+
+    parsed_list: list[ParsedHand] = []
+    parse_errors: list[str] = []
+
+    for block in blocks:
+        try:
+            parsed_list.append(parse_hand(block))
+        except ParseError as exc:
+            msg = str(exc)
+            logger.warning("skipping hand due to parse error: %s", msg)
+            parse_errors.append(msg)
+
+    inserted, skipped_duplicates = await ingest_parsed_hands(
         db,
         user_uuid,
         upload_uuid,
-        parse_hands(source),
+        iter(parsed_list),
     )
+
+    # Persist parse summary on the Upload row.
+    upload = await db.get(Upload, upload_uuid)
+    if upload is not None:
+        upload.error_message = None
+        upload.parse_warnings = _build_parse_summary(
+            inserted, skipped_duplicates, parse_errors
+        )
+        if not parsed_list and parse_errors:
+            # All blocks failed to parse — still "parsed" but with zero inserted
+            # and a descriptive error so the frontend can surface it.
+            upload.error_message = parse_errors[0][:2000]
+        # On re-upload, report how many hands were recognized even if all dupes.
+        upload.hand_count = inserted if inserted > 0 else skipped_duplicates
+        db.add(upload)
+        await db.flush()
+
     return inserted
 
 
@@ -273,8 +365,14 @@ async def run_upload_ingest(
         logger.error("upload %s not found for ingest", upload_id)
         return
 
+    # Capture scalars before commit; expire_on_commit clears the instance.
+    user_uuid = _uuid(upload.user_id)
+    upload_uuid = _uuid(upload.id)
+    storage_path = upload.storage_path
+
     upload.status = "parsing"
     upload.error_message = None
+    upload.parse_warnings = None
     db.add(upload)
     await db.commit()
 
@@ -282,12 +380,23 @@ async def run_upload_ingest(
         if content is None:
             from app.services.storage import download_storage_object
 
-            content = download_storage_object(upload.storage_path)
+            content = download_storage_object(storage_path)
 
-        hand_count = await ingest_upload_content(db, upload, content)
-        upload.status = "parsed"
-        upload.hand_count = hand_count
-        upload.error_message = None
+        hand_count = await ingest_upload_content(db, user_uuid, upload_uuid, content)
+
+        upload = await db.get(Upload, upload_uuid)
+        if upload is None:
+            logger.error("upload %s not found after ingest", upload_uuid)
+            return
+
+        # ingest_upload_content sets error_message for hard failures and may set
+        # hand_count when everything was a duplicate re-upload.
+        if upload.error_message:
+            upload.status = "error"
+        else:
+            upload.status = "parsed"
+        if upload.hand_count is None:
+            upload.hand_count = hand_count
     except Exception as exc:
         logger.exception("failed to ingest upload %s", upload_id)
         await db.rollback()

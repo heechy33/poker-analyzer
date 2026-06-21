@@ -3,11 +3,13 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, time, timezone
+from decimal import Decimal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import asc, desc, select
+from sqlalchemy import asc, desc
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.auth import get_current_user
@@ -33,12 +35,14 @@ from app.schemas import (
     AnalysisListItem,
     AnalyzeHandRequest,
     AnalyzeHandResponse,
+    FilterOptionsResponse,
     HandActionOut,
     HandDetail,
     HandPlayerOut,
     HandSummary,
     ScenarioEnvelope,
     ScenarioResponse,
+    StakeOption,
     Street,
 )
 from app.services.analysis import (
@@ -93,6 +97,8 @@ async def list_hands(
     position: str | None = Query(default=None),
     since: str | None = Query(default=None),
     only_losses: bool = Query(default=False),
+    game_mode: str | None = Query(default=None, pattern=r"^(heads_up|multiway)$"),
+    stakes: str | None = Query(default=None, pattern=r"^\d+(\.\d+)?/\d+(\.\d+)?$"),
     user_id: str = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> list[HandSummary]:
@@ -106,6 +112,10 @@ async def list_hands(
     (e.g. ``"2026-05-01"``).  ``position`` must be one of BTN, CO, HJ, UTG,
     SB, BB.  Returns at most 200 records per call; use ``offset`` for
     pagination.
+
+    **New filters:**
+    ``game_mode`` — ``heads_up`` (table_size = 2) or ``multiway`` (table_size >= 6).
+    ``stakes`` — exact ``"sb/bb"`` e.g. ``0.10/0.25``.
     """
     if order not in {f"{field}.{direction}" for field in ORDER_COLUMNS for direction in ("asc", "desc")}:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid order parameter")
@@ -125,6 +135,15 @@ async def list_hands(
         stmt = stmt.where(Hand.played_at >= since_dt)
     if only_losses:
         stmt = stmt.where(Hand.hero_net < 0)
+    if game_mode == "heads_up":
+        stmt = stmt.where(Hand.table_size == 2)
+    elif game_mode == "multiway":
+        stmt = stmt.where(Hand.table_size >= 6)
+    if stakes:
+        sb_str, bb_str = stakes.split("/", 1)
+        stake_sb = Decimal(sb_str)
+        stake_bb = Decimal(bb_str)
+        stmt = stmt.where(Hand.stake_sb == stake_sb).where(Hand.stake_bb == stake_bb)
 
     stmt = stmt.order_by(_parse_order(order)).offset(offset).limit(limit)
     result = await session.exec(stmt)
@@ -136,6 +155,8 @@ async def find_biggest_losers(
     limit: int = Query(default=10, ge=1, le=50),
     since: str | None = Query(default=None),
     position: str | None = Query(default=None),
+    game_mode: str | None = Query(default=None, pattern=r"^(heads_up|multiway)$"),
+    stakes: str | None = Query(default=None, pattern=r"^\d+(\.\d+)?/\d+(\.\d+)?$"),
     user_id: str = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> list[HandSummary]:
@@ -148,6 +169,8 @@ async def find_biggest_losers(
     a time window, or ``position`` (BTN, CO, HJ, UTG, SB, BB) to focus on
     a specific seat.  Prefer this tool over ``list_recent_hands`` whenever
     the goal is "show me the hands where I lost the most chips".
+
+    Accepts ``game_mode`` and ``stakes`` for consistency with ``list_recent_hands``.
     """
     stmt = select(Hand).where(Hand.user_id == UUID(user_id)).where(Hand.hero_net < 0)
 
@@ -163,10 +186,55 @@ async def find_biggest_losers(
             ) from exc
         since_dt = datetime.combine(since_date, time.min, tzinfo=timezone.utc)
         stmt = stmt.where(Hand.played_at >= since_dt)
+    if game_mode == "heads_up":
+        stmt = stmt.where(Hand.table_size == 2)
+    elif game_mode == "multiway":
+        stmt = stmt.where(Hand.table_size >= 6)
+    if stakes:
+        sb_str, bb_str = stakes.split("/", 1)
+        stake_sb = Decimal(sb_str)
+        stake_bb = Decimal(bb_str)
+        stmt = stmt.where(Hand.stake_sb == stake_sb).where(Hand.stake_bb == stake_bb)
 
     stmt = stmt.order_by(asc(Hand.hero_net)).limit(limit)
     result = await session.exec(stmt)
     return [_to_summary(hand) for hand in result.all()]
+
+
+@router.get("/filter-options", operation_id="filter_options", response_model=FilterOptionsResponse)
+async def get_filter_options(
+    user_id: str = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> FilterOptionsResponse:
+    """Return distinct (stake_sb, stake_bb) pairs and available game modes.
+
+    Used by the hands page to populate stake / game-mode filter dropdowns
+    dynamically based on the authenticated user's uploaded hands.
+    """
+    rows = await session.exec(
+        select(
+            Hand.stake_sb,
+            Hand.stake_bb,
+        )
+        .where(Hand.user_id == UUID(user_id))
+        .distinct()
+        .order_by(Hand.stake_bb, Hand.stake_sb)
+    )
+    stakes_options: list[StakeOption] = []
+    for sb, bb in rows.all():
+        sb_str = str(float(sb)).rstrip("0").rstrip(".")
+        bb_str = str(float(bb)).rstrip("0").rstrip(".")
+        stakes_options.append(
+            StakeOption(
+                sb=sb_str,
+                bb=bb_str,
+                label=f"{sb_str}/{bb_str}",
+            )
+        )
+    return FilterOptionsResponse(
+        stakes=stakes_options,
+        game_modes=["heads_up", "multiway"],
+    )
 
 
 @router.get("/{hand_id}", operation_id="get_hand", response_model=HandDetail)
@@ -271,7 +339,9 @@ async def get_hand_scenario(
         hand_id=str(hand_id),
         street=street,
         scenario_hash=scenario_hash,
-        confidence=result["metadata"]["confidence"],
+        confidence=result["metadata"].get("confidence", "low"),
+        confidence_reasons=result["metadata"].get("confidence_reasons", []),
+        confidence_detail=result["metadata"].get("confidence_detail", ""),
         cached=cached_run is not None,
         scenario=ScenarioEnvelope(**result["scenario"]),
         metadata=result["metadata"],

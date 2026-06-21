@@ -45,7 +45,7 @@ class _Seat:
 _HEADER_RE = re.compile(
     r"^CoinPoker Hand #(?P<hand_id>\d+):\s*"
     r"(?P<variant>[^()]+?)\s*"
-    r"\((?P<sb>[^/]+)/(?P<bb>[^)]+)\)\s*-\s*"
+    r"\((?P<stakes>[^)]+)\)\s*(?:-\s*)?"
     r"(?P<played_at>.+?)\s*$"
 )
 _TABLE_RE = re.compile(
@@ -64,13 +64,18 @@ _MARKER_RE = re.compile(
     r"(?P<rest>.*)$"
 )
 _DEALT_RE = re.compile(
-    r"^Dealt to (?P<screen_name>.+?) "
-    r"\[(?P<cards>[2-9TJQKA][cdhs] [2-9TJQKA][cdhs])\]$"
+    r"^Dealt to (?P<screen_name>.+?)"
+    r"(?:\s+\[(?P<cards>[2-9TJQKA][cdhs] [2-9TJQKA][cdhs])\])?"
+    r"\s*$"
+)
+_DEALT_CARDS_LINE_RE = re.compile(
+    r"^\[(?P<cards>[2-9TJQKA][cdhs] [2-9TJQKA][cdhs])\]\s*$"
 )
 _POST_RE = re.compile(
-    r"^(?P<screen_name>.+?): posts (?:the )?"
+    r"^(?P<screen_name>.+?): posts (?:the )?(?:auto )?"
     r"(?P<blind>small blind|big blind) (?P<body>.+)$"
 )
+_ANTE_POST_RE = re.compile(r"^(?P<screen_name>.+?): posts ante (?P<amount>.+)$")
 _ACTION_RE = re.compile(r"^(?P<screen_name>.+?): (?P<body>.+)$")
 _RAISE_RE = re.compile(r"^raises (?P<amount>.+?) to (?P<raise_to>.+)$")
 _COLLECT_RE = re.compile(
@@ -79,6 +84,7 @@ _COLLECT_RE = re.compile(
 _UNCALLED_RE = re.compile(
     r"^Uncalled bet \((?P<amount>.+?)\) returned to (?P<screen_name>.+)$"
 )
+_RETURN_RE = re.compile(r"^(?P<screen_name>.+?): RETURN (?P<amount>.+)$")
 _CARD_GROUP_RE = re.compile(r"\[([2-9TJQKA][cdhs](?:\s+[2-9TJQKA][cdhs])*)\]")
 
 _MONEY_RE = re.compile(
@@ -129,7 +135,9 @@ def parse_hand(lines: list[str]) -> ParsedHand:
     stake_sb: Decimal | None = None
     stake_bb: Decimal | None = None
     button_seat: int | None = None
+    hero_screen_name: str | None = None
     hero_cards: list[str] | None = None
+    awaiting_hero_cards = False
     flop: list[str] | None = None
     turn: str | None = None
     river: str | None = None
@@ -139,10 +147,10 @@ def parse_hand(lines: list[str]) -> ParsedHand:
     state: _State = "HEADER"
     current_street: Street = "preflop"
     went_to_showdown = False
-    hero_invested = _ZERO
-    hero_collected = _ZERO
+    uncalled_returns: list[tuple[str, Decimal]] = []
     flags: dict[str, object] = {
         "all_in": False,
+        "bomb_pot": False,
         "run_it_twice": False,
         "split_pot": False,
         "side_pots": False,
@@ -167,7 +175,6 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         raise_to: Decimal | None = None,
         is_all_in: bool = False,
     ) -> None:
-        nonlocal hero_invested
         seat = seats_by_name.get(screen_name)
         if seat is None:
             raise error("action references an unknown player", line_no, line)
@@ -187,19 +194,20 @@ def parse_hand(lines: list[str]) -> ParsedHand:
                 is_all_in=is_all_in,
             )
         )
-        if screen_name == "Hero" and amount is not None and action in {
-            "post_sb",
-            "post_bb",
-            "call",
-            "bet",
-            "raise",
-        }:
-            hero_invested += amount
 
     for line_no, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
         if not line:
             continue
+
+        if awaiting_hero_cards and hero_cards is None:
+            cards_match = _DEALT_CARDS_LINE_RE.match(line)
+            if cards_match:
+                hero_cards = cards_match.group("cards").split()
+                awaiting_hero_cards = False
+                state = "PREFLOP"
+                continue
+            awaiting_hero_cards = False
 
         header_match = _HEADER_RE.match(line)
         if header_match:
@@ -207,10 +215,18 @@ def parse_hand(lines: list[str]) -> ParsedHand:
                 raise error("unexpected hand header inside hand block", line_no, line)
             hand_id = int(header_match.group("hand_id"))
             variant = header_match.group("variant").strip()
-            if variant != "NLH":
+            base_variant = variant.replace(" BombPot", "").strip()
+            if base_variant != "NLH":
                 raise error("unsupported or non-English hand variant", line_no, line)
-            stake_sb = _parse_money(header_match.group("sb"), line_no, line)
-            stake_bb = _parse_money(header_match.group("bb"), line_no, line)
+            if "BombPot" in variant:
+                flags["bomb_pot"] = True
+            stake_parts = header_match.group("stakes").split("/")
+            if len(stake_parts) < 2:
+                raise error("stakes are missing sb/bb", line_no, line)
+            stake_sb = _parse_money(stake_parts[0], line_no, line)
+            stake_bb = _parse_money(stake_parts[1], line_no, line)
+            if len(stake_parts) >= 3 and flags["bomb_pot"]:
+                flags["bomb_pot_ante"] = _parse_money(stake_parts[2], line_no, line)
             played_at = _parse_played_at(
                 header_match.group("played_at"), line_no, line
             )
@@ -239,6 +255,8 @@ def parse_hand(lines: list[str]) -> ParsedHand:
             )
             seats[seat_no] = seat
             seats_by_name[screen_name] = seat
+            if screen_name == "Hero":
+                hero_screen_name = "Hero"
             state = "SEATS"
             continue
 
@@ -297,24 +315,57 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         if line.startswith("Board "):
             continue
 
+        if (
+            line in {"Hand was run once", "Hand was run with two boards"}
+            or line.startswith("Game ended:")
+            or line.startswith(("FIRST Board ", "SECOND Board "))
+        ):
+            continue
+
         if state == "SUMMARY" and line.startswith("Seat "):
             _parse_summary_seat(line, seats)
             continue
 
         dealt_match = _DEALT_RE.match(line)
         if dealt_match:
-            screen_name = dealt_match.group("screen_name")
-            if screen_name != "Hero":
-                raise error("unexpected non-Hero dealt cards line", line_no, line)
-            hero_cards = dealt_match.group("cards").split()
+            screen_name = dealt_match.group("screen_name").strip()
+            cards = dealt_match.group("cards")
+            if hero_screen_name is None:
+                if screen_name == "Hero":
+                    hero_screen_name = "Hero"
+                elif cards:
+                    hero_screen_name = screen_name
+                else:
+                    hero_screen_name = screen_name
+                    awaiting_hero_cards = True
+                    state = "PREFLOP"
+                    continue
+            elif screen_name != hero_screen_name:
+                if cards:
+                    raise error(
+                        "unexpected non-Hero dealt cards with hole cards",
+                        line_no,
+                        line,
+                    )
+                continue
+            if cards:
+                hero_cards = cards.split()
+                awaiting_hero_cards = False
+            else:
+                awaiting_hero_cards = True
             state = "PREFLOP"
             continue
 
         uncalled_match = _UNCALLED_RE.match(line)
         if uncalled_match:
             amount = _parse_money(uncalled_match.group("amount"), line_no, line)
-            if uncalled_match.group("screen_name") == "Hero":
-                hero_invested -= amount
+            uncalled_returns.append((uncalled_match.group("screen_name"), amount))
+            continue
+
+        return_match = _RETURN_RE.match(line)
+        if return_match:
+            amount = _parse_money(return_match.group("amount"), line_no, line)
+            uncalled_returns.append((return_match.group("screen_name"), amount))
             continue
 
         collect_match = _COLLECT_RE.match(line)
@@ -327,8 +378,6 @@ def parse_hand(lines: list[str]) -> ParsedHand:
             collect_winners_by_pot[pot_name].add(screen_name)
             if len(collect_winners_by_pot[pot_name]) > 1:
                 flags["split_pot"] = True
-            if screen_name == "Hero":
-                hero_collected += amount
             add_action(
                 street="showdown",
                 screen_name=screen_name,
@@ -337,6 +386,19 @@ def parse_hand(lines: list[str]) -> ParsedHand:
                 line_no=line_no,
                 line=line,
             )
+            continue
+
+        ante_post_match = _ANTE_POST_RE.match(line)
+        if ante_post_match:
+            add_action(
+                street="preflop",
+                screen_name=ante_post_match.group("screen_name"),
+                action="post_bb",
+                amount=_parse_money(ante_post_match.group("amount"), line_no, line),
+                line_no=line_no,
+                line=line,
+            )
+            state = "POSTS"
             continue
 
         post_match = _POST_RE.match(line)
@@ -383,12 +445,22 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         raise ParseError("table metadata is missing", hand_id=hand_id)
     if total_pot is None:
         raise ParseError("summary total pot line is missing", hand_id=hand_id)
+    if hero_cards is None and hero_screen_name is not None:
+        hero_seat_obj = seats_by_name.get(hero_screen_name)
+        if hero_seat_obj and hero_seat_obj.final_cards:
+            hero_cards = hero_seat_obj.final_cards[:2]
+
     if hero_cards is None:
         raise ParseError("Hero hole cards are missing", hand_id=hand_id)
+    if hero_screen_name is None:
+        raise ParseError("Hero player is missing", hand_id=hand_id)
 
-    hero_seat = _find_hero_seat(seats, hand_id)
+    hero_seat = _find_hero_seat(seats, hero_screen_name, hand_id)
     positions = _assign_positions(seats, table_size, button_seat, hand_id)
     hero_position = positions[hero_seat]
+    hero_invested, hero_collected = _hero_amounts(
+        hero_screen_name, actions, uncalled_returns
+    )
     hero_net = hero_collected - hero_invested
     hero_net_bb = _ZERO if stake_bb == _ZERO else hero_net / stake_bb
     won_at_showdown = (hero_collected > _ZERO) if went_to_showdown else None
@@ -399,7 +471,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
             screen_name=seat.screen_name,
             starting_stack=seat.starting_stack,
             position=positions[seat.seat],
-            is_hero=seat.screen_name == "Hero",
+            is_hero=seat.screen_name == hero_screen_name,
             final_cards=seat.final_cards,
         )
         for seat in sorted(seats.values(), key=lambda item: item.seat)
@@ -449,6 +521,17 @@ def _parse_player_action(
     body, is_all_in = _strip_all_in(action_match.group("body"))
     action_street: Street = current_street
 
+    if body.startswith("AUTOBB "):
+        add_action(
+            street="preflop",
+            screen_name=screen_name,
+            action="post_bb",
+            amount=parse_money(body.removeprefix("AUTOBB "), line_no, line),
+            is_all_in=is_all_in,
+            line_no=line_no,
+            line=line,
+        )
+        return
     if body == "folds" or "has timed out" in body or "is sitting out" in body:
         add_action(
             street=action_street,
@@ -463,6 +546,19 @@ def _parse_player_action(
             street=action_street,
             screen_name=screen_name,
             action="check",
+            line_no=line_no,
+            line=line,
+        )
+        return
+    if body.startswith("ALLIN "):
+        amount = parse_money(body.removeprefix("ALLIN "), line_no, line)
+        add_action(
+            street=action_street,
+            screen_name=screen_name,
+            action="raise",
+            amount=amount,
+            raise_to=amount,
+            is_all_in=True,
             line_no=line_no,
             line=line,
         )
@@ -662,9 +758,30 @@ def _is_showdown_action(body: str) -> bool:
     return body.startswith("shows ") or body.startswith("mucks")
 
 
-def _find_hero_seat(seats: dict[int, _Seat], hand_id: int) -> int:
+def _hero_amounts(
+    hero_screen_name: str,
+    actions: list[ParsedAction],
+    uncalled_returns: list[tuple[str, Decimal]],
+) -> tuple[Decimal, Decimal]:
+    invested = _ZERO
+    collected = _ZERO
+    invest_actions = {"post_sb", "post_bb", "call", "bet", "raise"}
+    for action in actions:
+        if action.screen_name != hero_screen_name:
+            continue
+        if action.action in invest_actions and action.amount is not None:
+            invested += action.amount
+        elif action.action == "collect" and action.amount is not None:
+            collected += action.amount
+    for screen_name, amount in uncalled_returns:
+        if screen_name == hero_screen_name:
+            invested -= amount
+    return invested, collected
+
+
+def _find_hero_seat(seats: dict[int, _Seat], hero_screen_name: str, hand_id: int) -> int:
     for seat_no, seat in seats.items():
-        if seat.screen_name == "Hero":
+        if seat.screen_name == hero_screen_name:
             return seat_no
     raise ParseError("Hero seat is missing", hand_id=hand_id)
 

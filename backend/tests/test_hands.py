@@ -1,0 +1,482 @@
+"""
+Integration tests for the /hands API endpoints (game_mode + stakes filters).
+
+Requires a PostgreSQL database accessible via TEST_DATABASE_URL or DATABASE_URL.
+SQLite is NOT supported — the models use PostgreSQL-native types (ARRAY, JSONB).
+
+Run with a local Postgres:
+    TEST_DATABASE_URL="postgresql+asyncpg://user:pass@localhost/test_poker" pytest -m integration tests/test_hands.py
+"""
+
+from __future__ import annotations
+
+import os
+from datetime import datetime, timezone
+from decimal import Decimal
+from uuid import UUID, uuid4
+
+import pytest
+import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
+
+from app.main import app
+from app.models.tables import Hand
+
+pytestmark = pytest.mark.asyncio
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _require_db() -> str:
+    url = os.getenv("TEST_DATABASE_URL") or os.getenv("DATABASE_URL")
+    if not url:
+        pytest.skip("Set TEST_DATABASE_URL (PostgreSQL) to run hands integration tests")
+    return url
+
+
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+async def _create_hand(
+    session: AsyncSession,
+    user_id: UUID,
+    *,
+    table_size: int,
+    stake_sb: str,
+    stake_bb: str,
+    hero_position: str = "BTN",
+    hero_net: str = "0",
+    hero_net_bb: str = "0",
+    coinpoker_hand_id: int | None = None,
+    played_at: datetime | None = None,
+) -> UUID:
+    """Insert a minimal Hand row and return its id."""
+    hand = Hand(
+        user_id=user_id,
+        upload_id=uuid4(),  # dummy, satisfied by FK check in non-strict mode
+        coinpoker_hand_id=coinpoker_hand_id or abs(hash(str(uuid4()))) % (10**9),
+        played_at=played_at or _utc_now(),
+        table_name="Test Table",
+        table_size=table_size,
+        stake_sb=Decimal(stake_sb),
+        stake_bb=Decimal(stake_bb),
+        button_seat=3,
+        hero_seat=1,
+        hero_position=hero_position,
+        hero_cards=["Ac", "Kd"],
+        hero_invested=Decimal("0"),
+        hero_collected=Decimal("0"),
+        hero_net=Decimal(hero_net),
+        hero_net_bb=Decimal(hero_net_bb),
+        total_pot=Decimal("0"),
+    )
+    session.add(hand)
+    await session.flush()
+    hand_id: UUID = hand.id  # type: ignore[assignment]
+    return hand_id
+
+
+# ---------------------------------------------------------------------------
+# Pytest fixtures (module scope for engine, function scope for data isolation)
+# ---------------------------------------------------------------------------
+
+
+@pytest_asyncio.fixture(scope="module")
+async def engine():
+    url = _require_db()
+    eng = create_async_engine(url, echo=False, future=True)
+    async with eng.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+    yield eng
+    await eng.dispose()
+
+
+@pytest_asyncio.fixture
+async def session(engine):
+    async with AsyncSession(engine) as s:
+        yield s
+
+
+@pytest_asyncio.fixture
+async def client(engine, session):
+    """Return an httpx AsyncClient that talks directly to the FastAPI app.
+
+    The app's get_session dependency is overridden to use *this* session
+    so we can seed data and query it from within the same transaction.
+    """
+    from app.database import get_session
+
+    async def override_get_session():
+        yield session
+
+    app.dependency_overrides[get_session] = override_get_session
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
+
+    app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def user_id() -> UUID:
+    return uuid4()
+
+
+@pytest_asyncio.fixture
+def auth_headers(user_id: UUID):
+    """Mock auth headers — we override get_current_user in tests, so just use
+    the real user_id UUID in headers. The test overrides the auth dep below."""
+    return {"Authorization": f"Bearer fake-token-for-{user_id}"}
+
+
+# ---------------------------------------------------------------------------
+# Data fixtures
+# ---------------------------------------------------------------------------
+
+SEED_HANDS = [
+    # table_size=2, heads-up hands (2-max)
+    {"table_size": 2, "stake_sb": "0.01", "stake_bb": "0.02", "hero_position": "BTN", "hero_net": "-1"},
+    {"table_size": 2, "stake_sb": "0.01", "stake_bb": "0.02", "hero_position": "BTN", "hero_net": "2"},
+    {"table_size": 2, "stake_sb": "0.05", "stake_bb": "0.10", "hero_position": "BB", "hero_net": "-5"},
+    # table_size=6, multiway hands (6-max)
+    {"table_size": 6, "stake_sb": "0.10", "stake_bb": "0.25", "hero_position": "BTN", "hero_net": "-10"},
+    {"table_size": 6, "stake_sb": "0.10", "stake_bb": "0.25", "hero_position": "CO", "hero_net": "3"},
+    {"table_size": 6, "stake_sb": "0.50", "stake_bb": "1.00", "hero_position": "HJ", "hero_net": "-1"},
+    # table_size=9, multiway hands (9-max — >=6 so multiway)
+    {"table_size": 9, "stake_sb": "0.10", "stake_bb": "0.25", "hero_position": "UTG", "hero_net": "-2"},
+]
+
+
+@pytest_asyncio.fixture
+async def seeded_hands(session: AsyncSession, user_id: UUID):
+    """Insert the SEED_HANDS set and return the list of hand ids."""
+    ids: list[UUID] = []
+    for i, h in enumerate(SEED_HANDS):
+        hid = await _create_hand(
+            session,
+            user_id,
+            table_size=h["table_size"],
+            stake_sb=h["stake_sb"],
+            stake_bb=h["stake_bb"],
+            hero_position=h["hero_position"],
+            hero_net=h["hero_net"],
+            coinpoker_hand_id=1000 + i,
+        )
+        ids.append(hid)
+    await session.commit()
+    return ids
+
+
+# ---------------------------------------------------------------------------
+# Override auth dependency so we don't need real Supabase tokens
+# ---------------------------------------------------------------------------
+
+@pytest_asyncio.fixture(autouse=True)
+async def override_auth(client, user_id: UUID):
+    """Make every request authenticate as `user_id`."""
+    from app.auth import get_current_user
+
+    async def _fake_user():
+        return str(user_id)
+
+    app.dependency_overrides[get_current_user] = _fake_user
+    # Reset the previously overridden get_session so both are in place
+    from app.database import get_session
+
+    # We need to re-apply both overrides. The client fixture above already
+    # set get_session. This fixture is autouse and will run after client,
+    # so both overrides are active.
+    yield
+    app.dependency_overrides.clear()
+
+
+# ---------------------------------------------------------------------------
+# Tests: game_mode filter
+# ---------------------------------------------------------------------------
+
+
+async def test_game_mode_heads_up_returns_only_table_size_2(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands?game_mode=heads_up returns only hands with table_size=2."""
+    resp = await client.get("/hands", params={"game_mode": "heads_up"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 3
+    for hand in data:
+        assert hand["table_size"] == 2
+
+
+async def test_game_mode_multiway_returns_only_table_size_gte_6(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands?game_mode=multiway returns only hands with table_size>=6."""
+    resp = await client.get("/hands", params={"game_mode": "multiway"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 4
+    for hand in data:
+        assert hand["table_size"] >= 6
+
+
+async def test_game_mode_omitted_returns_all(
+    client: AsyncClient, seeded_hands
+):
+    """Without game_mode param, all 7 hands are returned."""
+    resp = await client.get("/hands")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 7
+
+
+async def test_game_mode_invalid_returns_422(
+    client: AsyncClient, seeded_hands
+):
+    """Invalid game_mode value should return 422."""
+    resp = await client.get("/hands", params={"game_mode": "invalid"})
+    assert resp.status_code == 422
+
+
+# ---------------------------------------------------------------------------
+# Tests: stakes filter
+# ---------------------------------------------------------------------------
+
+
+async def test_stakes_filter_exact_match_001_002(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands?stakes=0.01/0.02 returns only 0.01/0.02 hands."""
+    resp = await client.get("/hands", params={"stakes": "0.01/0.02"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 2
+    for hand in data:
+        # Stake values come back as strings from JSON
+        assert hand["stake_sb"] == "0.01"
+        assert hand["stake_bb"] == "0.02"
+
+
+async def test_stakes_filter_exact_match_010_025(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands?stakes=0.10/0.25 returns only 0.10/0.25 hands (3 of them)."""
+    resp = await client.get("/hands", params={"stakes": "0.10/0.25"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 3
+    for hand in data:
+        assert hand["stake_sb"] == "0.10"
+        assert hand["stake_bb"] == "0.25"
+
+
+async def test_stakes_filter_no_match_returns_empty(
+    client: AsyncClient, seeded_hands
+):
+    """Stakes with no matching hands returns empty list."""
+    resp = await client.get("/hands", params={"stakes": "5.00/10.00"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 0
+
+
+async def test_stakes_filter_invalid_format_returns_422(
+    client: AsyncClient, seeded_hands
+):
+    """Invalid stakes format returns 422."""
+    resp = await client.get("/hands", params={"stakes": "invalid"})
+    assert resp.status_code == 422
+
+
+# ---------------------------------------------------------------------------
+# Tests: combined filters
+# ---------------------------------------------------------------------------
+
+
+async def test_combined_heads_up_and_stakes(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands?game_mode=heads_up&stakes=0.01/0.02 returns only 2-max 0.01/0.02."""
+    resp = await client.get(
+        "/hands",
+        params={"game_mode": "heads_up", "stakes": "0.01/0.02"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 2
+    for hand in data:
+        assert hand["table_size"] == 2
+        assert hand["stake_sb"] == "0.01"
+        assert hand["stake_bb"] == "0.02"
+
+
+async def test_combined_multiway_and_stakes(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands?game_mode=multiway&stakes=0.10/0.25 returns 6-max+ 0.10/0.25."""
+    resp = await client.get(
+        "/hands",
+        params={"game_mode": "multiway", "stakes": "0.10/0.25"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 2  # table_size 6 + table_size 9, both 0.10/0.25
+    for hand in data:
+        assert hand["table_size"] >= 6
+        assert hand["stake_sb"] == "0.10"
+        assert hand["stake_bb"] == "0.25"
+
+
+async def test_combined_no_results_when_mismatch(
+    client: AsyncClient, seeded_hands
+):
+    """heads_up + 0.50/1.00 stakes has no match (only multiway has 0.50/1.00)."""
+    resp = await client.get(
+        "/hands",
+        params={"game_mode": "heads_up", "stakes": "0.50/1.00"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 0
+
+
+# ---------------------------------------------------------------------------
+# Tests: find_biggest_losers with filters
+# ---------------------------------------------------------------------------
+
+
+async def test_losers_heads_up_only(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands/losers?game_mode=heads_up returns only losing HU hands."""
+    resp = await client.get("/hands/losers", params={"game_mode": "heads_up"})
+    assert resp.status_code == 200
+    data = resp.json()
+    # HU seed hands: -1, +2 (win), -5 => losers: -1 and -5 (since -5 < -1, should be first)
+    assert len(data) == 2
+    for hand in data:
+        assert hand["table_size"] == 2
+        assert float(hand["hero_net"]) < 0
+
+
+async def test_losers_with_stakes_filter(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands/losers?stakes=0.10/0.25 returns only losing hands at those stakes."""
+    resp = await client.get("/hands/losers", params={"stakes": "0.10/0.25"})
+    assert resp.status_code == 200
+    data = resp.json()
+    # 0.10/0.25 hands: -10 (6-max), +3 (6-max, win), -2 (9-max) => losers: -10, -2
+    assert len(data) == 2
+    for hand in data:
+        assert hand["stake_sb"] == "0.10"
+        assert hand["stake_bb"] == "0.25"
+        assert float(hand["hero_net"]) < 0
+
+
+async def test_losers_combined_game_mode_and_stakes(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands/losers?game_mode=multiway&stakes=0.10/0.25"""
+    resp = await client.get(
+        "/hands/losers",
+        params={"game_mode": "multiway", "stakes": "0.10/0.25"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 2  # -10 (6-max) and -2 (9-max)
+    for hand in data:
+        assert hand["table_size"] >= 6
+        assert hand["stake_sb"] == "0.10"
+        assert hand["stake_bb"] == "0.25"
+        assert float(hand["hero_net"]) < 0
+
+
+# ---------------------------------------------------------------------------
+# Tests: filter-options endpoint
+# ---------------------------------------------------------------------------
+
+
+async def test_filter_options_returns_distinct_stakes(
+    client: AsyncClient, seeded_hands
+):
+    """GET /hands/filter-options returns distinct stake pairs + game_modes."""
+    resp = await client.get("/hands/filter-options")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert "stakes" in data
+    assert "game_modes" in data
+
+    stakes = data["stakes"]
+    assert isinstance(stakes, list)
+    assert len(stakes) == 4  # 0.01/0.02, 0.05/0.10, 0.10/0.25, 0.50/1.00
+
+    # Check one specific entry
+    found_010_025 = [s for s in stakes if s["sb"] == "0.10" and s["bb"] == "0.25"]
+    assert len(found_010_025) == 1
+    assert found_010_025[0]["label"] == "0.10/0.25"
+
+    # Should be ordered by bb ascending, then sb
+    bb_values = [float(s["bb"]) for s in stakes]
+    assert bb_values == sorted(bb_values)
+
+    game_modes = data["game_modes"]
+    assert "heads_up" in game_modes
+    assert "multiway" in game_modes
+
+
+async def test_filter_options_empty_for_new_user(
+    client: AsyncClient, session: AsyncSession
+):
+    """A user with no hands gets empty stakes list but game_modes still populated."""
+    # This test doesn't use seeded_hands — a different user_id
+    resp = await client.get("/hands/filter-options")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["stakes"] == []
+    assert data["game_modes"] == ["heads_up", "multiway"]
+
+
+# ---------------------------------------------------------------------------
+# Tests: existing query params still work alongside new filters
+# ---------------------------------------------------------------------------
+
+
+async def test_existing_position_filter_still_works(
+    client: AsyncClient, seeded_hands
+):
+    """Position filter still works with the new game_mode filter."""
+    resp = await client.get(
+        "/hands",
+        params={"game_mode": "heads_up", "position": "BTN"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    # HU BTN hands: only the two 0.01/0.02 BTN hands
+    assert len(data) == 2
+    for hand in data:
+        assert hand["table_size"] == 2
+        assert hand["hero_position"] == "BTN"
+
+
+async def test_only_losses_with_game_mode(
+    client: AsyncClient, seeded_hands
+):
+    """only_losses=true combined with game_mode."""
+    resp = await client.get(
+        "/hands",
+        params={"game_mode": "heads_up", "only_losses": True},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 2  # -1 and -5
+    for hand in data:
+        assert float(hand["hero_net"]) < 0
+        assert hand["table_size"] == 2

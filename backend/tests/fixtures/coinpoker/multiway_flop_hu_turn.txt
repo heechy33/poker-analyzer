@@ -1,0 +1,33 @@
+CoinPoker Hand #9300000002: NLH (₮0.10/₮0.25) - 2026/06/19 12:05:00 PDT
+Table 'mw-flop-hu-turn' 6-max Seat #3 is the button
+Seat 1: Opener (₮50.00 in chips)
+Seat 2: Hero (₮50.00 in chips)
+Seat 3: Button (₮50.00 in chips)
+Seat 4: SmallBlind (₮50.00 in chips)
+Seat 5: BigBlind (₮50.00 in chips)
+SmallBlind: posts small blind ₮0.10
+BigBlind: posts big blind ₮0.25
+*** HOLE CARDS ***
+Dealt to Hero [Ah Kh]
+Opener: raises ₮0.65 to ₮0.90
+Hero: calls ₮0.90
+Button: folds
+SmallBlind: folds
+BigBlind: calls ₮0.65
+*** FLOP *** [Ts 7d 2c]
+BigBlind: checks
+Opener: bets ₮1.00
+Hero: calls ₮1.00
+BigBlind: folds
+*** TURN *** [Ts 7d 2c] [Ah]
+Opener: checks
+Hero: bets ₮2.00
+Opener: calls ₮2.00
+*** RIVER *** [Ts 7d 2c Ah] [3s]
+Opener: checks
+Hero: bets ₮3.00
+Opener: folds
+Uncalled bet (₮3.00) returned to Hero
+Hero collected ₮7.90 from pot
+*** SUMMARY ***
+Total pot ₮7.90 | Rake ₮0.00 | Splash Fee ₮0.00

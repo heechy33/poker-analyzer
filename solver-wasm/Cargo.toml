@@ -50,8 +50,8 @@ parallel = ["postflop-solver/rayon"]
 opt-level = 3
 lto = true
 codegen-units = 1
-# Small wasm bundle: drop panic unwinding (we never recover from panics).
-panic = "abort"
+# Unwind on panics so catch_unwind can recover inside WASM exports.
+panic = "unwind"
 
 [profile.dev]
 # Solver iterations are slow in debug without at least opt-level=1.
