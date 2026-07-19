@@ -10,7 +10,6 @@ dependencies = [
     "supabase",
     "httpx",
     "anthropic",
-    "fastapi-mcp",
     "pydantic-settings",
     "python-multipart",
     "mangum",

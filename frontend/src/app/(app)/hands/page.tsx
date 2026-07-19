@@ -2,14 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, ArrowUpDown, DollarSign, Hash } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import {
-  HandAnalysisPane,
-  handScoreFromSolves,
-  type SolvesByStreet,
-} from "@/components/hand-analysis/HandAnalysisPane";
-import { HandListCard, type GradeCounts } from "@/components/hand-analysis/HandListCard";
+import { HandListCard } from "@/components/hand-analysis/HandListCard";
+import { ReplayerTab } from "@/components/hand-review/ReplayerTab";
 import { QueryError } from "@/components/QueryError";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,11 +19,6 @@ const PAGE_SIZE = 50;
 
 type SortKey = "played_at" | "hero_position" | "total_pot" | "hero_net_bb" | "hero_net";
 type SortDir = "asc" | "desc";
-
-interface CachedScore {
-  counts: GradeCounts;
-  score: number;
-}
 
 function dayKey(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -56,7 +47,6 @@ export default function HandsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("played_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [selectedHandId, setSelectedHandId] = useState<string | null>(null);
-  const [scoresByHand, setScoresByHand] = useState<Record<string, CachedScore>>({});
 
   // New filter state
   const [gameMode, setGameMode] = useState<string>(() => loadStored("hands:game_mode"));
@@ -155,21 +145,10 @@ export default function HandsPage() {
     setOffset(0);
   }
 
-  const handleSolvesChange = useCallback((handId: string, solves: SolvesByStreet) => {
-    const nextScore = handScoreFromSolves(solves);
-    setScoresByHand((previous) => ({
-      ...previous,
-      [handId]: nextScore,
-    }));
-  }, []);
-
-  // Determine the effective sort key based on display unit
-  const effectiveSortKey: SortKey = sortKey;
-
   // Build active filter summary
   const activeFilters: string[] = [];
-  if (gameMode === "heads_up") activeFilters.push("Heads Up");
-  if (gameMode === "multiway") activeFilters.push("Multiway");
+  if (gameMode === "heads_up") activeFilters.push("2-max table");
+  if (gameMode === "multiway") activeFilters.push("6/9-max table");
   if (stakes) activeFilters.push(stakes);
   const hasFilters = Boolean(gameMode || stakes || position || onlyLosses || since);
 
@@ -177,14 +156,14 @@ export default function HandsPage() {
     <div className="mx-auto max-w-[1600px] space-y-5">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Hands</h1>
-        <p className="text-muted-foreground">Browse hands with embedded postflop review</p>
+        <p className="text-muted-foreground">Browse and replay uploaded hands</p>
       </div>
 
       {/* Filter bar */}
       <div className="flex flex-wrap items-end gap-4 rounded-lg border border-border bg-card p-4">
-        {/* Game mode segmented control */}
+        {/* Legacy API values represent table format, not postflop player count. */}
         <label className="space-y-1.5 text-sm">
-          <span className="text-muted-foreground">Game Mode</span>
+          <span className="text-muted-foreground">Table Format</span>
           <div className="flex rounded-md border border-input bg-background">
             {(["", "heads_up", "multiway"] as const).map((mode) => (
               <button
@@ -201,7 +180,7 @@ export default function HandsPage() {
                     : "text-muted-foreground hover:bg-zinc-800"
                 }`}
               >
-                {mode === "" ? "All" : mode === "heads_up" ? "Heads Up" : "Multiway"}
+                {mode === "" ? "All" : mode === "heads_up" ? "2-max" : "6/9-max"}
               </button>
             ))}
           </div>
@@ -375,8 +354,6 @@ export default function HandsPage() {
                       key={hand.id}
                       hand={hand}
                       selected={hand.id === selectedHandId}
-                      gradeCounts={scoresByHand[hand.id]?.counts}
-                      score={scoresByHand[hand.id]?.score}
                       onSelect={() => setSelectedHandId(hand.id)}
                     />
                   ))}
@@ -418,11 +395,11 @@ export default function HandsPage() {
               />
             )}
             {handQuery.data && (
-              <HandAnalysisPane hand={handQuery.data} onSolvesChange={handleSolvesChange} />
+              <ReplayerTab hand={handQuery.data} />
             )}
             {!selectedHandId && !handQuery.isLoading && (
               <div className="rounded-lg border border-border p-8 text-center text-sm text-muted-foreground">
-                Select a hand to review.
+                Select a hand to replay.
               </div>
             )}
           </main>

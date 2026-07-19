@@ -124,62 +124,6 @@ class HandsListParams(BaseModel):
         return value
 
 
-class ScenarioResult(BaseModel):
-    hand_id: str
-    street: Street
-    ev_bb: float | None = None
-    strategy: dict[str, float] = Field(default_factory=dict)
-    message: str
-    confidence: str = "low"
-
-
-class ScenarioEnvelope(BaseModel):
-    """JSON envelope consumed by the in-browser postflop-solver WASM bundle.
-
-    Stack and pot are denominated in big blinds; chips contributions are
-    canonicalised in the route's metadata payload.
-    """
-
-    board: list[str]
-    pot_bb: float
-    effective_stack_bb: float
-    oop_player: str
-    ip_player: str
-    hero_range: dict[str, float]
-    villain_range: dict[str, float]
-    bet_tree: dict[str, Any]
-
-
-class ScenarioResponse(BaseModel):
-    hand_id: str
-    street: Street
-    scenario_hash: str
-    confidence: str = "low"
-    confidence_reasons: list[str] = Field(default_factory=list)
-    confidence_detail: str = ""
-    cached: bool = False
-    scenario: ScenarioEnvelope
-    metadata: dict[str, Any] = Field(default_factory=dict)
-    cached_output: dict[str, Any] | None = None
-
-
-class SolverRunCreate(BaseModel):
-    hand_id: str | None = None
-    street: str
-    scenario_hash: str = Field(min_length=1)
-    solver_version: str = "postflop-solver@stub"
-    iterations: int = Field(default=0, ge=0)
-    exploitability_bb: Decimal = Field(default=Decimal("0"))
-    output_jsonb: dict[str, Any] = Field(default_factory=dict)
-
-
-class SolverRunResponse(BaseModel):
-    id: str
-    scenario_hash: str
-    street: str
-    created_at: datetime
-
-
 class StatsSummaryResponse(BaseModel):
     hands_count: int
     vpip_pct: float
@@ -245,48 +189,6 @@ class AnalysisListItem(BaseModel):
     prompt_hash: str
     analysis: str
     leak_tags: list[str]
-    created_at: datetime
-
-
-class SolverTelemetryCreate(BaseModel):
-    """Per-solve telemetry payload sent from the browser after each solve attempt.
-
-    All fields are optional so the frontend can fire a partial payload on
-    failure paths where scenario metadata was never fully constructed.
-    """
-
-    hand_id: str | None = None
-    street: str | None = None
-    scenario_hash: str | None = None
-
-    # Outcome
-    error_class: str = "success"
-    message: str | None = None
-
-    # Scenario snapshot
-    confidence: str | None = None
-    spr: float | None = None
-    pot_bb: float | None = None
-    eff_bb: float | None = None
-    multiway_alive_count: int | None = None
-    hero_lookup_hit: bool | None = None
-    villain_lookup_hit: bool | None = None
-    pot_error_pct: float | None = None
-
-    # Bet tree shape
-    effective_bet_sizes_flop: list[str] | None = None
-    effective_bet_sizes_turn: list[str] | None = None
-    effective_bet_sizes_river: list[str] | None = None
-
-    # Solver run metadata
-    solver_mode: str | None = None
-    duration_ms: int | None = None
-    wasm_memory_used: int | None = None
-
-
-class SolverTelemetryResponse(BaseModel):
-    id: str
-    error_class: str
     created_at: datetime
 
 

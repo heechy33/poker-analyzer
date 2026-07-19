@@ -1,33 +1,101 @@
-name: Solver Regression Suite
+name: Phase 0 CI
 
 on:
   push:
-    paths:
-      - "solver-wasm/**"
-      - "postflop-solver/**"
-      - ".gitmodules"
-      - "backend/app/scenario/**"
-      - "backend/tests/test_regression_fixtures.py"
-      - "backend/schemas/scenario_envelope.json"
-      - ".github/workflows/regression.yml"
+    branches:
+      - main
   pull_request:
-    paths:
-      - "solver-wasm/**"
-      - "postflop-solver/**"
-      - ".gitmodules"
-      - "backend/app/scenario/**"
-      - "backend/tests/test_regression_fixtures.py"
-      - "backend/schemas/scenario_envelope.json"
-      - ".github/workflows/regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
-  group: regression-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # ── Rust native tests (solver-wasm integration + regression fixtures) ──
-  rust-regression:
-    name: Rust regression tests
+  backend:
+    name: Backend tests (Python 3.12 + PostgreSQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: poker_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d poker_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      ANTHROPIC_API_KEY: test-key
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/poker_test
+      ENVIRONMENT: test
+      SUPABASE_SERVICE_ROLE_KEY: test-key
+      SUPABASE_URL: https://example.supabase.co
+      TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/poker_test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+
+      - name: Install backend and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run backend suite
+        run: pytest -q
+
+  frontend:
+    name: Frontend tests, lint, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:8000
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend unit tests
+        run: npm test
+
+      - name: Run frontend lint
+        run: npm run lint
+
+      - name: Build frontend
+        run: npm run build
+
+  rust:
+    name: Rust native, WASM, and bounded solver checks
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -43,83 +111,18 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
+          targets: wasm32-unknown-unknown
 
-      - name: Run solver integration tests (CI-safe subset)
-        run: |
-          cargo test --lib -- --test-threads=1
-          cargo test --test solver_integration -- --nocapture --test-threads=1 --skip init_solve_export_roundtrip
+      - name: Check native test targets
+        run: cargo check --tests
 
-  # ── Python regression tests (builder.py validation layer) ──
-  python-regression:
-    name: Python regression tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Check WASM target
+        run: cargo check --target wasm32-unknown-unknown --no-default-features
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - name: Run Rust library tests
+        run: cargo test --lib -- --test-threads=1
 
-      - name: Install test dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest jsonschema
-
-      - name: Run regression fixture validation
-        run: |
-          pytest tests/test_regression_fixtures.py -v
-
-  # ── JSON Schema validation (schema drift check) ──
-  schema-drift:
-    name: Schema drift check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install jsonschema
-        run: pip install jsonschema
-
-      - name: Validate fixtures against schema
-        run: |
-          python -c "
-          import json, pathlib, sys, jsonschema
-
-          schema_path = pathlib.Path('backend/schemas/scenario_envelope.json')
-          assert schema_path.exists(), 'Schema file does not exist!'
-          schema = json.loads(schema_path.read_text())
-
-          fixtures_dir = pathlib.Path('solver-wasm/tests/fixtures/regression')
-          assert fixtures_dir.is_dir(), 'Regression fixture directory does not exist!'
-
-          errors = []
-          for fixture_path in sorted(fixtures_dir.glob('*.json')):
-              try:
-                  data = json.loads(fixture_path.read_text())
-                  jsonschema.validate(instance=data, schema=schema)
-              except json.JSONDecodeError as e:
-                  errors.append(f'{fixture_path.name}: invalid JSON — {e}')
-              except jsonschema.ValidationError as e:
-                  errors.append(f'{fixture_path.name}: schema violation — {e.message}')
-
-          if errors:
-              print('SCHEMA DRIFT DETECTED:')
-              for err in errors:
-                  print(f'  - {err}')
-              sys.exit(1)
-
-          print(f'All {sum(1 for _ in fixtures_dir.glob(\"*.json\"))} fixtures pass schema validation.')
-          "
+      - name: Run bounded solver integration subset
+        run: >-
+          cargo test --test solver_integration -- --nocapture
+          --test-threads=1 --skip init_solve_export_roundtrip

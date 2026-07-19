@@ -1,173 +1,95 @@
-# CoinPoker Hand History Analyzer
+# Poker Analyzer
 
-A full-stack portfolio project for analyzing CoinPoker `.txt` hand history files. Upload hand histories, view a stats dashboard (VPIP, PFR, 3-bet%, BB/100), and review individual hands with browser-based GTO solving (WASM) and Claude-powered coaching.
+Poker Analyzer is an offline, post-session review tool for a player's own CoinPoker NLHE cash-game hand histories. It supports private hand-history upload, statistics, replay, and general coaching.
+
+## Current milestone
+
+The project is in **Phase 0: legacy solver teardown and rebuild boundary**. The authoritative roadmap and completion evidence live in [MASTER_SPEC.md](./MASTER_SPEC.md), section 17.
+
+The legacy solver-to-grade experience has been removed. In particular, the application does **not** currently expose solver tabs, action frequencies, decision grades, aggregate hand scores, solver-run routes, browser-submitted solver output, or MCP/external-agent access.
+
+Phase 0 completed work:
+
+- Removed the legacy solver, grading, cache-write, scenario, telemetry, range-library, and MCP contracts.
+- Archived/remediated legacy database objects through an allowlisted forward migration.
+- Removed regression fixtures that certified fallback ranges, multiway approximation, unfinished-node output, or numeric default scores.
+- Preserved the hand list, replay, private statistics, authenticated REST API, and general-coaching path.
+
+Phase 0 still requires the table-terminology cleanup, offline-study/closed-client confirmations, end-to-end negative acceptance coverage, AGPL/source-offer review, and replacement GitHub Actions checks. Phase 1 has not started: it will rebuild a canonical HUNL action ledger and eligibility boundary **without solving**.
+
+No solver caller may be restored until the Phase 1 exit review approves the next implementation checklist.
+
+## Scope and safety boundary
+
+This is not a live-play tool. Use it only after a session, for hands you personally played and uploaded, with the CoinPoker client closed. It must not provide live assistance, client capture, HUDs, opponent profiling, shared-pool analysis, or population reports.
+
+The only solver cohort planned for the active roadmap is true CoinPoker two-seat HUNL: 100 bb, BTN/SB opens one exact supported size, BB calls, and the first postflop decisions. Six-max hands remain replay-only even when only two players reach the flop. Hands with three or more players at the flop remain replay-only on every later street, regardless of folds.
+
+When the product cannot support a solver claim, the required outcome is **Not graded**—never a fallback range, nearest-size approximation, aggregate frequency, preview, unfinished node, or information from later in the hand.
 
 ## Stack
 
-- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
-- **Backend:** FastAPI, SQLModel, Supabase
-- **Solver:** Rust → WebAssembly (`solver-wasm/`, built from `postflop-solver/`; see [solver-wasm/README.md](./solver-wasm/README.md))
-- **Hosting:** Vercel (frontend), AWS Lambda container (backend)
-- **Auth:** Supabase magic link
-- **LLM:** Anthropic Claude
+- Frontend: Next.js, TypeScript, Tailwind CSS
+- Backend: FastAPI, SQLModel, Supabase
+- Retained engine boundary: Rust/WASM around the pinned two-player `b-inary/postflop-solver` engine (quarantined during the rebuild)
+- Authentication: Supabase
 
-## Monorepo layout
+## Repository layout
 
 ```
 poker-analyzer/
-├── frontend/         Next.js app
-├── backend/          FastAPI API
-├── solver-wasm/      WASM build output (future)
-├── postflop-solver/  Rust CFR solver crate
-├── docker-compose.yml
-└── .env.example
+├── frontend/         Next.js replay and review UI
+├── backend/          FastAPI parser, storage, statistics, and coaching API
+├── solver-wasm/      Rust/WASM engine boundary (not a current product solver path)
+├── postflop-solver/  Pinned two-player CFR engine
+├── MASTER_SPEC.md    Authoritative product and implementation specification
+└── AGENTS.md         Repository development guide
 ```
 
----
+## Local development
 
-## MCP (Model Context Protocol)
-
-The backend is simultaneously a REST API **and** an MCP server, enabling any
-MCP-aware LLM agent (Claude Desktop, Cursor, custom agents) to query the
-user's poker data with structured tools.
-
-### Server URL
-
-| Environment | URL |
-|---|---|
-| Local dev | `http://localhost:8000/mcp` |
-| Production | `https://api.poker-analyzer.app/mcp` |
-
-### Authentication
-
-MCP requests use the same Supabase JWT as the REST API.  Pass it as a bearer
-token in every request header:
-
-```
-Authorization: Bearer <your-supabase-jwt>
-```
-
-To obtain a JWT: log in via the frontend, open browser dev-tools → Application
-→ Local Storage → `supabase.auth.token` → `access_token`.
-
-### Claude Desktop / Cursor configuration
-
-Add the following block to your `claude_desktop_config.json`
-(`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS,
-`%APPDATA%\Claude\claude_desktop_config.json` on Windows):
-
-```json
-{
-  "mcpServers": {
-    "poker-analyzer": {
-      "url": "http://localhost:8000/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_JWT"
-      }
-    }
-  }
-}
-```
-
-Replace `YOUR_JWT` with the access token from your Supabase session.  For the
-production deployment, swap the URL for the production endpoint.
-
-### Exposed tools (exactly 6)
-
-| Tool | Backing endpoint | Purpose |
-|---|---|---|
-| `list_recent_hands` | `GET /hands` | Paginated, filterable hand summaries |
-| `get_hand` | `GET /hands/{hand_id}` | Full action log for one hand |
-| `find_biggest_losers` | `GET /hands/losers` | Top-N losing hands, pre-sorted |
-| `get_stats` | `GET /stats/summary` | VPIP / PFR / 3-bet / BB/100 aggregate |
-| `analyze_hand` | `POST /hands/{hand_id}/analyze` | Claude commentary + leak tags (use `stream=false`) |
-| `find_leaks` | `GET /stats/leaks` | Aggregated leak tag frequency table |
-
-The following endpoints are **intentionally excluded** from the MCP manifest
-to avoid noise: `/health`, `/uploads/*`, `/hands/{id}/scenario`, `/solver/*`,
-`/hands/{id}/analyses`, `/stats/by-position`.
-
-### Example agent session
-
-> "Go through my poker hands from last week and tell me my single biggest exploitable pattern."
-
-1. Agent calls `find_leaks(timeframe="7d")` → gets ranked leak tags.
-2. Agent calls `find_biggest_losers(since="2026-05-17")` → gets the 10 worst hands.
-3. Agent calls `analyze_hand(hand_id="...", stream=false)` on each → reads leak tags.
-4. Agent synthesizes a coherent weakness report.
-
-### Future: OAuth 2.1 + PKCE
-
-v1 uses static bearer tokens.  A future release will add OAuth 2.1 + PKCE
-(the full MCP auth spec) for a first-class public-facing deployment without
-requiring users to paste JWTs into config files.
-
----
-
-## Running locally
+Clone with submodules because `postflop-solver` is pinned as a submodule:
 
 ```bash
-# Clone and install (postflop-solver is a pinned git submodule)
 git clone --recurse-submodules https://github.com/heechy33/poker-analyzer.git
 cd poker-analyzer
-# If you already cloned without submodules:
-#   git submodule update --init --recursive
-cp .env.example .env   # fill in Supabase + Anthropic keys
+# If already cloned without submodules:
+# git submodule update --init --recursive
+```
 
-On Windows (or any IPv4-only network), set `DATABASE_URL` to the **Session pooler**
-connection string from the Supabase dashboard (Connect → Session pooler, port 5432),
-with the async driver prefix `postgresql+asyncpg://`. The direct `db.*.supabase.co`
-host is IPv6-only and often times out locally.
+Start the backend:
 
-# Backend
+```bash
 cd backend
 pip install -e ".[dev]"
 uvicorn app.main:app --reload
+```
 
-# Frontend (separate terminal)
+Start the frontend in a separate terminal:
+
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Backend runs on `http://localhost:8000`, MCP server at `http://localhost:8000/mcp`.
-
-### Supabase Storage (hand history uploads)
-
-1. **API keys** — In `backend/.env`, set `SUPABASE_SERVICE_ROLE_KEY` to the **service_role** secret from Project Settings → API. Do not paste the `anon` / publishable key there; uploads will fail with an RLS error.
-2. **Bucket** — In Storage, create a **private** bucket named `hand-histories` (matches `SUPABASE_STORAGE_BUCKET`).
-3. **Policies** — Run `backend/migrations/007_storage_policies.sql` in the Supabase SQL Editor.
-4. Restart the backend after changing `.env`.
-
-For local dev without Storage, open `/upload` and enable **Send raw text to API** (development only).
-
-### Building the WASM solver
+Run the relevant checks before contributing:
 
 ```bash
-# One-time toolchain setup
-rustup target add wasm32-unknown-unknown
-cargo install wasm-pack
-
-# From the repo root
-cd frontend
-npm run build:wasm
+cd backend && pytest
+cd frontend && npm test && npm run lint && npm run build
+cd solver-wasm && cargo check --tests
 ```
 
-Artifacts land in `frontend/public/wasm/`. See
-[`solver-wasm/README.md`](./solver-wasm/README.md) for the JS API, the
-strategy-export JSON shape, and known limitations.
+Do not run full/ignored solver regressions locally unless explicitly requested; they are workstation/CI workloads.
 
-### Hand review UX and solver limitations
+## Development rules
 
-The `/hands` page uses an integrated split review: the left pane lists hand
-cards grouped by date, while the right pane shows players, street-by-street
-action, embedded postflop Action Overview grids, an advanced range map, and
-results. Opening a postflop hand starts quick solver runs in the background
-for each available street; cached solver output is reused immediately.
+- Treat [MASTER_SPEC.md](./MASTER_SPEC.md) as the source of truth. Map every product or solver change to an approved Phase 0 or Phase 1 item and update its checklist evidence with the implementation.
+- Keep the canonical ledger, Python/TypeScript schemas, cache keys, and versioned paired range data aligned when the approved rebuild reaches those components.
+- Do not add multiway solving, six-max approximation, preflop solving, live assistance, MCP adapters, or a grading fallback.
+- Never commit secrets or `.env*` files.
 
-The solver is postflop-only and built around a heads-up scenario envelope. For
-multiway hands the app selects a primary villain and marks ranges as low
-confidence; it does not run true multiway CFR. Preflop hands show the action
-timeline without a solver overview. If `frontend/public/wasm/` is missing, the
-UI will show a "Solver not built" error and prompt you to run
-`cd frontend && npm run build:wasm`.
+## License and engine obligations
+
+The retained engine is AGPL-licensed. Phase 0 licensing/source-offer obligations are still being recorded; do not distribute derived artifacts or proprietary-derived range data until that review is complete.

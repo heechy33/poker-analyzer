@@ -303,6 +303,18 @@ describe("inferHeroActionOnStreet — pot-fraction bet mapping", () => {
     ).toBe("bet_75");
   });
 
+  it("converts chip-denominated action amounts to bb before sizing", () => {
+    // 1.5 chips at 0.25 chips/bb = 6bb into 10bb = 60% → bet_75.
+    const actions = [makeAction("bet", "1.5")];
+    expect(
+      inferHeroActionOnStreet(actions, "flop", solverActions, {
+        ...opts,
+        potAtHeroActionBb: 10,
+        bigBlindChips: 0.25,
+      }),
+    ).toBe("bet_75");
+  });
+
   it("maps hero large overbet to allin (>125% pot)", () => {
     // 200% > 75+50=125 → allin
     const actions = [makeAction("bet", "20")];

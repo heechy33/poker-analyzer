@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SolverClient, type WorkerLike } from "./client";
 import type { SolveProgress, SolveResult } from "./types";
-import type { SolverRunCreate } from "@/types/api";
 
 /**
  * FakeWorker: supports onmessage, onerror, onmessageerror callbacks
@@ -97,6 +96,20 @@ function makeRequest(overrides?: Partial<Parameters<SolverClient["solve"]>[0]>) 
   };
 }
 
+function successfulResult(): SolveResult {
+  return {
+    progress: { iterations: 50, exploitability_bb: 0.9, finished: true },
+    output: {
+      solver_version: "postflop-solver@test",
+      iterations: 50,
+      exploitability_bb: 0.9,
+      actions: ["check", "bet_33"],
+      combo_strategy: { AsKs: { check: 0.25, bet_33: 0.75 } },
+      aggregate_frequencies: { check: 0.4, bet_33: 0.6 },
+    },
+  };
+}
+
 describe("SolverClient", () => {
   let worker: FakeWorker;
 
@@ -140,12 +153,6 @@ describe("SolverClient", () => {
     expect(result.progress.iterations).toBe(20);
     expect(result.output.solver_version).toBe("postflop-solver@test");
 
-    const body: SolverRunCreate = {
-      street: "flop",
-      scenario_hash: "hash-1",
-      output_jsonb: result.output,
-    };
-    expect(body.output_jsonb).toBe(result.output);
   });
 
   // ── ping ─────────────────────────────────────────────────
@@ -204,7 +211,7 @@ describe("SolverClient", () => {
 
   // ── heartbeat / timeout ──────────────────────────────────
 
-  it("quick mode rejects after 30s total timeout", async () => {
+  it("quick mode rejects on heartbeat before its 30s total timeout", async () => {
     vi.useFakeTimers();
     worker.syncPing = true; // so ping resolves via setTimeout(0)
 
@@ -214,77 +221,75 @@ describe("SolverClient", () => {
 
     const client = new SolverClient(worker);
     const solvePromise = client.solve(makeRequest({ mode: "quick" }));
+    const rejection = expect(solvePromise).rejects.toMatchObject({
+      error_class: "timeout",
+    });
 
     // Advance past the ping microtask.
     await vi.advanceTimersByTimeAsync(0);
-    // Advance past 30s total timeout — fires the setTimeout in request().
+    // No progress arrives, so the 15s heartbeat fires before the total cap.
     await vi.advanceTimersByTimeAsync(31_000);
 
-    await expect(solvePromise).rejects.toMatchObject({
-      error_class: "timeout",
-    });
+    await rejection;
     expect(client.isDead).toBe(true);
     expect(worker.posted.some((p) => (p as { method: string }).method === "terminate")).toBe(true);
   });
 
-  it("full mode heartbeat fires before total timeout (no progress)", async () => {
+  it("full mode heartbeat timeout respawns and downgrades to quick", async () => {
     vi.useFakeTimers();
     worker.syncPing = true;
+    const quickWorker = new FakeWorker();
+    quickWorker.setSolveResolver((id, post) => {
+      post({ id, result: successfulResult() });
+    });
 
     worker.setSolveResolver(() => {
       // Never resolve and never send progress → heartbeat at 15s.
     });
 
-    const client = new SolverClient(worker);
+    const client = new SolverClient(worker, () => quickWorker);
     const solvePromise = client.solve(makeRequest({ mode: "full" }));
 
     await vi.advanceTimersByTimeAsync(0); // ping
     // Advance past 15s heartbeat, but not 180s total.
     await vi.advanceTimersByTimeAsync(16_000);
 
-    await expect(solvePromise).rejects.toMatchObject({
-      error_class: "timeout",
+    await expect(solvePromise).resolves.toMatchObject({
+      downgradedToQuick: true,
+      progress: { finished: true },
     });
-    expect(client.isDead).toBe(true);
+    expect(client.isDead).toBe(false);
   });
 
-  it("full mode total timeout fires if heartbeat stays alive", async () => {
+  it("full mode total timeout downgrades while progress keeps heartbeat alive", async () => {
     vi.useFakeTimers();
     worker.syncPing = true;
+    const quickWorker = new FakeWorker();
+    quickWorker.setSolveResolver((id, post) => {
+      post({ id, result: successfulResult() });
+    });
+    let progressInterval: ReturnType<typeof setInterval> | null = null;
 
     worker.setSolveResolver((_id, _post, fireProgress) => {
-      // Fire progress every 10s — keeps heartbeat alive past 15s.
+      // Fire progress every 10s — keeps heartbeat alive until the 180s cap.
       fireProgress({ iterations: 5, exploitability_bb: 2, finished: false });
-      setTimeout(() => {
+      progressInterval = setInterval(() => {
         fireProgress({ iterations: 10, exploitability_bb: 1.8, finished: false });
       }, 10_000);
-      setTimeout(() => {
-        fireProgress({ iterations: 15, exploitability_bb: 1.5, finished: false });
-      }, 20_000);
-      // Total timeout at 180s should still fire.
     });
 
-    const client = new SolverClient(worker);
+    const client = new SolverClient(worker, () => quickWorker);
     const solvePromise = client.solve(makeRequest({ mode: "full" }));
 
-    // Advance past ping.
     await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(181_000);
+    if (progressInterval !== null) clearInterval(progressInterval);
 
-    // Advance 12s — first progress at 10s fired, heartbeat reset.
-    // Heartbeat timer is now at ~2s (reset at 10s, now at 12s).
-    await vi.advanceTimersByTimeAsync(12_000);
-
-    // Advance to 22s — second progress at 20s fires and resets heartbeat.
-    await vi.advanceTimersByTimeAsync(10_000);
-    // Heartbeat now at ~2s from 20s.
-
-    // Advance to 180s total — should fire total timeout.
-    await vi.advanceTimersByTimeAsync(180_000 - 22_000);
-
-    await expect(solvePromise).rejects.toMatchObject({
-      error_class: "timeout",
+    await expect(solvePromise).resolves.toMatchObject({
+      downgradedToQuick: true,
+      progress: { finished: true },
     });
-    expect(client.isDead).toBe(true);
+    expect(client.isDead).toBe(false);
   });
 
   // ── terminate ────────────────────────────────────────────

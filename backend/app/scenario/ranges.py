@@ -24,47 +24,8 @@ RANKS = "23456789TJQKA"
 RANK_INDEX: dict[str, int] = {rank: i for i, rank in enumerate(RANKS)}
 SUITS = "cdhs"
 
-# Used when range_library has no row for (table_size, position, action_sequence).
-# Matches the BB default_call fallback in migrations/003_seed_ranges.sql.
-DEFAULT_FALLBACK_RANGE_STRING = (
-    "22-99,A2s-AJs,K9s+,Q9s+,J9s+,T9s,98s,87s,76s,A9o-AJo,KTo+,QTo+,JTo"
-)
-
-
 class RangeParseError(ValueError):
     """Raised when a PIO range string cannot be parsed."""
-
-
-def tighten_range_for_multiway(weights: dict[str, float]) -> dict[str, float]:
-    """Code-side multiway tightening: remove bottom ~20% of combos by weight.
-
-    This is a fallback when no dedicated multiway range_library row exists.
-    It sorts hand classes by descending weight, keeps top classes accounting
-    for ~80% of total weight (cumulative), and drops the rest.
-
-    This is NOT exact GTO multiway — it is an HU-engine approximation that
-    narrows ranges to reflect typical multiway caution.
-    """
-    if not weights:
-        return {}
-
-    sorted_classes = sorted(weights.items(), key=lambda x: -x[1])
-    total = sum(v for _, v in sorted_classes)
-    if total <= 0:
-        return dict(weights)
-
-    cumulative = 0.0
-    threshold = total * 0.80
-    kept: dict[str, float] = {}
-
-    for hand_class, weight in sorted_classes:
-        if cumulative < threshold:
-            kept[hand_class] = weight
-            cumulative += weight
-        else:
-            break
-
-    return kept if kept else dict(weights)
 
 
 def parse_range_string(range_str: str) -> dict[str, float]:

@@ -76,6 +76,7 @@
     "coinpoker_hand_id": 9200000001,
     "flags": {
       "all_in": true,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -200,6 +201,7 @@
     "coinpoker_hand_id": 9200000008,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -312,6 +314,7 @@
     "coinpoker_hand_id": 9100000001,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -416,6 +419,7 @@
     "coinpoker_hand_id": 9100000002,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -590,6 +594,7 @@
     "coinpoker_hand_id": 9100000003,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -742,6 +747,7 @@
     "coinpoker_hand_id": 9100000004,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -930,6 +936,7 @@
     "coinpoker_hand_id": 9100000005,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1114,6 +1121,7 @@
     "coinpoker_hand_id": 9100000006,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1246,6 +1254,7 @@
     "coinpoker_hand_id": 9100000007,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1370,6 +1379,7 @@
     "coinpoker_hand_id": 9100000008,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1548,6 +1558,7 @@
     "coinpoker_hand_id": 9100000009,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1760,6 +1771,7 @@
     "coinpoker_hand_id": 9100000010,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1874,6 +1886,7 @@
     "coinpoker_hand_id": 9100000011,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -1998,6 +2011,7 @@
     "coinpoker_hand_id": 9100000012,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2106,6 +2120,7 @@
     "coinpoker_hand_id": 9100000013,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2210,6 +2225,7 @@
     "coinpoker_hand_id": 9100000014,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2394,6 +2410,7 @@
     "coinpoker_hand_id": 9100000015,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2528,6 +2545,7 @@
     "coinpoker_hand_id": 9100000016,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2636,6 +2654,7 @@
     "coinpoker_hand_id": 9100000017,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2810,6 +2829,7 @@
     "coinpoker_hand_id": 9100000018,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -2942,6 +2962,7 @@
     "coinpoker_hand_id": 9100000019,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3126,6 +3147,7 @@
     "coinpoker_hand_id": 9100000020,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3310,6 +3332,7 @@
     "coinpoker_hand_id": 9100000021,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3442,6 +3465,7 @@
     "coinpoker_hand_id": 9100000022,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3546,6 +3570,7 @@
     "coinpoker_hand_id": 9100000023,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3670,6 +3695,7 @@
     "coinpoker_hand_id": 9100000024,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3858,6 +3884,7 @@
     "coinpoker_hand_id": 9100000025,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -3972,6 +3999,7 @@
     "coinpoker_hand_id": 9100000026,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -4146,6 +4174,7 @@
     "coinpoker_hand_id": 9100000027,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -4298,6 +4327,7 @@
     "coinpoker_hand_id": 9100000028,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -4406,6 +4436,7 @@
     "coinpoker_hand_id": 9100000029,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -4590,6 +4621,7 @@
     "coinpoker_hand_id": 9100000030,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -4774,6 +4806,7 @@
     "coinpoker_hand_id": 9200000007,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -4824,6 +4857,269 @@
     "turn": "5c",
     "went_to_showdown": true,
     "won_at_showdown": false
+  },
+  "multiway_flop_hu_turn.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.1000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "0.2500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": "0.9000",
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "0.9000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 4,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Button",
+        "seat": 3,
+        "street": "preflop"
+      },
+      {
+        "action": "fold",
+        "action_order": 5,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 6,
+        "amount": "0.6500",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "preflop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "flop"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "fold",
+        "action_order": 3,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "street": "flop"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "2.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "turn"
+      },
+      {
+        "action": "call",
+        "action_order": 2,
+        "amount": "2.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "turn"
+      },
+      {
+        "action": "check",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "bet",
+        "action_order": 1,
+        "amount": "3.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "river"
+      },
+      {
+        "action": "fold",
+        "action_order": 2,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Opener",
+        "seat": 1,
+        "street": "river"
+      },
+      {
+        "action": "collect",
+        "action_order": 0,
+        "amount": "7.9000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 3,
+    "coinpoker_hand_id": 9300000002,
+    "flags": {
+      "all_in": false,
+      "bomb_pot": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Ts",
+      "7d",
+      "2c"
+    ],
+    "hero_cards": [
+      "Ah",
+      "Kh"
+    ],
+    "hero_collected": "7.9000",
+    "hero_invested": "3.9000",
+    "hero_net": "4.0000",
+    "hero_net_bb": "16.0000",
+    "hero_position": "CO",
+    "hero_seat": 2,
+    "played_at": "2026-06-19T12:05:00-07:00",
+    "players": [
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "UTG",
+        "screen_name": "Opener",
+        "seat": 1,
+        "starting_stack": "50.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": true,
+        "position": "CO",
+        "screen_name": "Hero",
+        "seat": 2,
+        "starting_stack": "50.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BTN",
+        "screen_name": "Button",
+        "seat": 3,
+        "starting_stack": "50.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "SB",
+        "screen_name": "SmallBlind",
+        "seat": 4,
+        "starting_stack": "50.0000"
+      },
+      {
+        "final_cards": null,
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "BigBlind",
+        "seat": 5,
+        "starting_stack": "50.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9300000002: NLH (₮0.10/₮0.25) - 2026/06/19 12:05:00 PDT\nTable 'mw-flop-hu-turn' 6-max Seat #3 is the button\nSeat 1: Opener (₮50.00 in chips)\nSeat 2: Hero (₮50.00 in chips)\nSeat 3: Button (₮50.00 in chips)\nSeat 4: SmallBlind (₮50.00 in chips)\nSeat 5: BigBlind (₮50.00 in chips)\nSmallBlind: posts small blind ₮0.10\nBigBlind: posts big blind ₮0.25\n*** HOLE CARDS ***\nDealt to Hero [Ah Kh]\nOpener: raises ₮0.65 to ₮0.90\nHero: calls ₮0.90\nButton: folds\nSmallBlind: folds\nBigBlind: calls ₮0.65\n*** FLOP *** [Ts 7d 2c]\nBigBlind: checks\nOpener: bets ₮1.00\nHero: calls ₮1.00\nBigBlind: folds\n*** TURN *** [Ts 7d 2c] [Ah]\nOpener: checks\nHero: bets ₮2.00\nOpener: calls ₮2.00\n*** RIVER *** [Ts 7d 2c Ah] [3s]\nOpener: checks\nHero: bets ₮3.00\nOpener: folds\nUncalled bet (₮3.00) returned to Hero\nHero collected ₮7.90 from pot\n*** SUMMARY ***\nTotal pot ₮7.90 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "3s",
+    "splash_fee": "0.0000",
+    "stake_bb": "0.2500",
+    "stake_sb": "0.1000",
+    "table_name": "mw-flop-hu-turn",
+    "table_size": 6,
+    "total_pot": "7.9000",
+    "turn": "Ah",
+    "went_to_showdown": false,
+    "won_at_showdown": null
   },
   "run_it_twice.txt": {
     "actions": [
@@ -4932,6 +5228,7 @@
     "coinpoker_hand_id": 9200000004,
     "flags": {
       "all_in": true,
+      "bomb_pot": false,
       "run_it_twice": true,
       "second_board": [
         "Ac",
@@ -4995,6 +5292,161 @@
     "turn": "2s",
     "went_to_showdown": true,
     "won_at_showdown": true
+  },
+  "shallow_spr_hu.txt": {
+    "actions": [
+      {
+        "action": "post_sb",
+        "action_order": 0,
+        "amount": "0.5000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "post_bb",
+        "action_order": 1,
+        "amount": "1.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "DeepV",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "raise",
+        "action_order": 2,
+        "amount": "9.5000",
+        "is_all_in": false,
+        "raise_to": "10.0000",
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "preflop"
+      },
+      {
+        "action": "call",
+        "action_order": 3,
+        "amount": "9.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "DeepV",
+        "seat": 2,
+        "street": "preflop"
+      },
+      {
+        "action": "bet",
+        "action_order": 0,
+        "amount": "2.0000",
+        "is_all_in": true,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "flop"
+      },
+      {
+        "action": "call",
+        "action_order": 1,
+        "amount": "2.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "DeepV",
+        "seat": 2,
+        "street": "flop"
+      },
+      {
+        "action": "show",
+        "action_order": 0,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "Hero",
+        "seat": 1,
+        "street": "showdown"
+      },
+      {
+        "action": "show",
+        "action_order": 1,
+        "amount": null,
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "DeepV",
+        "seat": 2,
+        "street": "showdown"
+      },
+      {
+        "action": "collect",
+        "action_order": 2,
+        "amount": "24.0000",
+        "is_all_in": false,
+        "raise_to": null,
+        "screen_name": "DeepV",
+        "seat": 2,
+        "street": "showdown"
+      }
+    ],
+    "button_seat": 1,
+    "coinpoker_hand_id": 9300000001,
+    "flags": {
+      "all_in": true,
+      "bomb_pot": false,
+      "run_it_twice": false,
+      "side_pots": false,
+      "split_pot": false
+    },
+    "flop": [
+      "Js",
+      "Tc",
+      "4d"
+    ],
+    "hero_cards": [
+      "Kh",
+      "Qh"
+    ],
+    "hero_collected": "0.0000",
+    "hero_invested": "12.0000",
+    "hero_net": "-12.0000",
+    "hero_net_bb": "-12.0000",
+    "hero_position": "BTN/SB",
+    "hero_seat": 1,
+    "played_at": "2026-06-19T12:00:00-07:00",
+    "players": [
+      {
+        "final_cards": [
+          "Kh",
+          "Qh"
+        ],
+        "is_hero": true,
+        "position": "BTN/SB",
+        "screen_name": "Hero",
+        "seat": 1,
+        "starting_stack": "12.0000"
+      },
+      {
+        "final_cards": [
+          "As",
+          "Ad"
+        ],
+        "is_hero": false,
+        "position": "BB",
+        "screen_name": "DeepV",
+        "seat": 2,
+        "starting_stack": "15.0000"
+      }
+    ],
+    "rake": "0.0000",
+    "raw_text": "CoinPoker Hand #9300000001: NLH (₮0.50/₮1.00) - 2026/06/19 12:00:00 PDT\nTable 'shallow-spr-hu' heads-up Seat #1 is the button\nSeat 1: Hero (₮12.00 in chips)\nSeat 2: DeepV (₮15.00 in chips)\nHero: posts small blind ₮0.50\nDeepV: posts big blind ₮1.00\n*** HOLE CARDS ***\nDealt to Hero [Kh Qh]\nHero: raises ₮9.50 to ₮10.00\nDeepV: calls ₮9.00\n*** FLOP *** [Js Tc 4d]\nHero: bets ₮2.00 and is all-in\nDeepV: calls ₮2.00\n*** TURN *** [Js Tc 4d] [8s]\n*** RIVER *** [Js Tc 4d 8s] [2c]\n*** SHOWDOWN ***\nHero: shows [Kh Qh] (High Card)\nDeepV: shows [As Ad] (Pair)\nDeepV collected ₮24.00 from pot\n*** SUMMARY ***\nTotal pot ₮24.00 | Rake ₮0.00 | Splash Fee ₮0.00",
+    "river": "2c",
+    "splash_fee": "0.0000",
+    "stake_bb": "1.0000",
+    "stake_sb": "0.5000",
+    "table_name": "shallow-spr-hu",
+    "table_size": 2,
+    "total_pot": "24.0000",
+    "turn": "8s",
+    "went_to_showdown": true,
+    "won_at_showdown": false
   },
   "side_pot.txt": {
     "actions": [
@@ -5163,6 +5615,7 @@
     "coinpoker_hand_id": 9200000002,
     "flags": {
       "all_in": true,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": true,
       "split_pot": false
@@ -5308,6 +5761,7 @@
     "coinpoker_hand_id": 9200000005,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -5518,6 +5972,7 @@
     "coinpoker_hand_id": 9200000010,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -5732,6 +6187,7 @@
     "coinpoker_hand_id": 9200000003,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": true
@@ -5916,6 +6372,7 @@
     "coinpoker_hand_id": 9200000009,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false
@@ -6068,6 +6525,7 @@
     "coinpoker_hand_id": 9200000006,
     "flags": {
       "all_in": false,
+      "bomb_pot": false,
       "run_it_twice": false,
       "side_pots": false,
       "split_pot": false

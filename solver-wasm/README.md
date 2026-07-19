@@ -2,10 +2,11 @@
 
 Thin `wasm-bindgen` glue around [`b-inary/postflop-solver`][upstream]. This
 crate is *not* a fork — it links to the upstream engine via a relative path
-dependency and only translates the backend `ScenarioEnvelope` JSON into the
-engine's `CardConfig` + `TreeConfig`, runs chunked Discounted-CFR
-iterations, and serialises results into the cache document the Python
-backend stores in `solver_runs.output_jsonb`.
+dependency and translates a legacy `ScenarioEnvelope` JSON into the engine's
+`CardConfig` + `TreeConfig`, runs chunked Discounted-CFR iterations, and
+serialises strategy output. The legacy backend scenario/cache routes were
+deleted during Phase 0; this crate is quarantined infrastructure and has no
+product caller until the canonical HUNL contract is rebuilt.
 
 > ⚠️ **AGPL-3.0-or-later.** Because this crate links against the AGPL
 > upstream and ships the result over the network, any deployment must
@@ -16,25 +17,26 @@ backend stores in `solver_runs.output_jsonb`.
 
 | Export                                               | Returns       | Notes |
 |------------------------------------------------------|---------------|-------|
-| `init_game(scenario_json: string): number`           | `u32`         | `0` on failure; details via `last_error()`. |
+| `preflight(scenario_json: string): string`           | JSON          | Structured `{ok}` envelope; validates without allocation. |
+| `init_game(scenario_json: string): string`           | JSON          | Structured `{ok, handle}` or `{ok: false, error_class, message}` envelope. |
 | `solve_step(handle: number, max_iters: number): string` | JSON          | `SolveProgress { handle, iterations_done, max_iterations, exploitability_bb, target_exploitability_bb, finished }`. |
 | `get_exploitability(handle: number): number`         | `f32` (bb)    | `NaN` on unknown handle. |
 | `export_strategy(handle: number, history_json: string): string` | JSON | `StrategyExport` — see below. Pass `""` for the root node. |
+| `get_actions_at(handle: number, history_json: string): string` | JSON | Action labels and player at a node, used to build deeper history paths. |
 | `free_game(handle: number): void`                    | —             | Idempotent. |
 | `last_error(): string`                               | `string`      | Last error from any function, or `""`. |
 
 ### Envelope schema (input to `init_game`)
 
-Pass exactly what the backend returns from
-`GET /hands/{id}/scenario?street=...`, with one frontend addition:
-`hero_position` must be merged in from the sibling `metadata` object so we
-can map `hero_range`/`villain_range` onto OOP/IP.
+The current structs document the deleted legacy envelope only. There is no
+backend endpoint that emits this shape. Tests and isolated development callers
+must provide `hero_position` when they use hero/villain-keyed ranges so the
+crate can map them onto OOP/IP.
 
 Alternatively, ship `oop_range` + `ip_range` directly and skip
 `hero_position`. The crate prefers explicit OOP/IP keys when present.
 
-Optional knobs (sent at the top level of the envelope, ignored by the
-backend):
+Optional legacy-envelope knobs:
 
 * `max_iterations: number` (default `200`)
 * `target_exploitability_bb: number` (default `0.5`)
@@ -83,7 +85,7 @@ repo root:
 git submodule update --init --recursive
 ```
 
-Fresh clones should use `git clone --recurse-submodules ...` (see root `README.md`).
+Fresh clones should use `git clone --recurse-submodules ...`.
 
 ### Native (tests, benches)
 
@@ -145,8 +147,13 @@ crate is structured so the public API stays unchanged.
 * **Single-threaded wasm.** A 200-iter solve on a typical flop spot takes
   ~10–30s in-browser on a modern laptop. Acceptable for "review one hand"
   flow; will be revisited in T11 with worker threads.
-* **No bunching, no compression.** Allocates 32-bit floats unconditionally.
-* **Fixed bet tree per envelope.** No on-the-fly tree editing exposed to JS.
+* **No bunching.** Browser builds use the engine's 16-bit compressed storage
+  (native tests remain 32-bit) and reject trees above a 1 GiB pre-allocation budget.
+* **Quarantined browser-bounded preview tree.** The legacy compatibility flag
+  keeps the initial-street sizes but makes future streets check-down runouts.
+  This materially changes current strategy and EV, so it is not a verified or
+  gradeable product path. Other envelopes keep their configured tree. No
+  on-the-fly tree editing is exposed to JS.
 * **One active game per worker.** Spawn additional workers to solve
   concurrently; the global state inside the wasm module is `Mutex`-guarded
   but not designed for parallel solves on a shared module.
@@ -160,9 +167,9 @@ solver-wasm/
 ├── README.md                # this file
 ├── src/
 │   ├── lib.rs               # public wasm-bindgen surface + global state
-│   ├── envelope.rs          # serde structs matching backend JSON
+│   ├── envelope.rs          # quarantined legacy envelope serde structs
 │   ├── range_convert.rs     # hand-class weights -> postflop_solver::Range
-│   ├── bet_tree.rs          # backend bet_tree -> BetSizeOptions
+│   ├── bet_tree.rs          # legacy bet_tree -> BetSizeOptions
 │   └── strategy_export.rs   # PostFlopGame -> StrategyExport JSON
 └── tests/
     ├── fixtures/scenario_min.json

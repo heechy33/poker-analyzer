@@ -1,6 +1,7 @@
-//! Convert the backend `bet_tree` block into `postflop_solver::BetSizeOptions`.
+//! Convert the quarantined legacy `bet_tree` block into
+//! `postflop_solver::BetSizeOptions`.
 //!
-//! Backend contract (from `app/scenario/builder.py`):
+//! Deleted legacy contract:
 //!
 //! ```text
 //! bet_tree = {
@@ -97,8 +98,8 @@ fn build_one(
 }
 
 /// Validate that no street collapses to a single effective bet size when
-/// `allin_always` is true.  Mirrors
-/// `backend/app/scenario/builder.py::_validate_bet_tree_degeneracy`.
+/// `allin_always` is true. This preserves a low-level invariant from the
+/// deleted legacy scenario builder; it is not the rebuilt product contract.
 pub fn validate_bet_tree_degeneracy(
     cfg: &BetTreeConfig,
     pot_bb: f64,

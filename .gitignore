@@ -16,10 +16,7 @@ eggs/
 .eggs/
 lib/
 !frontend/src/lib/
-frontend/src/lib/*
-!frontend/src/lib/api.ts
-!frontend/src/lib/solver/
-!frontend/src/lib/solver/**
+!frontend/src/lib/**
 lib64/
 parts/
 sdist/
@@ -154,6 +151,8 @@ activemq-data/
 
 # Environments
 .env
+.env*
+!.env.example
 .envrc
 .venv
 env/
@@ -240,4 +239,12 @@ frontend/public/wasm/*.d.ts
 frontend/public/wasm/*.cjs
 frontend/public/wasm/*.mjs
 
-.env
+# Local / agent / planning artifacts (not part of the product tree)
+.agents/
+docs/
+MASTER_SPEC.md
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini

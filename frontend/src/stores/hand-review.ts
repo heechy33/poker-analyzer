@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { Street } from "@/types/api";
 
-export type HandReviewTab = "replayer" | "solver" | "coach";
+export type HandReviewTab = "replayer" | "coach";
 
 interface HandReviewState {
   handId: string | null;

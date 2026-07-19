@@ -157,18 +157,6 @@ function toUiProgress(raw: {
 }
 
 /**
- * Determine whether hero is OOP (player 0) or IP (player 1) based on
- * scenario metadata positions.
- */
-function heroIsOop(request: SolveRequest): boolean {
-  const meta = request.metadata ?? {};
-  const heroPos = typeof meta.hero_position === "string" ? meta.hero_position : null;
-  const oopPos  = typeof meta.oop_position  === "string" ? meta.oop_position  : null;
-  if (!heroPos || !oopPos) return false;
-  return heroPos === oopPos;
-}
-
-/**
  * Fetch the available action names at an already-navigated node without
  * computing the full strategy.  Returns null if the WASM call fails or the
  * game module doesn't expose `get_actions_at` yet (graceful fallback).
@@ -196,8 +184,9 @@ function fetchActionsAt(
  * 1. Export root to get action labels at the opening node.
  * 2. Use `buildDecisionNodeHistory` (with intermediate `get_actions_at` calls
  *    for depth > 1) to build the numeric history path.
- * 3. Export the hero-node strategy.  If history reconstruction fails at any
- *    step, fall back to the deepest navigable node or root.
+ * 3. Export only when the complete hero-node path was reconstructed. Partial
+ *    paths can leave the villain to act, so they fall back to root and are
+ *    explicitly marked unsafe for grading.
  */
 async function exportAtHeroNode(
   wasm: WasmModule,
@@ -217,9 +206,10 @@ async function exportAtHeroNode(
     "export_strategy(root)",
   );
 
-  // If hero is OOP they open the action — root IS the decision node.
-  const isOop = heroIsOop(request);
-  if (isOop || actionsBeforeHero.length === 0) {
+  // The root is the decision node only when no actions preceded the graded
+  // hero action. OOP heroes can act again after check → bet, so position alone
+  // must not force a root export.
+  if (actionsBeforeHero.length === 0) {
     return {
       output: rootOutput,
       progress: finalProgress,
@@ -229,7 +219,7 @@ async function exportAtHeroNode(
     };
   }
 
-  // Hero is IP (or unknown) — navigate past pre-hero actions.
+  // Navigate past every action that preceded hero's graded decision.
   const rootActions = rootOutput.actions as string[];
 
   // For depth > 1 we need the action labels at each intermediate node.
@@ -259,15 +249,7 @@ async function exportAtHeroNode(
 
   const incomplete = partialHistory.length < actionsBeforeHero.length;
 
-  // Build the context object (for description and depth).
-  const nodeCtx = buildDecisionNodeHistory(
-    actionsBeforeHero.slice(0, partialHistory.length),
-    rootActions,
-    intermediateActionLists,
-  );
-
-  if (partialHistory.length === 0) {
-    // Could not navigate at all — fall back to root.
+  if (incomplete) {
     return {
       output: rootOutput,
       progress: finalProgress,
@@ -276,6 +258,13 @@ async function exportAtHeroNode(
       nodeDepth: 0,
     };
   }
+
+  // Build the context object (for description and depth).
+  const nodeCtx = buildDecisionNodeHistory(
+    actionsBeforeHero,
+    rootActions,
+    intermediateActionLists,
+  );
 
   // Export the hero-node strategy.
   const heroHistoryJson = JSON.stringify(partialHistory);
@@ -301,7 +290,7 @@ async function exportAtHeroNode(
     output: heroOutput,
     progress: finalProgress,
     historyPath: partialHistory,
-    historyIncomplete: incomplete,
+    historyIncomplete: false,
     nodeDepth: nodeCtx.depth,
   };
 }
@@ -313,10 +302,17 @@ async function solve(request: SolveRequest, id: number): Promise<SolveResult> {
   const initPayload = {
     ...request.scenario,
     hero_position: heroPositionFrom(request),
+    browser_bounded_hu: request.metadata?.browser_bounded_hu === true,
     ...modeOverrides(request.mode),
   };
+  const initPayloadJson = JSON.stringify(initPayload);
+  unwrapWasmEnvelope(
+    wasm.preflight(initPayloadJson),
+    wasm,
+    "preflight",
+  );
   const initResult = unwrapWasmEnvelope(
-    wasm.init_game(JSON.stringify(initPayload)),
+    wasm.init_game(initPayloadJson),
     wasm,
     "init_game",
   );
@@ -354,7 +350,12 @@ async function solve(request: SolveRequest, id: number): Promise<SolveResult> {
 
     return await exportAtHeroNode(wasm, handle, request, finalProgress);
   } finally {
-    wasm.free_game(handle);
+    try {
+      wasm.free_game(handle);
+    } catch {
+      // The solve result/error is more useful than a cleanup failure. Each
+      // A solve owns this worker; the eventual qualified caller must terminate it.
+    }
   }
 }
 

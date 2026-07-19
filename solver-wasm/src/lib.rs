@@ -10,7 +10,7 @@
 //!
 //! | Export | Semantics |
 //! |---|---|
-//! | `init_game(scenario_json) -> u32` | Parse envelope, build [`PostFlopGame`], allocate memory. Returns a handle (0 = error; see [`last_error`]). |
+//! | `init_game(scenario_json) -> String` | Parse envelope, build [`PostFlopGame`], allocate memory. Returns a structured JSON success/error envelope. |
 //! | `solve_step(handle, max_iters) -> String` | Run chunked CFR for up to `max_iters` iterations, returning a JSON `SolveProgress` doc. |
 //! | `get_exploitability(handle) -> f32` | Most recent exploitability in bb. |
 //! | `export_strategy(handle, history_json) -> String` | Apply a history path then return a [`strategy_export::StrategyExport`] JSON doc. |
@@ -27,11 +27,13 @@
 
 #![doc(html_no_source)]
 
+use std::any::Any;
 use std::collections::HashMap;
+use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::{LazyLock, Mutex};
 
 use postflop_solver::{
-    card_from_str, compute_exploitability, finalize, flop_from_str, solve_step as cfr_step,
+    card_from_str, compute_exploitability, finalize, flop_from_str, solve_step as cfr_step, Action,
     ActionTree, BoardState, CardConfig, PostFlopGame, TreeConfig, NOT_DEALT,
 };
 use serde::{Deserialize, Serialize};
@@ -45,7 +47,7 @@ pub mod strategy_export;
 use bet_tree::build_street_sizes;
 use envelope::ScenarioEnvelope;
 use range_convert::range_from_hand_classes;
-use strategy_export::{build_export, ExportInput};
+use strategy_export::{actions_at_current_node, build_export, ExportInput};
 
 // ---------------------------------------------------------------------------
 // Globals
@@ -63,6 +65,11 @@ pub const DEFAULT_TARGET_EXPLOITABILITY_BB: f32 = 0.5;
 /// Default cap on CFR iterations per game. Matches PLAN.md §6 ("200 iters
 /// or 0.5 bb exploitability, whichever first").
 pub const DEFAULT_MAX_ITERATIONS: u32 = 200;
+
+/// Keep a single browser solve below a practical 1 GiB linear-memory budget.
+/// Oversized envelopes are rejected before `allocate_memory` can trap.
+#[cfg(target_arch = "wasm32")]
+const MAX_WASM_MEMORY_BYTES: u64 = 1024 * 1024 * 1024;
 
 struct GameState {
     game: PostFlopGame,
@@ -96,23 +103,90 @@ fn clear_error() {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct WasmEnvelope {
+    ok: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    handle: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error_class: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    message: Option<String>,
+}
+
+fn serialise_wasm_envelope(envelope: WasmEnvelope) -> String {
+    serde_json::to_string(&envelope).unwrap_or_else(|_| {
+        r#"{"ok":false,"error_class":"serialization","message":"failed to serialize WASM response"}"#
+            .to_string()
+    })
+}
+
+fn success_envelope(handle: Option<u32>) -> String {
+    serialise_wasm_envelope(WasmEnvelope {
+        ok: true,
+        handle,
+        error_class: None,
+        message: None,
+    })
+}
+
+fn error_envelope(context: &str, error_class: &str, message: impl Into<String>) -> String {
+    let detail = format!("{context}: {}", message.into());
+    set_error(&detail);
+    serialise_wasm_envelope(WasmEnvelope {
+        ok: false,
+        handle: None,
+        error_class: Some(error_class.to_string()),
+        message: Some(detail),
+    })
+}
+
+fn panic_message(payload: Box<dyn Any + Send>) -> String {
+    if let Some(message) = payload.downcast_ref::<&str>() {
+        (*message).to_string()
+    } else if let Some(message) = payload.downcast_ref::<String>() {
+        message.clone()
+    } else {
+        "non-string panic payload".to_string()
+    }
+}
+
+fn classify_runtime_error(message: &str) -> &'static str {
+    if message.contains("unknown handle") {
+        "invalid_handle"
+    } else {
+        "engine_error"
+    }
+}
+
+fn classify_init_error(message: &str) -> &'static str {
+    if message.contains("WASM memory budget") {
+        "resource_limit"
+    } else if message.contains("ActionTree") || message.contains("PostFlopGame") {
+        "engine_error"
+    } else {
+        "validation"
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
 /// Initialise a new game from an envelope JSON string.
 ///
-/// Returns the handle on success (always > 0). On failure returns `0` and
-/// stashes the reason in [`last_error`].
+/// Returns a JSON [`WasmEnvelope`] with the handle on success. Failures are
+/// structured and also stashed in [`last_error`].
 #[wasm_bindgen]
-pub fn init_game(scenario_json: &str) -> u32 {
+pub fn init_game(scenario_json: &str) -> String {
     clear_error();
-    match init_game_inner(scenario_json) {
-        Ok(handle) => handle,
-        Err(e) => {
-            set_error(format!("init_game: {e}"));
-            0
+    match catch_unwind(AssertUnwindSafe(|| init_game_inner(scenario_json))) {
+        Ok(Ok(handle)) => success_envelope(Some(handle)),
+        Ok(Err(error)) => {
+            let error_class = classify_init_error(&error);
+            error_envelope("init_game", error_class, error)
         }
+        Err(payload) => error_envelope("init_game", "panic", panic_message(payload)),
     }
 }
 
@@ -191,12 +265,19 @@ pub struct SolveProgress {
 #[wasm_bindgen]
 pub fn solve_step(handle: u32, max_iters_this_step: u32) -> String {
     clear_error();
-    match solve_step_inner(handle, max_iters_this_step) {
-        Ok(json) => json,
-        Err(e) => {
-            set_error(format!("solve_step({handle}): {e}"));
-            "{}".to_string()
+    match catch_unwind(AssertUnwindSafe(|| {
+        solve_step_inner(handle, max_iters_this_step)
+    })) {
+        Ok(Ok(json)) => json,
+        Ok(Err(error)) => {
+            let error_class = classify_runtime_error(&error);
+            error_envelope(&format!("solve_step({handle})"), error_class, error)
         }
+        Err(payload) => error_envelope(
+            &format!("solve_step({handle})"),
+            "panic",
+            panic_message(payload),
+        ),
     }
 }
 
@@ -262,11 +343,21 @@ pub fn get_exploitability_inner(handle: u32) -> f32 {
 #[wasm_bindgen]
 pub fn get_exploitability(handle: u32) -> f32 {
     clear_error();
-    let expl = get_exploitability_inner(handle);
-    if expl.is_nan() {
-        set_error(format!("get_exploitability: unknown handle {handle}"));
+    match catch_unwind(AssertUnwindSafe(|| get_exploitability_inner(handle))) {
+        Ok(expl) => {
+            if expl.is_nan() {
+                set_error(format!("get_exploitability: unknown handle {handle}"));
+            }
+            expl
+        }
+        Err(payload) => {
+            set_error(format!(
+                "get_exploitability({handle}): {}",
+                panic_message(payload)
+            ));
+            f32::NAN
+        }
     }
-    expl
 }
 
 /// Apply a history path (as `[usize, ...]` JSON) and return the
@@ -274,12 +365,19 @@ pub fn get_exploitability(handle: u32) -> f32 {
 #[wasm_bindgen]
 pub fn export_strategy(handle: u32, history_path_json: &str) -> String {
     clear_error();
-    match export_strategy_inner(handle, history_path_json) {
-        Ok(json) => json,
-        Err(e) => {
-            set_error(format!("export_strategy({handle}): {e}"));
-            "{}".to_string()
+    match catch_unwind(AssertUnwindSafe(|| {
+        export_strategy_inner(handle, history_path_json)
+    })) {
+        Ok(Ok(json)) => json,
+        Ok(Err(error)) => {
+            let error_class = classify_runtime_error(&error);
+            error_envelope(&format!("export_strategy({handle})"), error_class, error)
         }
+        Err(payload) => error_envelope(
+            &format!("export_strategy({handle})"),
+            "panic",
+            panic_message(payload),
+        ),
     }
 }
 
@@ -310,9 +408,89 @@ pub fn export_strategy_inner(handle: u32, history_path_json: &str) -> Result<Str
     serde_json::to_string(&export).map_err(|e| format!("serialise StrategyExport: {e}"))
 }
 
+/// Lightweight description of the action node at a history path.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ActionsAtResponse {
+    pub ok: bool,
+    pub actions: Vec<String>,
+    pub current_player: Option<u8>,
+    pub pot_chips: i32,
+    pub is_terminal: bool,
+    pub is_chance: bool,
+}
+
+/// Return action labels at a history path without computing strategy/EV data.
+#[wasm_bindgen]
+pub fn get_actions_at(handle: u32, history_path_json: &str) -> String {
+    clear_error();
+    match catch_unwind(AssertUnwindSafe(|| {
+        get_actions_at_inner(handle, history_path_json)
+    })) {
+        Ok(Ok(json)) => json,
+        Ok(Err(error)) => {
+            let error_class = classify_runtime_error(&error);
+            error_envelope(&format!("get_actions_at({handle})"), error_class, error)
+        }
+        Err(payload) => error_envelope(
+            &format!("get_actions_at({handle})"),
+            "panic",
+            panic_message(payload),
+        ),
+    }
+}
+
+pub fn get_actions_at_inner(handle: u32, history_path_json: &str) -> Result<String, String> {
+    let history: Vec<usize> = if history_path_json.trim().is_empty() {
+        Vec::new()
+    } else {
+        serde_json::from_str(history_path_json).map_err(|e| format!("history JSON parse: {e}"))?
+    };
+
+    let mut games = GAMES.lock().map_err(|_| "games mutex poisoned")?;
+    let state = games
+        .get_mut(&handle)
+        .ok_or_else(|| format!("unknown handle: {handle}"))?;
+    state.game.apply_history(&history);
+
+    let is_terminal = state.game.is_terminal_node();
+    let is_chance = state.game.is_chance_node();
+    let total_bet = state.game.total_bet_amount();
+    let pot_chips = state.game.tree_config().starting_pot + total_bet[0] + total_bet[1];
+    let (actions, current_player) = if is_terminal || is_chance {
+        (Vec::new(), None)
+    } else {
+        let (actions, _) = actions_at_current_node(&state.game);
+        (actions, Some(state.game.current_player() as u8))
+    };
+
+    serde_json::to_string(&ActionsAtResponse {
+        ok: true,
+        actions,
+        current_player,
+        pot_chips,
+        is_terminal,
+        is_chance,
+    })
+    .map_err(|e| format!("serialise ActionsAtResponse: {e}"))
+}
+
+/// Validate an envelope without allocating solver memory.
+#[wasm_bindgen]
+pub fn preflight(envelope_json: &str) -> String {
+    clear_error();
+    match catch_unwind(AssertUnwindSafe(|| preflight_inner(envelope_json))) {
+        Ok(Ok(())) => success_envelope(None),
+        Ok(Err(error)) => error_envelope("preflight", "validation", error),
+        Err(payload) => error_envelope("preflight", "panic", panic_message(payload)),
+    }
+}
+
 /// Validate an envelope without allocating solver memory.
 ///
-/// Rules shared with `backend/app/scenario/builder.py::validate_scenario_envelope`.
+/// Validate the quarantined legacy envelope contract locally.
+///
+/// The former Python scenario builder was deleted in Phase 0; a rebuilt HUNL
+/// contract must replace this validator before any product caller is restored.
 pub fn preflight_inner(envelope_json: &str) -> Result<(), String> {
     let envelope: ScenarioEnvelope = serde_json::from_str(envelope_json)
         .map_err(|e| format!("envelope JSON parse error: {e}"))?;
@@ -353,8 +531,13 @@ pub fn preflight_inner(envelope_json: &str) -> Result<(), String> {
 /// Drop the game and release its arena. No-op if `handle` is unknown.
 #[wasm_bindgen]
 pub fn free_game(handle: u32) {
-    if let Ok(mut games) = GAMES.lock() {
-        games.remove(&handle);
+    clear_error();
+    if let Err(payload) = catch_unwind(AssertUnwindSafe(|| {
+        if let Ok(mut games) = GAMES.lock() {
+            games.remove(&handle);
+        }
+    })) {
+        set_error(format!("free_game({handle}): {}", panic_message(payload)));
     }
 }
 
@@ -376,16 +559,87 @@ pub fn last_error() -> String {
 // ---------------------------------------------------------------------------
 
 fn build_game(envelope: &ScenarioEnvelope) -> Result<PostFlopGame, String> {
-    let card_config = build_card_config(envelope)?;
-    let tree_config = build_tree_config(envelope)?;
-    let action_tree =
-        ActionTree::new(tree_config).map_err(|e| format!("ActionTree::new: {e}"))?;
-    let mut game = PostFlopGame::with_config(card_config, action_tree)
-        .map_err(|e| format!("PostFlopGame::with_config: {e}"))?;
-    // 32-bit float storage; compression saves memory but loses precision and
-    // is overkill at v1 problem sizes.
+    let mut game = build_game_unallocated(envelope)?;
+    #[cfg(target_arch = "wasm32")]
+    {
+        let compressed_bytes = game.memory_usage().1;
+        if compressed_bytes > MAX_WASM_MEMORY_BYTES {
+            return Err(format!(
+                "scenario requires {compressed_bytes} bytes of compressed solver storage, \
+                 exceeding the {MAX_WASM_MEMORY_BYTES}-byte WASM memory budget"
+            ));
+        }
+        game.allocate_memory(true);
+    }
+    #[cfg(not(target_arch = "wasm32"))]
     game.allocate_memory(false);
     Ok(game)
+}
+
+fn build_game_unallocated(envelope: &ScenarioEnvelope) -> Result<PostFlopGame, String> {
+    let card_config = build_card_config(envelope)?;
+    let tree_config = build_tree_config(envelope)?;
+    let mut action_tree =
+        ActionTree::new(tree_config).map_err(|e| format!("ActionTree::new: {e}"))?;
+    if envelope.browser_bounded_hu {
+        cap_reraises_per_street(&mut action_tree)?;
+    }
+    PostFlopGame::with_config(card_config, action_tree)
+        .map_err(|e| format!("PostFlopGame::with_config: {e}"))
+}
+
+pub fn estimate_memory_inner(scenario_json: &str) -> Result<(u64, u64), String> {
+    preflight_inner(scenario_json)?;
+    let envelope: ScenarioEnvelope = serde_json::from_str(scenario_json)
+        .map_err(|e| format!("envelope JSON parse error: {e}"))?;
+    Ok(build_game_unallocated(&envelope)?.memory_usage())
+}
+
+/// Keep one raise per betting round. The upstream `2.5x` raise option otherwise
+/// permits repeated re-raises until stacks are exhausted, which makes ordinary
+/// deep-stack flop trees exceed WebAssembly's address space.
+fn cap_reraises_per_street(action_tree: &mut ActionTree) -> Result<(), String> {
+    fn collect_reraises(
+        tree: &mut ActionTree,
+        raised_this_street: bool,
+        path: &mut Vec<Action>,
+        removals: &mut Vec<Vec<Action>>,
+    ) -> Result<(), String> {
+        if tree.is_terminal_node() {
+            return Ok(());
+        }
+
+        let actions = tree.available_actions().to_vec();
+        for action in actions {
+            if raised_this_street && matches!(action, Action::Raise(_)) {
+                let mut line = path.clone();
+                line.push(action);
+                removals.push(line);
+                continue;
+            }
+
+            tree.play(action)?;
+            path.push(action);
+            let next_raised = match action {
+                Action::Raise(_) => true,
+                Action::Call => false,
+                _ => raised_this_street,
+            };
+            collect_reraises(tree, next_raised, path, removals)?;
+            path.pop();
+            tree.undo()?;
+        }
+        Ok(())
+    }
+
+    let mut removals = Vec::new();
+    collect_reraises(action_tree, false, &mut Vec::new(), &mut removals)?;
+    for line in removals {
+        action_tree
+            .remove_line(&line)
+            .map_err(|error| format!("cap re-raises at {line:?}: {error}"))?;
+    }
+    Ok(())
 }
 
 fn build_card_config(envelope: &ScenarioEnvelope) -> Result<CardConfig, String> {
@@ -414,10 +668,8 @@ fn build_card_config(envelope: &ScenarioEnvelope) -> Result<CardConfig, String> 
     };
 
     let ranges = envelope.resolve_ranges()?;
-    let oop_range = range_from_hand_classes(&ranges.oop)
-        .map_err(|e| format!("oop range: {e}"))?;
-    let ip_range = range_from_hand_classes(&ranges.ip)
-        .map_err(|e| format!("ip range: {e}"))?;
+    let oop_range = range_from_hand_classes(&ranges.oop).map_err(|e| format!("oop range: {e}"))?;
+    let ip_range = range_from_hand_classes(&ranges.ip).map_err(|e| format!("ip range: {e}"))?;
 
     Ok(CardConfig {
         range: [oop_range, ip_range],
@@ -450,7 +702,25 @@ fn build_tree_config(envelope: &ScenarioEnvelope) -> Result<TreeConfig, String> 
         n => return Err(format!("unexpected board length {n}")),
     };
 
-    let sizes = build_street_sizes(&envelope.bet_tree)?;
+    let mut sizes = build_street_sizes(&envelope.bet_tree)?;
+    if envelope.browser_bounded_hu {
+        // Quarantined preview behavior only. Removing future-street betting
+        // materially changes current-street strategy and EV, so output from
+        // this tree must never be treated as verified or used for grading.
+        match initial_state {
+            BoardState::Flop => {
+                sizes.turn.bet.clear();
+                sizes.turn.raise.clear();
+                sizes.river.bet.clear();
+                sizes.river.raise.clear();
+            }
+            BoardState::Turn => {
+                sizes.river.bet.clear();
+                sizes.river.raise.clear();
+            }
+            BoardState::River => {}
+        }
+    }
     Ok(TreeConfig {
         initial_state,
         starting_pot,
@@ -529,22 +799,57 @@ mod tests {
     }
 
     #[test]
-    fn init_returns_nonzero_handle_for_valid_envelope() {
+    fn browser_tree_bounding_is_explicitly_hu_only() {
+        let unbounded: ScenarioEnvelope = serde_json::from_str(min_envelope_json()).unwrap();
+        let unbounded_config = build_tree_config(&unbounded).unwrap();
+        assert!(!unbounded_config.turn_bet_sizes[0].bet.is_empty());
+        assert!(!unbounded_config.river_bet_sizes[0].bet.is_empty());
+
+        let mut bounded_json: serde_json::Value =
+            serde_json::from_str(min_envelope_json()).unwrap();
+        bounded_json["browser_bounded_hu"] = serde_json::Value::Bool(true);
+        let bounded: ScenarioEnvelope = serde_json::from_value(bounded_json).unwrap();
+        let bounded_config = build_tree_config(&bounded).unwrap();
+        assert!(bounded_config.turn_bet_sizes[0].bet.is_empty());
+        assert!(bounded_config.river_bet_sizes[0].bet.is_empty());
+    }
+
+    #[test]
+    fn init_returns_structured_handle_for_valid_envelope() {
         let _g = TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-        let h = init_game(min_envelope_json());
+        let raw = init_game(min_envelope_json());
+        let response: WasmEnvelope = serde_json::from_str(&raw).unwrap();
         let err = last_error();
-        assert!(h != 0, "expected nonzero handle, got error: {err}");
+        assert!(response.ok, "expected success, got {raw}; error: {err}");
+        let h = response
+            .handle
+            .expect("success response must include handle");
+        assert_ne!(h, 0);
         free_game(h);
     }
 
     #[test]
-    fn init_returns_zero_on_bad_envelope() {
+    fn init_returns_structured_error_on_bad_envelope() {
         let _g = TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-        let h = init_game("{\"board\": []}");
-        assert_eq!(h, 0);
+        let raw = init_game("{\"board\": []}");
+        let response: WasmEnvelope = serde_json::from_str(&raw).unwrap();
+        assert!(!response.ok);
+        assert_eq!(response.error_class.as_deref(), Some("validation"));
+        assert!(response.handle.is_none());
         // Read the error WHILE we still hold the test lock — otherwise a
         // parallel test could clear_error() between our call and the assert.
         assert!(!last_error().is_empty());
+    }
+
+    #[test]
+    fn preflight_returns_structured_success_and_error() {
+        let _g = TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+        let success: WasmEnvelope = serde_json::from_str(&preflight(min_envelope_json())).unwrap();
+        assert!(success.ok);
+
+        let failure: WasmEnvelope = serde_json::from_str(&preflight("{\"board\": []}")).unwrap();
+        assert!(!failure.ok);
+        assert_eq!(failure.error_class.as_deref(), Some("validation"));
     }
 
     #[test]

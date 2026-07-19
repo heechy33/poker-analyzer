@@ -27,10 +27,7 @@ from app.models import (
     HandAction,
     HandPlayer,
     LlmAnalysis,
-    RangeLibrary,
-    SolverRun,
 )
-from app.scenario import ScenarioBuildError, build_scenario
 from app.schemas import (
     AnalysisListItem,
     AnalyzeHandRequest,
@@ -40,8 +37,6 @@ from app.schemas import (
     HandDetail,
     HandPlayerOut,
     HandSummary,
-    ScenarioEnvelope,
-    ScenarioResponse,
     StakeOption,
     Street,
 )
@@ -306,67 +301,6 @@ async def get_hand(
     )
 
 
-@router.get("/{hand_id}/scenario", response_model=ScenarioResponse)
-async def get_hand_scenario(
-    hand_id: UUID,
-    street: Street = Query(...),
-    user_id: str = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
-) -> ScenarioResponse:
-    hand = await session.get(Hand, hand_id)
-    if hand is None or str(hand.user_id) != user_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hand not found")
-
-    players_result = await session.exec(
-        select(HandPlayer).where(HandPlayer.hand_id == hand_id).order_by(HandPlayer.seat)
-    )
-    actions_result = await session.exec(select(HandAction).where(HandAction.hand_id == hand_id))
-    players = list(players_result.all())
-    actions = sort_actions(list(actions_result.all()))
-
-    range_lookup = _make_range_lookup(session)
-    try:
-        result = await build_scenario(hand, players, actions, street, range_lookup)
-    except ScenarioBuildError as exc:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
-
-    scenario_hash = result["scenario_hash"]
-    cached_run = (
-        await session.exec(select(SolverRun).where(SolverRun.scenario_hash == scenario_hash))
-    ).first()
-
-    return ScenarioResponse(
-        hand_id=str(hand_id),
-        street=street,
-        scenario_hash=scenario_hash,
-        confidence=result["metadata"].get("confidence", "low"),
-        confidence_reasons=result["metadata"].get("confidence_reasons", []),
-        confidence_detail=result["metadata"].get("confidence_detail", ""),
-        cached=cached_run is not None,
-        scenario=ScenarioEnvelope(**result["scenario"]),
-        metadata=result["metadata"],
-        cached_output=cached_run.output_jsonb if cached_run is not None else None,
-    )
-
-
-def _make_range_lookup(session: AsyncSession):
-    """Bind a fresh DB session to the async lookup signature build_scenario expects."""
-
-    async def _lookup(table_size: int, position: str, action_sequence: str):
-        stmt = (
-            select(RangeLibrary)
-            .where(RangeLibrary.table_size == table_size)
-            .where(RangeLibrary.effective_stack_bb == 100)
-            .where(RangeLibrary.position == position)
-            .where(RangeLibrary.action_sequence == action_sequence)
-            .limit(1)
-        )
-        result = await session.exec(stmt)
-        return result.first()
-
-    return _lookup
-
-
 # ---------------------------------------------------------------------------
 # LLM hand analysis
 # ---------------------------------------------------------------------------
@@ -417,7 +351,7 @@ async def analyze_hand(
 ):
     """Generate (or replay cached) Claude commentary and leak tags for a hand.
 
-    Pass ``stream=false`` for MCP usage — returns a synchronous
+    Pass ``stream=false`` for non-streaming API usage — returns a synchronous
     :class:`AnalyzeHandResponse` JSON object containing the full
     plain-English analysis and an array of ``leak_tags`` (e.g.
     ``[\"overfold_turn\", \"thin_value_river\"]``).  Cache hits are

@@ -1,4 +1,27 @@
-import type { ScenarioEnvelope, Street } from "@/types/api";
+import type { Street } from "@/types/api";
+
+/**
+ * Quarantined low-level wrapper input. This is not a product solve contract and
+ * must be replaced by the versioned HUNL solve specification before reuse.
+ */
+export interface LegacyScenarioEnvelope {
+  board: string[];
+  pot_bb: number;
+  effective_stack_bb: number;
+  oop_player: string;
+  ip_player: string;
+  hero_range: Record<string, number>;
+  villain_range: Record<string, number>;
+  bet_tree: {
+    flop: string[];
+    turn: string[];
+    river: string[];
+    allin_always?: boolean;
+  };
+  hero_position?: string;
+  oop_range?: Record<string, number>;
+  ip_range?: Record<string, number>;
+}
 
 export type SolveMode = "quick" | "full";
 
@@ -19,7 +42,7 @@ export interface SolverOutput extends Record<string, unknown> {
 }
 
 export interface SolveRequest {
-  scenario: ScenarioEnvelope;
+  scenario: LegacyScenarioEnvelope;
   scenario_hash: string;
   street: Street;
   hand_id: string;

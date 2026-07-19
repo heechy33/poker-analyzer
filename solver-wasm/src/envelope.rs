@@ -1,14 +1,14 @@
-//! Deserialisation for the backend `ScenarioEnvelope` JSON.
+//! Deserialisation for the quarantined legacy `ScenarioEnvelope` JSON.
 //!
-//! The Python backend (`app/scenario/builder.py`) emits an envelope with
+//! The deleted Python scenario builder emitted an envelope with
 //! `hero_range` / `villain_range` keyed by *hand classes* (PIO-style strings
 //! like `"AKs"`, `"QQ"`, `"AKo"`) and position labels in `oop_player` /
 //! `ip_player`. The solver only cares about OOP vs IP, so we accept two
 //! equivalent encodings of the same information:
 //!
-//! 1. **OOP/IP-keyed** (preferred, written by the frontend after consulting
+//! 1. **OOP/IP-keyed** (preferred, formerly written by the frontend after consulting
 //!    metadata): `oop_range` + `ip_range`. The solver uses these directly.
-//! 2. **Hero/villain-keyed** (the raw backend envelope): `hero_range` +
+//! 2. **Hero/villain-keyed** (the former raw backend envelope): `hero_range` +
 //!    `villain_range`. To map hero onto OOP/IP we additionally require
 //!    `hero_position` (which the frontend reads from the scenario metadata
 //!    and merges into the envelope before calling `init_game`).
@@ -57,6 +57,12 @@ pub struct ScenarioEnvelope {
     pub hero_range: Option<HandClassWeights>,
     #[serde(default)]
     pub villain_range: Option<HandClassWeights>,
+
+    /// Legacy preview-only compatibility flag. It removes future-street betting
+    /// and therefore cannot be used by a verified or graded product path.
+    /// Absent/false preserves the configured tree for low-level callers.
+    #[serde(default)]
+    pub browser_bounded_hu: bool,
 
     pub bet_tree: BetTreeConfig,
 }

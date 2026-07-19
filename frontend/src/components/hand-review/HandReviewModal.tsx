@@ -1,18 +1,10 @@
 "use client";
 
-/**
- * Manual demo script:
- * 1. Upload fixture hands (T13).
- * 2. Dashboard -> biggest loser -> Solve (full) on flop -> wait for grid.
- * 3. Explain -> watch stream -> tags appear.
- * 4. Re-open same hand/street -> cache hit + cached analysis.
- */
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import { CoachTab } from "@/components/hand-review/CoachTab";
 import { ReplayerTab } from "@/components/hand-review/ReplayerTab";
-import { SolverTab } from "@/components/hand-review/SolverTab";
 import { NetAmount } from "@/components/NetAmount";
 import { PositionBadge } from "@/components/PositionBadge";
 import { Badge } from "@/components/ui/badge";
@@ -28,8 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchHand } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { useHandReviewStore, type HandReviewTab } from "@/stores/hand-review";
-import type { SolverOutput } from "@/lib/solver/types";
-import type { HandDetail, SolverSummary, Street } from "@/types/api";
+import type { HandDetail, Street } from "@/types/api";
 
 function shortId(id: string): string {
   return id.length > 8 ? id.slice(0, 8) : id;
@@ -96,9 +87,6 @@ export function HandReviewModal() {
     setTab,
     setStreet,
   } = useHandReviewStore();
-  const [scenarioHash, setScenarioHash] = useState<string | null>(null);
-  const [solverSummary, setSolverSummary] = useState<SolverSummary | null>(null);
-
   const handQuery = useQuery({
     queryKey: ["hand", handId],
     queryFn: () => fetchHand(handId as string),
@@ -107,32 +95,11 @@ export function HandReviewModal() {
 
   const hand = handQuery.data;
   const streets = useMemo(() => availableStreets(hand), [hand]);
-  const solverDisabled = streets.length === 0;
-
   useEffect(() => {
     if (streets.length > 0 && !streets.includes(selectedStreet)) {
       setStreet(streets[0]);
     }
   }, [selectedStreet, setStreet, streets]);
-
-  useEffect(() => {
-    if (!handId) {
-      setScenarioHash(null);
-      setSolverSummary(null);
-    }
-  }, [handId]);
-
-  const onSolved = useCallback(
-    (payload: {
-      scenarioHash: string | null;
-      solverSummary: SolverSummary | null;
-      output: SolverOutput | null;
-    }) => {
-      setScenarioHash(payload.scenarioHash);
-      setSolverSummary(payload.solverSummary);
-    },
-    [],
-  );
 
   function handleOpenChange(open: boolean) {
     if (!open) closeHandReview();
@@ -148,7 +115,7 @@ export function HandReviewModal() {
         <DialogHeader className="border-b border-border px-6 py-5 pr-12">
           <DialogTitle>Hand {hand ? shortId(hand.id) : ""}</DialogTitle>
           <DialogDescription className="sr-only">
-            Review hand action, solver output, and coach analysis.
+            Replay the hand and request general post-session coaching.
           </DialogDescription>
           {hand ? <HeaderMeta hand={hand} /> : <Skeleton className="mt-3 h-12 w-full" />}
         </DialogHeader>
@@ -166,12 +133,9 @@ export function HandReviewModal() {
               <div className="flex flex-wrap items-center gap-3">
                 <TabsList>
                   <TabsTrigger value="replayer">Replayer</TabsTrigger>
-                  <TabsTrigger value="solver" disabled={solverDisabled}>
-                    Solver
-                  </TabsTrigger>
                   <TabsTrigger value="coach">Coach</TabsTrigger>
                 </TabsList>
-                {solverDisabled && (
+                {streets.length === 0 && (
                   <span className="text-sm text-muted-foreground">Hand ended preflop.</span>
                 )}
               </div>
@@ -180,24 +144,14 @@ export function HandReviewModal() {
                 <ReplayerTab hand={hand} />
               </TabsContent>
 
-              <TabsContent value="solver">
-                <SolverTab
-                  hand={hand}
-                  selectedStreet={selectedStreet}
-                  availableStreets={streets}
-                  onStreetChange={setStreet}
-                  onSolved={onSolved}
-                />
-              </TabsContent>
-
               <TabsContent value="coach">
                 <CoachTab
                   handId={hand.id}
                   selectedStreet={selectedStreet}
                   availableStreets={streets}
                   onStreetChange={setStreet}
-                  scenarioHash={scenarioHash}
-                  solverSummary={solverSummary}
+                  scenarioHash={null}
+                  solverSummary={null}
                 />
               </TabsContent>
             </Tabs>

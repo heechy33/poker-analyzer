@@ -1,5 +1,7 @@
-//! Build the strategy-cache JSON document consumed by the backend
-//! `POST /solver-runs` endpoint and the range-grid UI.
+//! Build the legacy strategy-export JSON document.
+//!
+//! The backend cache endpoint and product range-grid caller were removed in
+//! Phase 0. This serializer remains quarantined for low-level contract tests.
 //!
 //! # Mapping doc — how postflop-solver lays out its arrays (READ THIS!)
 //!
@@ -54,9 +56,7 @@
 
 use std::collections::BTreeMap;
 
-use postflop_solver::{
-    hole_to_string, Action, BetSize, PostFlopGame,
-};
+use postflop_solver::{hole_to_string, Action, BetSize, PostFlopGame};
 use serde::{Deserialize, Serialize};
 
 /// JSON document returned by `export_strategy`.
@@ -145,11 +145,7 @@ pub fn build_export(input: ExportInput<'_>) -> Result<StrategyExport, String> {
         return Err("node has zero available actions".into());
     }
 
-    let pot_at_node = pot_at_current_node(game);
-    let action_names: Vec<String> = actions
-        .iter()
-        .map(|act| action_label(act, pot_at_node))
-        .collect();
+    let (action_names, _) = actions_at_current_node(game);
 
     let strategy = game.strategy();
     if strategy.len() != a * h {
@@ -236,6 +232,16 @@ pub fn build_export(input: ExportInput<'_>) -> Result<StrategyExport, String> {
 
 /// `starting_pot + sum(total_bet_amount)` reported by the engine at the
 /// current node. Used to back out pot-percent labels for `Bet`/`Raise`.
+pub(crate) fn actions_at_current_node(game: &PostFlopGame) -> (Vec<String>, i32) {
+    let pot_at_node = pot_at_current_node(game);
+    let action_names = game
+        .available_actions()
+        .iter()
+        .map(|action| action_label(action, pot_at_node))
+        .collect();
+    (action_names, pot_at_node)
+}
+
 fn pot_at_current_node(game: &PostFlopGame) -> i32 {
     let starting_pot = game.tree_config().starting_pot;
     let total = game.total_bet_amount();

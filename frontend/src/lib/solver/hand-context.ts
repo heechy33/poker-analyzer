@@ -114,6 +114,7 @@ function nearestSizeAction(
   action: HandActionOut,
   solverActions: readonly string[],
   potAtActionBb?: number,
+  bigBlindChips?: number,
 ): string | null {
   const verb = action.action.toLowerCase();
 
@@ -132,9 +133,13 @@ function nearestSizeAction(
     const amount = rawAmount !== null && rawAmount !== undefined
       ? Number.parseFloat(rawAmount)
       : Number.NaN;
+    const amountBb =
+      Number.isFinite(amount) && bigBlindChips !== undefined && bigBlindChips > 0
+        ? amount / bigBlindChips
+        : amount;
 
-    if (Number.isFinite(amount) && potAtActionBb !== undefined && potAtActionBb > 0) {
-      const pctOfPot = (amount / potAtActionBb) * 100;
+    if (Number.isFinite(amountBb) && potAtActionBb !== undefined && potAtActionBb > 0) {
+      const pctOfPot = (amountBb / potAtActionBb) * 100;
       return mapBetFractionToLabel(pctOfPot, solverActions);
     }
 
@@ -158,6 +163,8 @@ export function inferHeroActionOnStreet(
     heroName?: string | null;
     /** Pot size in bb when hero is to act — used for accurate bet-fraction mapping. */
     potAtHeroActionBb?: number;
+    /** Table big blind in chip/currency units; hand-action amounts are normalized by this. */
+    bigBlindChips?: number;
   } = {},
 ): string | null {
   const heroActions = actions.filter((action) => {
@@ -169,7 +176,12 @@ export function inferHeroActionOnStreet(
 
   // Grade the last hero action on the street (the "decision" being reviewed).
   for (const action of heroActions.reverse()) {
-    const mapped = nearestSizeAction(action, solverActions, options.potAtHeroActionBb);
+    const mapped = nearestSizeAction(
+      action,
+      solverActions,
+      options.potAtHeroActionBb,
+      options.bigBlindChips,
+    );
     if (mapped) return mapped;
   }
 

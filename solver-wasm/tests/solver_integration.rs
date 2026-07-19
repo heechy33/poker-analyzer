@@ -13,11 +13,12 @@ use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-use solver_wasm::{
-    export_strategy_inner, free_game, get_exploitability_inner, init_game_inner, last_error,
-    preflight_inner, solve_step_inner, SolveProgress,
-};
 use solver_wasm::strategy_export::StrategyExport;
+use solver_wasm::{
+    export_strategy_inner, free_game, get_actions_at_inner, get_exploitability_inner,
+    init_game_inner, last_error, preflight_inner, solve_step_inner, ActionsAtResponse,
+    SolveProgress,
+};
 
 /// Serializes tests that read `last_error()` or hold a handle long enough
 /// for another test to observe stale global state. Each test acquires this
@@ -30,13 +31,16 @@ const EXPECTED_MAX_ITERATIONS: u32 = 60;
 const REGRESSION_STEP_SIZE: u32 = 10;
 const REGRESSION_MAX_ITERATIONS: u32 = 10;
 const REGRESSION_MAX_SOLVE_CHUNKS: u32 = 2;
+// Phase 0 deliberately removed 11 semantic fixtures that certified unsafe
+// fallback, multiway, raw-turn/river, or confidence behavior. Keep a floor on
+// the retained low-level boundary corpus so accidental deletions still fail CI.
+const MIN_RETAINED_REGRESSION_FIXTURES: usize = 11;
 
 /// Memory-light fixtures for init → 10-iter solve → export on GHA (~7 GB RAM).
 /// Avoid min-pot (SPR≈100), wide-range, and deep-stack fixtures — they OOM runners.
 const CI_REPRESENTATIVE_SMOKE: &[&str] = &[
-    "fallback_range.json",
     "near_degenerate_spr_1_2.json",
-    "hu_high_clean_3bet_co_vs_utg.json",
+    "hu_medium_borderline_low_spr.json",
 ];
 
 fn runs_full_smoke(full_smoke: bool, _filename: &str) -> bool {
@@ -229,6 +233,47 @@ fn unknown_handle_surfaces_error() {
     );
 }
 
+#[test]
+fn regression_decision_node_history_exports_ip_response() {
+    let _g = TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+    let mut envelope: serde_json::Value = serde_json::from_str(&load_envelope()).unwrap();
+    envelope["max_iterations"] = serde_json::json!(1);
+    envelope["target_exploitability_bb"] = serde_json::json!(999.0);
+    let envelope = serde_json::to_string(&envelope).unwrap();
+
+    let handle = init_game_inner(&envelope).expect("init should succeed");
+    let progress: SolveProgress =
+        serde_json::from_str(&solve_step_inner(handle, 1).expect("solve should succeed")).unwrap();
+    assert!(progress.finished);
+
+    let root: ActionsAtResponse =
+        serde_json::from_str(&get_actions_at_inner(handle, "").expect("root actions")).unwrap();
+    let check_index = root
+        .actions
+        .iter()
+        .position(|action| action == "check")
+        .expect("root must expose check");
+
+    let history = serde_json::to_string(&vec![check_index]).unwrap();
+    let response_node: ActionsAtResponse = serde_json::from_str(
+        &get_actions_at_inner(handle, &history).expect("response-node actions"),
+    )
+    .unwrap();
+    assert_eq!(response_node.current_player, Some(1));
+    assert!(!response_node.is_terminal);
+    assert!(!response_node.is_chance);
+    assert!(!response_node.actions.is_empty());
+
+    let response_export: StrategyExport = serde_json::from_str(
+        &export_strategy_inner(handle, &history).expect("response-node export"),
+    )
+    .unwrap();
+    assert_eq!(response_export.current_player, 1);
+    assert_eq!(response_export.actions, response_node.actions);
+
+    free_game(handle);
+}
+
 // ---------------------------------------------------------------------------
 // Regression fixtures — P2.3
 // ---------------------------------------------------------------------------
@@ -322,12 +367,12 @@ fn regression_degenerate_allin_tree_is_rejected() {
 /// Load all *.json in tests/fixtures/regression/ and run:
 /// preflight -> init_game -> 10-iter solve_step -> export_strategy without panic.
 ///
-/// Ignored in default `cargo test` because 22 wide-tree smokes can exceed GHA
+/// Ignored in default `cargo test` because wide-tree smokes can exceed GHA
 /// runner budgets. CI runs [`regression_all_fixtures_dynamically_ci`] instead;
 /// run this locally with:
 /// `cargo test --test solver_integration regression_all_fixtures_dynamically -- --ignored --nocapture --test-threads=1`
 #[test]
-#[ignore = "full 22-fixture smoke — run locally or on a nightly runner"]
+#[ignore = "full retained-fixture smoke — run locally or on a nightly runner"]
 fn regression_all_fixtures_dynamically() {
     run_regression_fixture_matrix(true);
 }
@@ -347,8 +392,7 @@ fn regression_ci_smoke_roundtrip() {
     for name in CI_REPRESENTATIVE_SMOKE {
         println!("CI smoke: {name}");
         let envelope = regression_fixture(name);
-        preflight_inner(&envelope)
-            .unwrap_or_else(|e| panic!("{name} failed preflight: {e}"));
+        preflight_inner(&envelope).unwrap_or_else(|e| panic!("{name} failed preflight: {e}"));
         let handle = regression_smoke_solve(&envelope, name);
         free_game(handle);
     }
@@ -430,11 +474,11 @@ fn run_regression_fixture_matrix(full_smoke: bool) {
     }
 
     assert!(
-        fixture_count >= 20,
-        "expected at least 20 regression fixtures, found {fixture_count}"
+        fixture_count >= MIN_RETAINED_REGRESSION_FIXTURES,
+        "expected at least {MIN_RETAINED_REGRESSION_FIXTURES} retained regression fixtures, found {fixture_count}"
     );
     assert!(
-        accepted_count >= 20,
-        "expected at least 20 accepted regression fixtures, found {accepted_count}"
+        accepted_count >= MIN_RETAINED_REGRESSION_FIXTURES,
+        "expected at least {MIN_RETAINED_REGRESSION_FIXTURES} accepted regression fixtures, found {accepted_count}"
     );
 }

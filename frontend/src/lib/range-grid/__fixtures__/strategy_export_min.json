@@ -1,0 +1,48 @@
+{
+  "solver_version": "postflop-solver@fixture",
+  "iterations": 50,
+  "exploitability_bb": 0.85,
+  "actions": ["check", "bet_33", "bet_75", "allin"],
+  "combo_strategy": {
+    "AhKh": { "check": 0.15, "bet_33": 0.55, "bet_75": 0.2, "allin": 0.1 },
+    "AsKs": { "check": 0.12, "bet_33": 0.58, "bet_75": 0.2, "allin": 0.1 },
+    "AdKd": { "check": 0.18, "bet_33": 0.52, "bet_75": 0.2, "allin": 0.1 },
+    "AcKc": { "check": 0.2, "bet_33": 0.5, "bet_75": 0.2, "allin": 0.1 },
+    "AhKd": { "check": 0.45, "bet_33": 0.35, "bet_75": 0.15, "allin": 0.05 },
+    "AsKc": { "check": 0.5, "bet_33": 0.3, "bet_75": 0.15, "allin": 0.05 },
+    "AhQh": { "check": 0.25, "bet_33": 0.45, "bet_75": 0.2, "allin": 0.1 },
+    "AsQs": { "check": 0.22, "bet_33": 0.48, "bet_75": 0.2, "allin": 0.1 },
+    "AhJh": { "check": 0.35, "bet_33": 0.4, "bet_75": 0.2, "allin": 0.05 },
+    "AcJc": { "check": 0.4, "bet_33": 0.35, "bet_75": 0.2, "allin": 0.05 },
+    "KhQh": { "check": 0.3, "bet_33": 0.4, "bet_75": 0.25, "allin": 0.05 },
+    "KsQs": { "check": 0.28, "bet_33": 0.42, "bet_75": 0.25, "allin": 0.05 },
+    "AhAd": { "check": 0.05, "bet_33": 0.25, "bet_75": 0.4, "allin": 0.3 },
+    "AhAs": { "check": 0.05, "bet_33": 0.25, "bet_75": 0.4, "allin": 0.3 },
+    "AdAc": { "check": 0.05, "bet_33": 0.2, "bet_75": 0.45, "allin": 0.3 },
+    "AsAc": { "check": 0.08, "bet_33": 0.22, "bet_75": 0.4, "allin": 0.3 },
+    "KhKd": { "check": 0.1, "bet_33": 0.3, "bet_75": 0.4, "allin": 0.2 },
+    "KhKs": { "check": 0.1, "bet_33": 0.3, "bet_75": 0.4, "allin": 0.2 },
+    "KdKc": { "check": 0.12, "bet_33": 0.28, "bet_75": 0.4, "allin": 0.2 },
+    "KsKc": { "check": 0.1, "bet_33": 0.3, "bet_75": 0.4, "allin": 0.2 },
+    "7h2d": { "check": 0.85, "bet_33": 0.1, "bet_75": 0.05, "allin": 0 },
+    "7s2c": { "check": 0.9, "bet_33": 0.08, "bet_75": 0.02, "allin": 0 },
+    "2h2d": { "check": 0.7, "bet_33": 0.2, "bet_75": 0.1, "allin": 0 },
+    "2h2s": { "check": 0.65, "bet_33": 0.25, "bet_75": 0.1, "allin": 0 },
+    "2d2c": { "check": 0.68, "bet_33": 0.22, "bet_75": 0.1, "allin": 0 },
+    "2s2c": { "check": 0.72, "bet_33": 0.18, "bet_75": 0.1, "allin": 0 }
+  },
+  "combo_ev": {
+    "AhKh": { "check": 1.2, "bet_33": 1.8, "bet_75": 1.5, "allin": 0.9 },
+    "AsKs": { "check": 1.25, "bet_33": 1.85, "bet_75": 1.55, "allin": 0.95 },
+    "AhAd": { "check": 4.0, "bet_33": 5.2, "bet_75": 6.1, "allin": 5.8 },
+    "KhKd": { "check": 3.2, "bet_33": 4.1, "bet_75": 4.8, "allin": 4.5 },
+    "7h2d": { "check": -0.4, "bet_33": -0.8, "bet_75": -1.2, "allin": -2.0 },
+    "2h2d": { "check": 0.3, "bet_33": 0.1, "bet_75": -0.2, "allin": -0.5 }
+  },
+  "aggregate_frequencies": {
+    "check": 0.42,
+    "bet_33": 0.33,
+    "bet_75": 0.18,
+    "allin": 0.07
+  }
+}

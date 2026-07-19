@@ -25,13 +25,7 @@ import type {
   PositionStatsRow,
   PresignResponse,
   PresignUploadRequest,
-  ScenarioResponse,
-  SolverRunCreate,
-  SolverRunResponse,
-  SolverTelemetryCreate,
-  SolverTelemetryResponse,
   StatsSummaryResponse,
-  Street,
   Timeframe,
   UploadResponse,
 } from "@/types/api";
@@ -192,33 +186,6 @@ export function fetchUpload(uploadId: string): Promise<UploadResponse> {
 
 export function fetchHandAnalyses(handId: string): Promise<AnalysisListItem[]> {
   return apiFetch<AnalysisListItem[]>(`/hands/${handId}/analyses`);
-}
-
-export function fetchScenario(handId: string, street: Street): Promise<ScenarioResponse> {
-  const params = new URLSearchParams({ street });
-  return apiFetch<ScenarioResponse>(`/hands/${handId}/scenario?${params.toString()}`);
-}
-
-export function postSolverRun(body: SolverRunCreate): Promise<SolverRunResponse> {
-  return apiFetch<SolverRunResponse>("/solver-runs", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-}
-
-/**
- * Fire-and-forget telemetry beacon. Failures are silently swallowed so
- * telemetry never blocks the UI or breaks the solver workflow.
- */
-export function postSolverTelemetry(body: SolverTelemetryCreate): void {
-  void apiFetch<SolverTelemetryResponse>("/solver-runs/telemetry", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  }).catch(() => {
-    // Swallow — telemetry must never surface errors to the user.
-  });
 }
 
 /**

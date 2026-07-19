@@ -55,14 +55,16 @@ const TIMEOUTS: Record<SolveMode, { totalMs: number; heartbeatMs: number }> = {
 
 export class SolverClient {
   private worker: WorkerLike;
+  private readonly workerFactory: () => WorkerLike;
   private nextId = 1;
   private pending = new Map<number, PendingRequest<unknown>>();
   private dead = false;
   private heartbeatTimer: ReturnType<typeof setTimeout> | null = null;
   private heartbeatMs = 15_000;
 
-  constructor(worker?: WorkerLike) {
-    this.worker = worker ?? this.createWorker();
+  constructor(worker?: WorkerLike, workerFactory?: () => WorkerLike) {
+    this.workerFactory = workerFactory ?? (() => this.createWorker());
+    this.worker = worker ?? this.workerFactory();
     this.worker.onmessage = (event) => this.handleMessage(event.data);
 
     this.worker.onerror = (event: ErrorEvent) => {
@@ -103,10 +105,9 @@ export class SolverClient {
    * Solve with mode-appropriate timeouts and heartbeat monitoring.
    * Calls ping() first to verify the worker is alive.
    *
-   * P2.6 auto-downgrade: if a "full" solve times out, the client spawns a
-   * fresh Worker and retries in "quick" mode.  The returned result carries
-   * `downgradedToQuick: true` so the UI can surface:
-   *   "Full solve timed out — showing quick approximation"
+   * Legacy preview behavior: if a "full" solve times out, the client spawns a
+   * fresh Worker and retries in "quick" mode. Neither result is gradeable until
+   * a rebuilt caller enforces the verified solve contract.
    */
   async solve(
     request: SolveRequest,
@@ -133,7 +134,7 @@ export class SolverClient {
         totalMs,
       );
     } catch (err: unknown) {
-      // P2.6: Auto-downgrade full→quick on timeout.
+      // Legacy preview-only auto-downgrade from full to quick on timeout.
       // Only downgrade once (don't retry quick timeouts).
       const typedErr = err as Error & { error_class?: string };
       if (mode === "full" && typedErr?.error_class === "timeout") {
@@ -161,7 +162,7 @@ export class SolverClient {
         } catch (quickErr: unknown) {
           const quickTyped = quickErr as Error & { error_class?: string };
           const msg = quickTyped?.error_class === "timeout"
-            ? "Full solve timed out (90s) — quick approximation also timed out"
+            ? `Full solve timed out (${TIMEOUTS.full.totalMs / 1000}s) — quick approximation also timed out`
             : `Full solve timed out — quick approximation failed: ${quickTyped?.message ?? quickErr}`;
           throw Object.assign(new Error(msg), { error_class: "downgrade_failed" });
         }
@@ -175,7 +176,7 @@ export class SolverClient {
    * Clears dead flag and sets up fresh event handlers.
    */
   private respawnWorker(): void {
-    this.worker = this.createWorker();
+    this.worker = this.workerFactory();
     this.dead = false;
     this.worker.onmessage = (event) => this.handleMessage(event.data);
     this.worker.onerror = (event: ErrorEvent) => {

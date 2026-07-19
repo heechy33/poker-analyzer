@@ -1,13 +1,14 @@
--- Migration 006: MCP curated tools — find_leaks support
+-- Migration 006: historical no-op retained for migration continuity
 --
 -- The GIN index required by find_leaks (GET /stats/leaks) was already
 -- created in migration 005:
 --
 --   CREATE INDEX idx_llm_analyses_user_tags ON llm_analyses USING GIN (leak_tags);
 --
--- This migration is intentionally a no-op DDL file; its purpose is to
--- document that T09 (MCP server) depends on the 005 index and to mark the
--- migration sequence as contiguous.
+-- This migration remains an intentional no-op so databases that already
+-- recorded migration 006 stay aligned with clean installations. The MCP
+-- adapter that originally motivated this file has been removed; the index
+-- remains useful to the authenticated REST statistics endpoint.
 --
 -- If you are running against a database where 005 was applied without the
 -- GIN index (e.g. an early schema), run:
@@ -16,6 +17,6 @@
 --     ON llm_analyses USING GIN (leak_tags);
 --
 -- The index accelerates the UNNEST(leak_tags) aggregation in compute_leaks()
--- (backend/app/stats/compute.py) which powers the find_leaks MCP tool.
+-- (backend/app/stats/compute.py) which powers GET /stats/leaks.
 
 SELECT 1; -- no-op, keeps migration runners happy

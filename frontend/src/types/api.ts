@@ -115,66 +115,6 @@ export interface CompleteUploadRequest {
 
 export type Street = "flop" | "turn" | "river";
 
-export interface BetTreeConfig {
-  flop: string[];
-  turn: string[];
-  river: string[];
-  allin_always?: boolean;
-}
-
-export interface ScenarioEnvelope {
-  board: string[];
-  pot_bb: number;
-  effective_stack_bb: number;
-  oop_player: string;
-  ip_player: string;
-  hero_range: Record<string, number>;
-  villain_range: Record<string, number>;
-  bet_tree: BetTreeConfig;
-  hero_position?: string;
-  oop_range?: Record<string, number>;
-  ip_range?: Record<string, number>;
-}
-
-export interface ScenarioResponse {
-  hand_id: string;
-  street: Street;
-  scenario_hash: string;
-  confidence: string;
-  confidence_reasons: string[];
-  confidence_detail: string;
-  cached: boolean;
-  scenario: ScenarioEnvelope;
-  metadata: Record<string, unknown>;
-  cached_output: Record<string, unknown> | null;
-}
-
-export interface ScenarioResult {
-  hand_id: string;
-  street: Street;
-  ev_bb: number | null;
-  strategy: Record<string, number>;
-  message: string;
-  confidence: string;
-}
-
-export interface SolverRunCreate {
-  hand_id?: string;
-  street: string;
-  scenario_hash: string;
-  solver_version?: string;
-  iterations?: number;
-  exploitability_bb?: string;
-  output_jsonb?: Record<string, unknown>;
-}
-
-export interface SolverRunResponse {
-  id: string;
-  scenario_hash: string;
-  street: string;
-  created_at: string;
-}
-
 export interface SolverSummary {
   hero_action?: string | null;
   solver_best_action?: string | null;
@@ -261,34 +201,6 @@ export interface HandsListParams {
   only_losses?: boolean;
   game_mode?: "heads_up" | "multiway";
   stakes?: string;
-}
-
-export interface SolverTelemetryCreate {
-  hand_id?: string | null;
-  street?: string | null;
-  scenario_hash?: string | null;
-  error_class?: string;
-  message?: string | null;
-  confidence?: string | null;
-  spr?: number | null;
-  pot_bb?: number | null;
-  eff_bb?: number | null;
-  multiway_alive_count?: number | null;
-  hero_lookup_hit?: boolean | null;
-  villain_lookup_hit?: boolean | null;
-  pot_error_pct?: number | null;
-  effective_bet_sizes_flop?: string[] | null;
-  effective_bet_sizes_turn?: string[] | null;
-  effective_bet_sizes_river?: string[] | null;
-  solver_mode?: string | null;
-  duration_ms?: number | null;
-  wasm_memory_used?: number | null;
-}
-
-export interface SolverTelemetryResponse {
-  id: string;
-  error_class: string;
-  created_at: string;
 }
 
 export interface HandsLosersParams {
