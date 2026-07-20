@@ -348,14 +348,14 @@ async def test_combined_hu_2max_and_stakes(
 async def test_combined_6max_and_stakes(
     client: AsyncClient, seeded_hands
 ):
-    """A 6-max filter does not include 9-max hands at the same stakes."""
+    """A 6-max filter returns both matching 6-max hands, but no 9-max hand."""
     resp = await client.get(
         "/hands",
         params={"table_format": "6max", "stakes": "0.10/0.25"},
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 1
+    assert len(data) == 2
     for hand in data:
         assert hand["table_format"] == "6max"
         assert hand["stake_sb"] == "0.10"

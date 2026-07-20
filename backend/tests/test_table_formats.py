@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+from decimal import Decimal
+
 import pytest
 from pydantic import ValidationError
 
 from app.main import app
-from app.schemas import FilterOptionsResponse, HandsListParams
+from app.schemas import FilterOptionsResponse, HandSummary, HandsListParams
+from app.stakes import format_stake
 from app.table_formats import table_format_from_size
 
 
@@ -30,6 +34,41 @@ def test_filter_options_use_table_format_contract() -> None:
     payload = FilterOptionsResponse(stakes=[]).model_dump()
     assert payload["table_formats"] == ["hu_2max", "6max", "9max"]
     assert "game_modes" not in payload
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (Decimal("0.0100"), "0.01"),
+        (Decimal("0.1000"), "0.10"),
+        (Decimal("1.0000"), "1.00"),
+    ],
+)
+def test_stake_formatter_uses_two_decimal_api_contract(
+    value: Decimal, expected: str
+) -> None:
+    assert format_stake(value) == expected
+
+
+def test_hand_summary_json_uses_canonical_stake_strings() -> None:
+    payload = HandSummary(
+        id="hand-id",
+        coinpoker_hand_id=1,
+        played_at=datetime.now(timezone.utc),
+        table_name="Test Table",
+        table_format="hu_2max",
+        stake_sb=Decimal("0.0100"),
+        stake_bb=Decimal("0.1000"),
+        hero_position="BTN",
+        hero_cards=["As", "Kd"],
+        hero_net=Decimal("0"),
+        hero_net_bb=Decimal("0"),
+        went_to_showdown=False,
+        total_pot=Decimal("0"),
+    ).model_dump(mode="json")
+
+    assert payload["stake_sb"] == "0.01"
+    assert payload["stake_bb"] == "0.10"
 
 
 def test_hands_openapi_separates_table_format_from_future_state_fields() -> None:

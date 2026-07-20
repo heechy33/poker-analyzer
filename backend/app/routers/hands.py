@@ -46,6 +46,7 @@ from app.services.analysis import (
     load_hand_bundle,
     persist_analysis,
 )
+from app.stakes import format_stake
 from app.services.ingest import sort_actions
 from app.table_formats import TABLE_SIZE_BY_FORMAT, table_format_from_size
 
@@ -217,8 +218,8 @@ async def get_filter_options(
     )
     stakes_options: list[StakeOption] = []
     for sb, bb in rows.all():
-        sb_str = str(float(sb)).rstrip("0").rstrip(".")
-        bb_str = str(float(bb)).rstrip("0").rstrip(".")
+        sb_str = format_stake(sb)
+        bb_str = format_stake(bb)
         stakes_options.append(
             StakeOption(
                 sb=sb_str,

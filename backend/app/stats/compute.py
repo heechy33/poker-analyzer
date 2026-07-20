@@ -51,6 +51,7 @@ Implementation notes
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
@@ -265,7 +266,7 @@ def _row_to_summary(row: Any) -> dict[str, Any]:
         "three_bet_pct": float(row.three_bet_pct),
         "wtsd_pct": float(row.wtsd_pct),
         "wsd_pct": float(row.wsd_pct),
-        "bb_per_100": float(row.bb_per_100),
+        "bb_per_100": Decimal(row.bb_per_100),
     }
 
 
@@ -278,7 +279,7 @@ def _row_to_position(row: Any) -> dict[str, Any]:
         "three_bet_pct": float(row.three_bet_pct),
         "wtsd_pct": float(row.wtsd_pct),
         "wsd_pct": float(row.wsd_pct),
-        "bb_per_100": float(row.bb_per_100),
+        "bb_per_100": Decimal(row.bb_per_100),
     }
 
 

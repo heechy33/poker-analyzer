@@ -123,8 +123,9 @@ async def upload_id(session: AsyncSession, user_id: UUID) -> UUID:
     )
     session.add(upload)
     await session.flush()
+    upload_id: UUID = upload.id  # type: ignore[assignment]
     await session.commit()
-    return upload.id  # type: ignore[return-value]
+    return upload_id
 
 
 @pytest_asyncio.fixture(loop_scope="module")
@@ -155,6 +156,7 @@ async def hand_id(
     )
     session.add(hand)
     await session.flush()
+    persisted_hand_id: UUID = hand.id  # type: ignore[assignment]
 
     session.add(
         HandPlayer(
@@ -217,7 +219,7 @@ async def hand_id(
         )
     )
     await session.commit()
-    return hand.id  # type: ignore[return-value]
+    return persisted_hand_id
 
 
 # ---------------------------------------------------------------------------

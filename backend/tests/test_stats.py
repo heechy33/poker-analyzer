@@ -15,15 +15,15 @@ Hand matrix used (hero_seat=1, stake_bb=1.0, all positions explicit):
     2  | BTN      |  T   |  T  |    F     |  F   |    F     |  F   |  –   |  +1.5
     3  | BTN      |  T   |  T  |    T     |  T   |    F     |  F   |  –   |  +3.0
     4  | BB       |  F   |  F  |    T     |  F   |    F     |  F   |  –   |   0.0
-    5  | BB       |  T   |  F  |    F     |  F   |    T     |  T   |  T   |  +5.0
-    6  | BB       |  T   |  F  |    F     |  F   |    T     |  T   |  F   |  -5.0
-    7  | BB       |  T   |  F  |    F     |  F   |    T     |  F   |  –   |  -1.0
+    5  | BB       |  T   |  F  |    T     |  F   |    T     |  T   |  T   |  +5.0
+    6  | BB       |  T   |  F  |    T     |  F   |    T     |  T   |  F   |  -5.0
+    7  | BB       |  T   |  F  |    T     |  F   |    T     |  F   |  –   |  -1.0
 
 Expected summary over all 7 hands:
   hands_count  = 7
   vpip_pct     = 6/7 ≈ 85.71
   pfr_pct      = 2/7 ≈ 28.57
-  three_bet_pct= 1/2 = 50.00   (1 three_bet / 2 opportunities)
+  three_bet_pct= 1/5 = 20.00   (1 three_bet / 5 opportunities)
   wtsd_pct     = 2/4 = 50.00   (saw_flop: hands 1,5,6,7)
   wsd_pct      = 1/2 = 50.00
   bb_per_100   = (2.5 / 7) * 100 ≈ 35.71
@@ -34,7 +34,7 @@ BTN breakdown (hands 1–3):
   bb_per_100 = ((-1+1.5+3)/3)*100 ≈ 116.67
 
 BB breakdown (hands 4–7):
-  hands=4, vpip=3/4=75%, pfr=0/4=0%, 3bet_opp=1, 3bet=0, 3bet_pct=0%
+  hands=4, vpip=3/4=75%, pfr=0/4=0%, 3bet_opp=4, 3bet=0, 3bet_pct=0%
   saw_flop=3 (5,6,7), wtsd=2/3≈66.67%, wsd=1/2=50%
   bb_per_100 = ((0+5-5-1)/4)*100 = -25.00
 """
@@ -273,7 +273,7 @@ async def seeded_hands(session: AsyncSession, test_user_id: UUID, upload_id: UUI
         other_seat=2,
     )
 
-    # Hand 5 — BB, call preflop, goes to showdown and WINS
+    # Hand 5 — BB, calls an SB raise, goes to showdown and WINS
     h5 = await _insert_hand(
         session, uid, up,
         hero_position="BB",
@@ -284,12 +284,12 @@ async def seeded_hands(session: AsyncSession, test_user_id: UUID, upload_id: UUI
         preflop_actions=[
             {"seat": 2, "action": "post_sb",  "amount": Decimal("0.5")},
             {"seat": 1, "action": "post_bb",  "amount": Decimal("1.0")},
-            {"seat": 2, "action": "call",     "amount": Decimal("0.5")},  # SB completes
-            {"seat": 1, "action": "check"},
+            {"seat": 2, "action": "raise",    "amount": Decimal("2.5"), "raise_to": Decimal("3.0")},
+            {"seat": 1, "action": "call",     "amount": Decimal("2.0")},
         ],
     )
 
-    # Hand 6 — BB, call preflop, goes to showdown and LOSES
+    # Hand 6 — BB, calls an SB raise, goes to showdown and LOSES
     h6 = await _insert_hand(
         session, uid, up,
         hero_position="BB",
@@ -300,12 +300,12 @@ async def seeded_hands(session: AsyncSession, test_user_id: UUID, upload_id: UUI
         preflop_actions=[
             {"seat": 2, "action": "post_sb",  "amount": Decimal("0.5")},
             {"seat": 1, "action": "post_bb",  "amount": Decimal("1.0")},
-            {"seat": 2, "action": "call",     "amount": Decimal("0.5")},
-            {"seat": 1, "action": "check"},
+            {"seat": 2, "action": "raise",    "amount": Decimal("2.5"), "raise_to": Decimal("3.0")},
+            {"seat": 1, "action": "call",     "amount": Decimal("2.0")},
         ],
     )
 
-    # Hand 7 — BB, call preflop, sees flop, folds on flop (WTSD denom, not num)
+    # Hand 7 — BB, calls an SB raise, sees flop, folds on flop (WTSD denom, not num)
     h7 = await _insert_hand(
         session, uid, up,
         hero_position="BB",
@@ -314,8 +314,8 @@ async def seeded_hands(session: AsyncSession, test_user_id: UUID, upload_id: UUI
         preflop_actions=[
             {"seat": 2, "action": "post_sb",  "amount": Decimal("0.5")},
             {"seat": 1, "action": "post_bb",  "amount": Decimal("1.0")},
-            {"seat": 2, "action": "call",     "amount": Decimal("0.5")},
-            {"seat": 1, "action": "check"},
+            {"seat": 2, "action": "raise",    "amount": Decimal("2.5"), "raise_to": Decimal("3.0")},
+            {"seat": 1, "action": "call",     "amount": Decimal("2.0")},
         ],
     )
 
@@ -377,11 +377,11 @@ async def test_pfr_pct(session, test_user_id, seeded_hands):
 
 
 async def test_three_bet_pct(session, test_user_id, seeded_hands):
-    # 3bet_opp: hands 3, 4 = 2 (h_old1 is an open-raise — no prior non-hero raise)
+    # 3bet_opp: hands 3–7 = 5 (h_old1 is an open-raise — no prior non-hero raise)
     # 3bet: hand 3 only = 1
-    # three_bet_pct = 1/2 = 50.00%
+    # three_bet_pct = 1/5 = 20.00%
     result = await compute_stats(session, test_user_id, timeframe="lifetime")
-    assert result["three_bet_pct"] == 50.00
+    assert result["three_bet_pct"] == 20.00
 
 
 async def test_wtsd_pct(session, test_user_id, seeded_hands):
@@ -451,7 +451,7 @@ async def test_position_filter_bb(session, test_user_id, seeded_hands):
     assert result["hands_count"] == 4
     assert result["vpip_pct"] == 75.00         # 3/4
     assert result["pfr_pct"] == 0.00
-    assert result["three_bet_pct"] == 0.00     # 0/1 opportunity
+    assert result["three_bet_pct"] == 0.00     # 0/4 opportunities
     assert result["wtsd_pct"] == round(2 / 3 * 100, 2)   # 2 WTSD / 3 saw flop
     assert result["wsd_pct"] == 50.00
 
