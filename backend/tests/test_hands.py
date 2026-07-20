@@ -23,7 +23,7 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.main import app
-from app.models.tables import Hand
+from app.models.tables import Hand, Upload
 
 # The module-scoped engine owns asyncpg connections, so its tests and async
 # fixtures must all run on the same module-scoped event loop.
@@ -48,6 +48,7 @@ def _utc_now() -> datetime:
 async def _create_hand(
     session: AsyncSession,
     user_id: UUID,
+    upload_id: UUID,
     *,
     table_size: int,
     stake_sb: str,
@@ -61,7 +62,7 @@ async def _create_hand(
     """Insert a minimal Hand row and return its id."""
     hand = Hand(
         user_id=user_id,
-        upload_id=uuid4(),  # dummy, satisfied by FK check in non-strict mode
+        upload_id=upload_id,
         coinpoker_hand_id=coinpoker_hand_id or abs(hash(str(uuid4()))) % (10**9),
         played_at=played_at or _utc_now(),
         table_name="Test Table",
@@ -131,6 +132,21 @@ def user_id() -> UUID:
     return uuid4()
 
 
+@pytest_asyncio.fixture(loop_scope="module")
+async def upload_id(session: AsyncSession, user_id: UUID) -> UUID:
+    """Persist the upload referenced by seeded hands."""
+    upload = Upload(
+        user_id=user_id,
+        filename="test_hands.txt",
+        storage_path=f"test/{user_id}/test_hands.txt",
+        sha256="b" * 64,
+        status="parsed",
+    )
+    session.add(upload)
+    await session.flush()
+    return upload.id  # type: ignore[return-value]
+
+
 @pytest_asyncio.fixture
 def auth_headers(user_id: UUID):
     """Mock auth headers — we override get_current_user in tests, so just use
@@ -157,13 +173,16 @@ SEED_HANDS = [
 
 
 @pytest_asyncio.fixture(loop_scope="module")
-async def seeded_hands(session: AsyncSession, user_id: UUID):
+async def seeded_hands(
+    session: AsyncSession, user_id: UUID, upload_id: UUID
+):
     """Insert the SEED_HANDS set and return the list of hand ids."""
     ids: list[UUID] = []
     for i, h in enumerate(SEED_HANDS):
         hid = await _create_hand(
             session,
             user_id,
+            upload_id,
             table_size=h["table_size"],
             stake_sb=h["stake_sb"],
             stake_bb=h["stake_bb"],
