@@ -15,7 +15,7 @@ Phase 0 completed work:
 - Removed regression fixtures that certified fallback ranges, multiway approximation, unfinished-node output, or numeric default scores.
 - Preserved the hand list, replay, private statistics, authenticated REST API, and general-coaching path.
 
-P0.6-P0.8 are complete. P0.9 now has local licensing, source-offer, artifact-audit, and database-purge implementation; it remains open until the pinned fork commit is published and migrations 012/013 are verified on the known database. P0.11 awaits its first hosted PostgreSQL Actions run. Phase 1 has not started: it will rebuild a canonical HUNL action ledger and eligibility boundary **without solving**.
+P0.6-P0.10 are complete. P0.9's published source, source-offer, artifact audit, and database purge have been verified. P0.11 awaits a green hosted PostgreSQL Actions rerun after its async fixture-loop fix. Phase 1 has not started: it will rebuild a canonical HUNL action ledger and eligibility boundary **without solving**.
 
 No solver caller may be restored until the Phase 1 exit review approves the next implementation checklist.
 

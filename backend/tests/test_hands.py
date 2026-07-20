@@ -25,8 +25,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.main import app
 from app.models.tables import Hand
 
-# The module-scoped engine owns asyncpg connections, so every test using it
-# must run on the same module-scoped event loop.
+# The module-scoped engine owns asyncpg connections, so its tests and async
+# fixtures must all run on the same module-scoped event loop.
 pytestmark = pytest.mark.asyncio(loop_scope="module")
 
 # ---------------------------------------------------------------------------
@@ -89,7 +89,7 @@ async def _create_hand(
 # ---------------------------------------------------------------------------
 
 
-@pytest_asyncio.fixture(scope="module")
+@pytest_asyncio.fixture(scope="module", loop_scope="module")
 async def engine():
     url = _require_db()
     eng = create_async_engine(url, echo=False, future=True)
@@ -99,13 +99,13 @@ async def engine():
     await eng.dispose()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="module")
 async def session(engine):
     async with AsyncSession(engine) as s:
         yield s
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="module")
 async def client(engine, session):
     """Return an httpx AsyncClient that talks directly to the FastAPI app.
 
@@ -126,8 +126,8 @@ async def client(engine, session):
     app.dependency_overrides.clear()
 
 
-@pytest_asyncio.fixture
-async def user_id() -> UUID:
+@pytest.fixture
+def user_id() -> UUID:
     return uuid4()
 
 
@@ -156,7 +156,7 @@ SEED_HANDS = [
 ]
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="module")
 async def seeded_hands(session: AsyncSession, user_id: UUID):
     """Insert the SEED_HANDS set and return the list of hand ids."""
     ids: list[UUID] = []
@@ -180,7 +180,7 @@ async def seeded_hands(session: AsyncSession, user_id: UUID):
 # Override auth dependency so we don't need real Supabase tokens
 # ---------------------------------------------------------------------------
 
-@pytest_asyncio.fixture(autouse=True)
+@pytest_asyncio.fixture(autouse=True, loop_scope="module")
 async def override_auth(client, user_id: UUID):
     """Make every request authenticate as `user_id`."""
     from app.auth import get_current_user

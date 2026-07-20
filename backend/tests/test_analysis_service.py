@@ -37,8 +37,8 @@ from app.services.analysis import (
     list_analyses_for_hand,
 )
 
-# The module-scoped engine owns asyncpg connections, so every test using it
-# must run on the same module-scoped event loop.
+# The module-scoped engine owns asyncpg connections, so its tests and async
+# fixtures must all run on the same module-scoped event loop.
 pytestmark = pytest.mark.asyncio(loop_scope="module")
 
 
@@ -91,7 +91,7 @@ class FakeLLM:
 # ---------------------------------------------------------------------------
 
 
-@pytest_asyncio.fixture(scope="module")
+@pytest_asyncio.fixture(scope="module", loop_scope="module")
 async def engine():
     url = _require_db()
     eng = create_async_engine(url, echo=False, future=True)
@@ -101,18 +101,18 @@ async def engine():
     await eng.dispose()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="module")
 async def session(engine):
     async with AsyncSession(engine) as s:
         yield s
 
 
-@pytest_asyncio.fixture
-async def user_id() -> UUID:
+@pytest.fixture
+def user_id() -> UUID:
     return uuid4()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="module")
 async def upload_id(session: AsyncSession, user_id: UUID) -> UUID:
     upload = Upload(
         user_id=user_id,
@@ -127,7 +127,7 @@ async def upload_id(session: AsyncSession, user_id: UUID) -> UUID:
     return upload.id  # type: ignore[return-value]
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="module")
 async def hand_id(
     session: AsyncSession, user_id: UUID, upload_id: UUID
 ) -> UUID:

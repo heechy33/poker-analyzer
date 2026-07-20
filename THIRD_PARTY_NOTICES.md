@@ -12,13 +12,13 @@ The retained two-player CFR engine is:
 
 - upstream: `https://github.com/b-inary/postflop-solver`;
 - maintained fork: `https://github.com/heechy33/postflop-solver`;
-- release-candidate fork commit (currently local; publish before distribution):
+- published fork commit:
   `a67bf3d9f43b9998871a5c999717c1b72bd9e2ef`;
 - upstream base before the local provenance cleanup:
   `3a64f855cf205cf7525d844c66c7f29da1bead0f`;
 - license: GNU AGPL-3.0-or-later.
 
-The local fork commit removes an ignored engine test containing ranges marked
+The fork commit removes an ignored engine test containing ranges marked
 as copied from a proprietary solver. It makes no runtime engine change.
 
 ## Source delivery obligations
@@ -68,6 +68,8 @@ Run these checks before a release candidate is approved:
 
 ```text
 python backend/scripts/audit_p0_9_distribution.py
+python backend/scripts/audit_legacy_solver_objects.py --env-file .env
+python backend/scripts/verify_p0_9_database.py --env-file .env
 cd backend && pytest tests/test_p0_9_distribution_compliance.py tests/test_legacy_solver_remediation_migration.py
 cd frontend && npm run build:wasm:release
 ```
