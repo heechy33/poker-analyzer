@@ -103,7 +103,10 @@ async def engine():
 
 @pytest_asyncio.fixture(loop_scope="module")
 async def session(engine):
-    async with AsyncSession(engine) as s:
+    # These tests intentionally retain returned ORM rows across later commits.
+    # Avoid implicit post-commit reloads, which async SQLAlchemy cannot perform
+    # through ordinary attribute access.
+    async with AsyncSession(engine, expire_on_commit=False) as s:
         yield s
 
 

@@ -548,7 +548,7 @@ async def test_user_isolation(session, test_user_id, upload_id, seeded_hands):
 
     result = await compute_stats(session, test_user_id, timeframe="lifetime")
     # test_user's net_bb must not be contaminated by other_user's 999bb hand
-    assert result["bb_per_100"] != pytest.approx(999.0, abs=1.0)
+    assert float(result["bb_per_100"]) != pytest.approx(999.0, abs=1.0)
 
     other_result = await compute_stats(session, other_user, timeframe="lifetime")
     assert other_result["hands_count"] == 1
