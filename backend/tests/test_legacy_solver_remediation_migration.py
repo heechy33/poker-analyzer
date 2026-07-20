@@ -109,8 +109,15 @@ def test_purge_is_atomic_and_limited_to_retired_solver_objects() -> None:
 def test_purge_requires_quarantine_and_keeps_a_private_audit_trail() -> None:
     normalized = re.sub(r"\s+", " ", _purge_sql().lower())
 
+    create_position = normalized.index(
+        "create table if not exists legacy_solver_archive.purge_manifest"
+    )
+    rls_position = normalized.index(
+        "alter table legacy_solver_archive.purge_manifest enable row level security"
+    )
     refuse_position = normalized.index("refusing to purge public.%")
     drop_position = normalized.index("drop table legacy_solver_archive.%i")
+    assert create_position < rls_position < refuse_position
     assert refuse_position < drop_position
     assert "apply migration 012 first" in normalized
     assert "select count(*) from legacy_solver_archive.%i" in normalized

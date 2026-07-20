@@ -58,8 +58,9 @@ The retired range seeds and migrations are absent from clean-install history.
 Migration `013_purge_legacy_solver_data.sql` deletes the quarantined
 `range_library`, `solver_runs`, and `solver_telemetry` payloads after migration
 012 has revoked access and recorded row counts. The purge keeps only private
-remediation/purge manifests; it does not delete hands, uploads, sessions,
-statistics, or coaching analyses.
+remediation/purge manifests; the new purge manifest has RLS enabled with no
+client policies. It does not delete hands, uploads, sessions, statistics, or
+coaching analyses.
 
 ## Verification
 

@@ -25,7 +25,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.main import app
 from app.models.tables import Hand
 
-pytestmark = pytest.mark.asyncio
+# The module-scoped engine owns asyncpg connections, so every test using it
+# must run on the same module-scoped event loop.
+pytestmark = pytest.mark.asyncio(loop_scope="module")
 
 # ---------------------------------------------------------------------------
 # Helpers

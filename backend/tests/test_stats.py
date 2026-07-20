@@ -59,7 +59,9 @@ from app.stats.compute import compute_by_position, compute_stats
 # Pytest marks
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.asyncio
+# The module-scoped engine owns asyncpg connections, so every test using it
+# must run on the same module-scoped event loop.
+pytestmark = pytest.mark.asyncio(loop_scope="module")
 
 
 def _require_db() -> str:

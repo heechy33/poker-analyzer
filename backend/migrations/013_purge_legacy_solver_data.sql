@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS legacy_solver_archive.purge_manifest (
     migration_version text NOT NULL
 );
 
+-- The archive schema is not exposed and all client grants are revoked, but
+-- keep RLS enabled as an independent Supabase safety boundary. No policies are
+-- created, so anon/authenticated roles cannot read or mutate manifest rows.
+ALTER TABLE legacy_solver_archive.purge_manifest ENABLE ROW LEVEL SECURITY;
+
 REVOKE ALL PRIVILEGES ON TABLE
     legacy_solver_archive.purge_manifest FROM PUBLIC;
 
