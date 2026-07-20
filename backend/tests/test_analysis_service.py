@@ -5,10 +5,9 @@ These cover the acceptance criteria:
 * First call invokes the (mocked) Anthropic client; second identical call
   returns the cached row without invoking it again.
 * Invalid leak tags returned by the model are stripped before persistence.
-* ``prompt_hash`` dedupes repeat requests — changing the street or the
-  ``scenario_hash`` produces a new analysis row, identical inputs do not.
-* The flow works with a hand that has no solver data attached
-  (``scenario_hash=None``).
+* ``prompt_hash`` dedupes repeat general-coaching requests: changing the
+  street produces a new analysis row, identical inputs do not.
+* Persisted responses carry the required solver-free coaching label.
 
 Requires a PostgreSQL database (the models use PG-native ARRAY / JSONB).
 Set ``TEST_DATABASE_URL`` or ``DATABASE_URL`` to run.
@@ -29,7 +28,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.llm import LEAK_TAGS, AnalysisResult, StreamChunk
+from app.llm import GENERAL_COACHING_LABEL, LEAK_TAGS, AnalysisResult, StreamChunk
 from app.llm.prompts import compute_prompt_hash
 from app.models import Hand, HandAction, HandPlayer, Upload
 from app.services.analysis import (
@@ -233,14 +232,14 @@ async def test_first_call_invokes_llm_and_persists(
         user_id=user_id,
         hand_id=hand_id,
         street="river",
-        scenario_hash="scenariohash123",
-        solver_summary={"hero_action": "bet 75%", "ev_diff_bb": -1.5},
         llm=llm,
     )
 
     assert outcome.cached is False
     assert llm.call_count == 1
-    assert outcome.analysis.analysis_text == "Hero overbluffs the river here."
+    assert outcome.analysis.analysis_text == (
+        f"{GENERAL_COACHING_LABEL}\n\nHero overbluffs the river here."
+    )
     assert outcome.analysis.input_tokens == 42
     assert outcome.analysis.output_tokens == 17
     assert outcome.analysis.model == "claude-sonnet-fake"
@@ -255,8 +254,6 @@ async def test_invalid_tags_stripped_on_persist(
         user_id=user_id,
         hand_id=hand_id,
         street="river",
-        scenario_hash="hash-strip-tags",
-        solver_summary=None,
         llm=llm,
     )
     assert outcome.analysis.leak_tags == ["overbluff_river"]
@@ -275,8 +272,6 @@ async def test_second_call_with_same_hash_hits_cache(
         user_id=user_id,
         hand_id=hand_id,
         street="river",
-        scenario_hash="cache-key-1",
-        solver_summary=None,
         llm=llm,
     )
     assert first.cached is False
@@ -287,8 +282,6 @@ async def test_second_call_with_same_hash_hits_cache(
         user_id=user_id,
         hand_id=hand_id,
         street="river",
-        scenario_hash="cache-key-1",
-        solver_summary=None,
         llm=llm,
     )
     assert second.cached is True
@@ -306,8 +299,6 @@ async def test_different_street_does_not_collide(
         user_id=user_id,
         hand_id=hand_id,
         street="flop",
-        scenario_hash="same-hash",
-        solver_summary=None,
         llm=llm,
     )
     turn = await get_or_create_analysis(
@@ -315,8 +306,6 @@ async def test_different_street_does_not_collide(
         user_id=user_id,
         hand_id=hand_id,
         street="turn",
-        scenario_hash="same-hash",
-        solver_summary=None,
         llm=llm,
     )
     assert flop.analysis.id != turn.analysis.id
@@ -324,7 +313,7 @@ async def test_different_street_does_not_collide(
     assert llm.call_count == 2
 
 
-async def test_works_without_scenario_hash(
+async def test_general_coaching_cache_key_works(
     session: AsyncSession, user_id: UUID, hand_id: UUID
 ) -> None:
     llm = FakeLLM()
@@ -333,8 +322,6 @@ async def test_works_without_scenario_hash(
         user_id=user_id,
         hand_id=hand_id,
         street="river",
-        scenario_hash=None,
-        solver_summary=None,
         llm=llm,
     )
     assert first.cached is False
@@ -344,7 +331,7 @@ async def test_works_without_scenario_hash(
         session,
         user_id,
         hand_id,
-        compute_prompt_hash(hand_id, "river", None),
+        compute_prompt_hash(hand_id, "river"),
     )
     assert cached is not None
     assert cached.id == first.analysis.id
@@ -359,8 +346,6 @@ async def test_list_analyses_returns_recent_first(
         user_id=user_id,
         hand_id=hand_id,
         street="flop",
-        scenario_hash="list-a",
-        solver_summary=None,
         llm=llm,
     )
     await get_or_create_analysis(
@@ -368,8 +353,6 @@ async def test_list_analyses_returns_recent_first(
         user_id=user_id,
         hand_id=hand_id,
         street="turn",
-        scenario_hash="list-b",
-        solver_summary=None,
         llm=llm,
     )
 
@@ -389,7 +372,5 @@ async def test_missing_hand_raises_lookup_error(
             user_id=user_id,
             hand_id=uuid4(),
             street="river",
-            scenario_hash=None,
-            solver_summary=None,
             llm=llm,
         )

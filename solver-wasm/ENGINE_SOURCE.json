@@ -1,0 +1,8 @@
+{
+  "name": "b-inary/postflop-solver",
+  "upstream_url": "https://github.com/b-inary/postflop-solver",
+  "fork_url": "https://github.com/heechy33/postflop-solver",
+  "commit": "a67bf3d9f43b9998871a5c999717c1b72bd9e2ef",
+  "license": "AGPL-3.0-or-later",
+  "local_change": "Removed an ignored proprietary-derived range fixture from the retained source tree."
+}

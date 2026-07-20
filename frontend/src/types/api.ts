@@ -23,7 +23,7 @@ export interface HandSummary {
   coinpoker_hand_id: number;
   played_at: string;
   table_name: string;
-  table_size: number;
+  table_format: TableFormat;
   stake_sb: string;
   stake_bb: string;
   hero_position: string;
@@ -115,18 +115,8 @@ export interface CompleteUploadRequest {
 
 export type Street = "flop" | "turn" | "river";
 
-export interface SolverSummary {
-  hero_action?: string | null;
-  solver_best_action?: string | null;
-  ev_diff_bb?: number | null;
-  action_frequencies?: Record<string, number>;
-  notes?: string | null;
-}
-
 export interface AnalyzeHandRequest {
   street: Street;
-  scenario_hash?: string | null;
-  solver_summary?: SolverSummary | null;
 }
 
 export interface AnalyzeHandResponse {
@@ -199,7 +189,7 @@ export interface HandsListParams {
   position?: string;
   since?: string;
   only_losses?: boolean;
-  game_mode?: "heads_up" | "multiway";
+  table_format?: TableFormat;
   stakes?: string;
 }
 
@@ -207,7 +197,7 @@ export interface HandsLosersParams {
   limit?: number;
   since?: string;
   position?: string;
-  game_mode?: "heads_up" | "multiway";
+  table_format?: TableFormat;
   stakes?: string;
 }
 
@@ -219,7 +209,7 @@ export interface StakeOption {
 
 export interface FilterOptionsResponse {
   stakes: StakeOption[];
-  game_modes: ("heads_up" | "multiway")[];
+  table_formats: TableFormat[];
 }
 
-export type GameMode = "heads_up" | "multiway";
+export type TableFormat = "hu_2max" | "6max" | "9max";

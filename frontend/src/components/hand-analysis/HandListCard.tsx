@@ -1,6 +1,7 @@
 import { CardStrip } from "@/components/hand-analysis/CardFace";
 import { NetAmount } from "@/components/NetAmount";
 import { formatDate } from "@/lib/format";
+import { formatTableFormat } from "@/lib/table-formats";
 import { cn } from "@/lib/utils";
 import type { HandSummary } from "@/types/api";
 
@@ -26,7 +27,7 @@ export function HandListCard({
     >
       <div className="flex items-start justify-between gap-3">
         <span className="rounded-md bg-slate-950/80 px-2 py-1 text-xs text-slate-300">
-          NLHE {hand.table_size}-max, {hand.stake_sb}/{hand.stake_bb}
+          NLHE {formatTableFormat(hand.table_format)}, {hand.stake_sb}/{hand.stake_bb}
         </span>
         <NetAmount chips={hand.hero_net} bb={hand.hero_net_bb} />
       </div>

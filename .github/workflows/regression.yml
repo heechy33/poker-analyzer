@@ -67,8 +67,8 @@ jobs:
     timeout-minutes: 20
     env:
       NEXT_PUBLIC_API_URL: http://127.0.0.1:8000
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
-      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: p0-acceptance-anon-key
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
     defaults:
       run:
         working-directory: frontend
@@ -93,6 +93,12 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+      - name: Install Chromium for browser acceptance
+        run: npx playwright install --with-deps chromium
+
+      - name: Run deployed-app negative acceptance matrix
+        run: npm run test:e2e
 
   rust:
     name: Rust native, WASM, and bounded solver checks

@@ -1,9 +1,9 @@
 """Prompt assembly for the per-hand Anthropic analysis call.
 
-The prompt is structured so the model has every piece of context it needs
-(stakes, positions, actions, hero cards, optional solver diff) and is told
-to emit a strict JSON envelope containing the analysis text plus a list of
-enumerated leak tags. See :mod:`app.llm.tags` for the tag whitelist.
+The Phase 0 prompt is intentionally solver-free. It supplies the uploaded
+hand facts needed for general post-session coaching and asks the model for a
+strict JSON envelope containing analysis text plus enumerated leak tags. See
+:mod:`app.llm.tags` for the tag whitelist.
 """
 
 from __future__ import annotations
@@ -11,32 +11,34 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Iterable, Sequence
 from decimal import Decimal
-from typing import Any
-
-from app.models import Hand, HandAction, HandPlayer
 from app.llm.tags import LEAK_TAGS
+from app.models import Hand, HandAction, HandPlayer
+from app.table_formats import table_format_from_size
+
+GENERAL_COACHING_LABEL = "General coaching—no verified solver result."
+COACH_PROMPT_VERSION = "general-v1"
 
 SYSTEM_PROMPT = (
-    "You are an expert No-Limit Hold'em poker coach analysing CoinPoker "
-    "cash hand histories. You ground every observation in GTO baseline "
-    "expectations and the supplied solver diff when present. Be concise, "
-    "concrete, and actionable. Always respond with a single JSON object "
-    "matching the schema described in the user message — no markdown, no "
-    "code fences, no commentary outside the JSON."
+    "You are an expert No-Limit Hold'em poker coach reviewing a player's own "
+    "CoinPoker cash hand after the session. No verified solver result is "
+    "available. Give conceptual general coaching only: do not claim that a "
+    "solver or GTO model chose an action, and do not invent frequencies, EVs, "
+    "ranges, or other numerical strategy facts. Be concise, concrete, and "
+    "actionable. Always respond with a single JSON object matching the schema "
+    "described in the user message—no markdown, code fences, or commentary "
+    "outside the JSON."
 )
 
 _STREET_ORDER: tuple[str, ...] = ("preflop", "flop", "turn", "river", "showdown")
 
 
-def compute_prompt_hash(
-    hand_id: str | object, street: str, scenario_hash: str | None
-) -> str:
-    """SHA-256 of the cache key tuple ``(hand_id, street, scenario_hash)``.
+def compute_prompt_hash(hand_id: str | object, street: str) -> str:
+    """Hash the hand, street, and coaching prompt contract version.
 
-    ``scenario_hash`` may be ``None`` or empty when the analysis is being
-    run on a hand with no solver scenario attached.
+    Including the version prevents Phase 0 from replaying an older cached
+    response that may have been grounded in an unverified solver summary.
     """
-    payload = f"{hand_id}:{street}:{scenario_hash or ''}"
+    payload = f"{COACH_PROMPT_VERSION}:{hand_id}:{street}"
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -46,10 +48,8 @@ def build_analysis_prompt(
     actions: Sequence[HandAction],
     *,
     street: str,
-    scenario_hash: str | None = None,
-    solver_summary: dict[str, Any] | None = None,
 ) -> str:
-    """Return the user message body sent to Claude."""
+    """Return the solver-free user message body sent to the coach model."""
 
     bb = _safe_decimal(hand.stake_bb) or Decimal("1")
     sb = _safe_decimal(hand.stake_sb) or Decimal("0")
@@ -61,7 +61,7 @@ def build_analysis_prompt(
     lines.append("# Hand")
     lines.append(f"- coinpoker_hand_id: {hand.coinpoker_hand_id}")
     lines.append(f"- stakes: {sb}/{bb} (big blind = {bb})")
-    lines.append(f"- table_size: {hand.table_size}-max")
+    lines.append(f"- table_format: {table_format_from_size(hand.table_size)}")
     lines.append(f"- hero_position: {hand.hero_position}")
     lines.append(f"- hero_cards: {hero_cards or '?'}")
     lines.append(
@@ -70,8 +70,6 @@ def build_analysis_prompt(
     if hero_player is not None:
         lines.append(f"- hero_starting_stack: {hero_player.starting_stack}")
     lines.append(f"- focus_street: {street}")
-    if scenario_hash:
-        lines.append(f"- scenario_hash: {scenario_hash}")
 
     lines.append("")
     lines.append("# Board")
@@ -92,14 +90,11 @@ def build_analysis_prompt(
     lines.append("# Action sequence")
     lines.extend(_format_actions(actions, bb))
 
-    if solver_summary:
-        lines.append("")
-        lines.append("# Solver context")
-        lines.extend(_format_solver_summary(solver_summary))
-    else:
-        lines.append("")
-        lines.append("# Solver context")
-        lines.append("- (no solver scenario attached)")
+    lines.append("")
+    lines.append("# Coaching mode")
+    lines.append(f"- {GENERAL_COACHING_LABEL}")
+    lines.append("- Explain concepts from the hand facts above.")
+    lines.append("- Do not say 'the solver says' or invent solver numbers.")
 
     lines.append("")
     lines.append("# Allowed leak tags")
@@ -118,8 +113,8 @@ def build_analysis_prompt(
     )
     lines.append(
         '{"analysis": "<two-to-four-sentence plain-English review of the hand, '
-        "focusing on the focus_street and citing the solver diff if "
-        'present>", "leak_tags": ["<allowed_tag>", ...]}'
+        'focusing on the focus_street and making no solver claim>", "leak_tags": '
+        '["<allowed_tag>", ...]}'
     )
 
     return "\n".join(lines)
@@ -185,31 +180,6 @@ def _format_money(value: object, bb: Decimal) -> str:
         bb_units = (dec / bb).quantize(Decimal("0.01"))
         return f"{dec} ({bb_units}bb)"
     return f"{dec}"
-
-
-def _format_solver_summary(summary: dict[str, Any]) -> list[str]:
-    out: list[str] = []
-    hero_action = summary.get("hero_action")
-    if hero_action:
-        out.append(f"- hero_action: {hero_action}")
-    solver_best = summary.get("solver_best_action")
-    if solver_best:
-        out.append(f"- solver_best_action: {solver_best}")
-    ev_diff = summary.get("ev_diff_bb")
-    if ev_diff is not None:
-        out.append(f"- ev_diff_bb: {ev_diff}")
-    freqs = summary.get("action_frequencies") or {}
-    if isinstance(freqs, dict) and freqs:
-        items = ", ".join(
-            f"{k}={float(v):.2%}" for k, v in freqs.items() if v is not None
-        )
-        out.append(f"- solver_action_frequencies: {items}")
-    notes = summary.get("notes")
-    if notes:
-        out.append(f"- notes: {notes}")
-    if not out:
-        out.append("- (solver summary was empty)")
-    return out
 
 
 def _join_cards(cards: Iterable[str] | None) -> str:

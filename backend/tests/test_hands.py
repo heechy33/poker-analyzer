@@ -1,5 +1,5 @@
 """
-Integration tests for the /hands API endpoints (game_mode + stakes filters).
+Integration tests for the /hands API endpoints (table_format + stakes filters).
 
 Requires a PostgreSQL database accessible via TEST_DATABASE_URL or DATABASE_URL.
 SQLite is NOT supported — the models use PostgreSQL-native types (ARRAY, JSONB).
@@ -141,15 +141,15 @@ def auth_headers(user_id: UUID):
 # ---------------------------------------------------------------------------
 
 SEED_HANDS = [
-    # table_size=2, heads-up hands (2-max)
+    # table_size=2 (2-max table format)
     {"table_size": 2, "stake_sb": "0.01", "stake_bb": "0.02", "hero_position": "BTN", "hero_net": "-1"},
     {"table_size": 2, "stake_sb": "0.01", "stake_bb": "0.02", "hero_position": "BTN", "hero_net": "2"},
     {"table_size": 2, "stake_sb": "0.05", "stake_bb": "0.10", "hero_position": "BB", "hero_net": "-5"},
-    # table_size=6, multiway hands (6-max)
+    # table_size=6 (6-max table format; postflop player count is independent)
     {"table_size": 6, "stake_sb": "0.10", "stake_bb": "0.25", "hero_position": "BTN", "hero_net": "-10"},
     {"table_size": 6, "stake_sb": "0.10", "stake_bb": "0.25", "hero_position": "CO", "hero_net": "3"},
     {"table_size": 6, "stake_sb": "0.50", "stake_bb": "1.00", "hero_position": "HJ", "hero_net": "-1"},
-    # table_size=9, multiway hands (9-max — >=6 so multiway)
+    # table_size=9 (9-max table format; postflop player count is independent)
     {"table_size": 9, "stake_sb": "0.10", "stake_bb": "0.25", "hero_position": "UTG", "hero_net": "-2"},
 ]
 
@@ -187,9 +187,6 @@ async def override_auth(client, user_id: UUID):
         return str(user_id)
 
     app.dependency_overrides[get_current_user] = _fake_user
-    # Reset the previously overridden get_session so both are in place
-    from app.database import get_session
-
     # We need to re-apply both overrides. The client fixture above already
     # set get_session. This fixture is autouse and will run after client,
     # so both overrides are active.
@@ -198,49 +195,60 @@ async def override_auth(client, user_id: UUID):
 
 
 # ---------------------------------------------------------------------------
-# Tests: game_mode filter
+# Tests: table_format filter
 # ---------------------------------------------------------------------------
 
 
-async def test_game_mode_heads_up_returns_only_table_size_2(
+async def test_table_format_hu_2max_returns_only_table_size_2(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands?game_mode=heads_up returns only hands with table_size=2."""
-    resp = await client.get("/hands", params={"game_mode": "heads_up"})
+    """GET /hands?table_format=hu_2max returns only 2-max hands."""
+    resp = await client.get("/hands", params={"table_format": "hu_2max"})
     assert resp.status_code == 200
     data = resp.json()
     assert len(data) == 3
     for hand in data:
-        assert hand["table_size"] == 2
+        assert hand["table_format"] == "hu_2max"
+        assert "table_size" not in hand
 
 
-async def test_game_mode_multiway_returns_only_table_size_gte_6(
+async def test_table_format_6max_returns_only_table_size_6(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands?game_mode=multiway returns only hands with table_size>=6."""
-    resp = await client.get("/hands", params={"game_mode": "multiway"})
+    """GET /hands?table_format=6max does not conflate 6-max with multiway."""
+    resp = await client.get("/hands", params={"table_format": "6max"})
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 4
+    assert len(data) == 3
     for hand in data:
-        assert hand["table_size"] >= 6
+        assert hand["table_format"] == "6max"
 
 
-async def test_game_mode_omitted_returns_all(
+async def test_table_format_9max_returns_only_table_size_9(
     client: AsyncClient, seeded_hands
 ):
-    """Without game_mode param, all 7 hands are returned."""
+    resp = await client.get("/hands", params={"table_format": "9max"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 1
+    assert data[0]["table_format"] == "9max"
+
+
+async def test_table_format_omitted_returns_all(
+    client: AsyncClient, seeded_hands
+):
+    """Without table_format, all 7 hands are returned."""
     resp = await client.get("/hands")
     assert resp.status_code == 200
     data = resp.json()
     assert len(data) == 7
 
 
-async def test_game_mode_invalid_returns_422(
+async def test_table_format_invalid_returns_422(
     client: AsyncClient, seeded_hands
 ):
-    """Invalid game_mode value should return 422."""
-    resp = await client.get("/hands", params={"game_mode": "invalid"})
+    """Legacy aggregate values are invalid table formats."""
+    resp = await client.get("/hands", params={"table_format": "multiway"})
     assert resp.status_code == 422
 
 
@@ -299,36 +307,36 @@ async def test_stakes_filter_invalid_format_returns_422(
 # ---------------------------------------------------------------------------
 
 
-async def test_combined_heads_up_and_stakes(
+async def test_combined_hu_2max_and_stakes(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands?game_mode=heads_up&stakes=0.01/0.02 returns only 2-max 0.01/0.02."""
+    """Exact table format and stakes filters compose."""
     resp = await client.get(
         "/hands",
-        params={"game_mode": "heads_up", "stakes": "0.01/0.02"},
+        params={"table_format": "hu_2max", "stakes": "0.01/0.02"},
     )
     assert resp.status_code == 200
     data = resp.json()
     assert len(data) == 2
     for hand in data:
-        assert hand["table_size"] == 2
+        assert hand["table_format"] == "hu_2max"
         assert hand["stake_sb"] == "0.01"
         assert hand["stake_bb"] == "0.02"
 
 
-async def test_combined_multiway_and_stakes(
+async def test_combined_6max_and_stakes(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands?game_mode=multiway&stakes=0.10/0.25 returns 6-max+ 0.10/0.25."""
+    """A 6-max filter does not include 9-max hands at the same stakes."""
     resp = await client.get(
         "/hands",
-        params={"game_mode": "multiway", "stakes": "0.10/0.25"},
+        params={"table_format": "6max", "stakes": "0.10/0.25"},
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 2  # table_size 6 + table_size 9, both 0.10/0.25
+    assert len(data) == 1
     for hand in data:
-        assert hand["table_size"] >= 6
+        assert hand["table_format"] == "6max"
         assert hand["stake_sb"] == "0.10"
         assert hand["stake_bb"] == "0.25"
 
@@ -336,10 +344,10 @@ async def test_combined_multiway_and_stakes(
 async def test_combined_no_results_when_mismatch(
     client: AsyncClient, seeded_hands
 ):
-    """heads_up + 0.50/1.00 stakes has no match (only multiway has 0.50/1.00)."""
+    """An exact 2-max format plus unmatched stakes returns no hands."""
     resp = await client.get(
         "/hands",
-        params={"game_mode": "heads_up", "stakes": "0.50/1.00"},
+        params={"table_format": "hu_2max", "stakes": "0.50/1.00"},
     )
     assert resp.status_code == 200
     data = resp.json()
@@ -351,17 +359,17 @@ async def test_combined_no_results_when_mismatch(
 # ---------------------------------------------------------------------------
 
 
-async def test_losers_heads_up_only(
+async def test_losers_hu_2max_only(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands/losers?game_mode=heads_up returns only losing HU hands."""
-    resp = await client.get("/hands/losers", params={"game_mode": "heads_up"})
+    """GET /hands/losers?table_format=hu_2max returns losing 2-max hands."""
+    resp = await client.get("/hands/losers", params={"table_format": "hu_2max"})
     assert resp.status_code == 200
     data = resp.json()
     # HU seed hands: -1, +2 (win), -5 => losers: -1 and -5 (since -5 < -1, should be first)
     assert len(data) == 2
     for hand in data:
-        assert hand["table_size"] == 2
+        assert hand["table_format"] == "hu_2max"
         assert float(hand["hero_net"]) < 0
 
 
@@ -380,19 +388,19 @@ async def test_losers_with_stakes_filter(
         assert float(hand["hero_net"]) < 0
 
 
-async def test_losers_combined_game_mode_and_stakes(
+async def test_losers_combined_table_format_and_stakes(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands/losers?game_mode=multiway&stakes=0.10/0.25"""
+    """GET /hands/losers combines exact 6-max and stakes filters."""
     resp = await client.get(
         "/hands/losers",
-        params={"game_mode": "multiway", "stakes": "0.10/0.25"},
+        params={"table_format": "6max", "stakes": "0.10/0.25"},
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 2  # -10 (6-max) and -2 (9-max)
+    assert len(data) == 1
     for hand in data:
-        assert hand["table_size"] >= 6
+        assert hand["table_format"] == "6max"
         assert hand["stake_sb"] == "0.10"
         assert hand["stake_bb"] == "0.25"
         assert float(hand["hero_net"]) < 0
@@ -406,13 +414,13 @@ async def test_losers_combined_game_mode_and_stakes(
 async def test_filter_options_returns_distinct_stakes(
     client: AsyncClient, seeded_hands
 ):
-    """GET /hands/filter-options returns distinct stake pairs + game_modes."""
+    """GET /hands/filter-options returns stakes and exact table formats."""
     resp = await client.get("/hands/filter-options")
     assert resp.status_code == 200
     data = resp.json()
 
     assert "stakes" in data
-    assert "game_modes" in data
+    assert "table_formats" in data
 
     stakes = data["stakes"]
     assert isinstance(stakes, list)
@@ -427,21 +435,20 @@ async def test_filter_options_returns_distinct_stakes(
     bb_values = [float(s["bb"]) for s in stakes]
     assert bb_values == sorted(bb_values)
 
-    game_modes = data["game_modes"]
-    assert "heads_up" in game_modes
-    assert "multiway" in game_modes
+    assert data["table_formats"] == ["hu_2max", "6max", "9max"]
+    assert "game_modes" not in data
 
 
 async def test_filter_options_empty_for_new_user(
     client: AsyncClient, session: AsyncSession
 ):
-    """A user with no hands gets empty stakes list but game_modes still populated."""
+    """A user with no hands still gets the supported table formats."""
     # This test doesn't use seeded_hands — a different user_id
     resp = await client.get("/hands/filter-options")
     assert resp.status_code == 200
     data = resp.json()
     assert data["stakes"] == []
-    assert data["game_modes"] == ["heads_up", "multiway"]
+    assert data["table_formats"] == ["hu_2max", "6max", "9max"]
 
 
 # ---------------------------------------------------------------------------
@@ -452,31 +459,32 @@ async def test_filter_options_empty_for_new_user(
 async def test_existing_position_filter_still_works(
     client: AsyncClient, seeded_hands
 ):
-    """Position filter still works with the new game_mode filter."""
+    """Position filtering composes with the table-format filter."""
     resp = await client.get(
         "/hands",
-        params={"game_mode": "heads_up", "position": "BTN"},
+        params={"table_format": "hu_2max", "position": "BTN"},
     )
     assert resp.status_code == 200
     data = resp.json()
     # HU BTN hands: only the two 0.01/0.02 BTN hands
     assert len(data) == 2
     for hand in data:
-        assert hand["table_size"] == 2
+        assert hand["table_format"] == "hu_2max"
         assert hand["hero_position"] == "BTN"
 
 
-async def test_only_losses_with_game_mode(
+async def test_only_losses_with_table_format(
     client: AsyncClient, seeded_hands
 ):
-    """only_losses=true combined with game_mode."""
+    """only_losses=true combines with an exact table format."""
     resp = await client.get(
         "/hands",
-        params={"game_mode": "heads_up", "only_losses": True},
+        params={"table_format": "hu_2max", "only_losses": True},
     )
     assert resp.status_code == 200
     data = resp.json()
     assert len(data) == 2  # -1 and -5
     for hand in data:
         assert float(hand["hero_net"]) < 0
-        assert hand["table_size"] == 2
+        assert hand["table_format"] == "hu_2max"
+        assert "table_size" not in hand

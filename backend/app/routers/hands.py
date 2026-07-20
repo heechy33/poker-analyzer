@@ -38,7 +38,7 @@ from app.schemas import (
     HandPlayerOut,
     HandSummary,
     StakeOption,
-    Street,
+    TableFormat,
 )
 from app.services.analysis import (
     find_cached_analysis,
@@ -47,6 +47,7 @@ from app.services.analysis import (
     persist_analysis,
 )
 from app.services.ingest import sort_actions
+from app.table_formats import TABLE_SIZE_BY_FORMAT, table_format_from_size
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ def _to_summary(hand: Hand) -> HandSummary:
         coinpoker_hand_id=hand.coinpoker_hand_id,
         played_at=hand.played_at,
         table_name=hand.table_name,
-        table_size=hand.table_size,
+        table_format=table_format_from_size(hand.table_size),
         stake_sb=hand.stake_sb,
         stake_bb=hand.stake_bb,
         hero_position=hand.hero_position,
@@ -92,7 +93,7 @@ async def list_hands(
     position: str | None = Query(default=None),
     since: str | None = Query(default=None),
     only_losses: bool = Query(default=False),
-    game_mode: str | None = Query(default=None, pattern=r"^(heads_up|multiway)$"),
+    table_format: TableFormat | None = Query(default=None),
     stakes: str | None = Query(default=None, pattern=r"^\d+(\.\d+)?/\d+(\.\d+)?$"),
     user_id: str = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
@@ -108,8 +109,10 @@ async def list_hands(
     SB, BB.  Returns at most 200 records per call; use ``offset`` for
     pagination.
 
-    **New filters:**
-    ``game_mode`` — ``heads_up`` (table_size = 2) or ``multiway`` (table_size >= 6).
+    **Filters:**
+    ``table_format`` — the exact table configuration: ``hu_2max``, ``6max``,
+    or ``9max``. It does not describe how many players reached the flop or
+    whether a hand is solver-eligible.
     ``stakes`` — exact ``"sb/bb"`` e.g. ``0.10/0.25``.
     """
     if order not in {f"{field}.{direction}" for field in ORDER_COLUMNS for direction in ("asc", "desc")}:
@@ -130,10 +133,8 @@ async def list_hands(
         stmt = stmt.where(Hand.played_at >= since_dt)
     if only_losses:
         stmt = stmt.where(Hand.hero_net < 0)
-    if game_mode == "heads_up":
-        stmt = stmt.where(Hand.table_size == 2)
-    elif game_mode == "multiway":
-        stmt = stmt.where(Hand.table_size >= 6)
+    if table_format is not None:
+        stmt = stmt.where(Hand.table_size == TABLE_SIZE_BY_FORMAT[table_format])
     if stakes:
         sb_str, bb_str = stakes.split("/", 1)
         stake_sb = Decimal(sb_str)
@@ -150,7 +151,7 @@ async def find_biggest_losers(
     limit: int = Query(default=10, ge=1, le=50),
     since: str | None = Query(default=None),
     position: str | None = Query(default=None),
-    game_mode: str | None = Query(default=None, pattern=r"^(heads_up|multiway)$"),
+    table_format: TableFormat | None = Query(default=None),
     stakes: str | None = Query(default=None, pattern=r"^\d+(\.\d+)?/\d+(\.\d+)?$"),
     user_id: str = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
@@ -165,7 +166,8 @@ async def find_biggest_losers(
     a specific seat.  Prefer this tool over ``list_recent_hands`` whenever
     the goal is "show me the hands where I lost the most chips".
 
-    Accepts ``game_mode`` and ``stakes`` for consistency with ``list_recent_hands``.
+    Accepts ``table_format`` and ``stakes`` for consistency with
+    ``list_recent_hands``.
     """
     stmt = select(Hand).where(Hand.user_id == UUID(user_id)).where(Hand.hero_net < 0)
 
@@ -181,10 +183,8 @@ async def find_biggest_losers(
             ) from exc
         since_dt = datetime.combine(since_date, time.min, tzinfo=timezone.utc)
         stmt = stmt.where(Hand.played_at >= since_dt)
-    if game_mode == "heads_up":
-        stmt = stmt.where(Hand.table_size == 2)
-    elif game_mode == "multiway":
-        stmt = stmt.where(Hand.table_size >= 6)
+    if table_format is not None:
+        stmt = stmt.where(Hand.table_size == TABLE_SIZE_BY_FORMAT[table_format])
     if stakes:
         sb_str, bb_str = stakes.split("/", 1)
         stake_sb = Decimal(sb_str)
@@ -201,9 +201,9 @@ async def get_filter_options(
     user_id: str = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> FilterOptionsResponse:
-    """Return distinct (stake_sb, stake_bb) pairs and available game modes.
+    """Return distinct (stake_sb, stake_bb) pairs and supported table formats.
 
-    Used by the hands page to populate stake / game-mode filter dropdowns
+    Used by the hands page to populate stake / table-format filters
     dynamically based on the authenticated user's uploaded hands.
     """
     rows = await session.exec(
@@ -228,7 +228,7 @@ async def get_filter_options(
         )
     return FilterOptionsResponse(
         stakes=stakes_options,
-        game_modes=["heads_up", "multiway"],
+        table_formats=["hu_2max", "6max", "9max"],
     )
 
 
@@ -355,9 +355,9 @@ async def analyze_hand(
     :class:`AnalyzeHandResponse` JSON object containing the full
     plain-English analysis and an array of ``leak_tags`` (e.g.
     ``[\"overfold_turn\", \"thin_value_river\"]``).  Cache hits are
-    returned instantly without re-calling Claude.  Optionally supply
-    ``solver_summary`` in the request body if you have solver output to
-    ground the analysis in GTO equilibrium (omit it for a pure-LLM review).
+    returned instantly without re-calling Claude. During Phase 0 this is
+    general coaching only: solver summaries and scenario hashes are rejected
+    at the request boundary and no solver claims are supplied to the model.
     The ``street`` field (``\"flop\"`` | ``\"turn\"`` | ``\"river\"``) selects
     which decision point Claude focuses on.  Use ``get_hand`` first to
     retrieve the action log and determine the interesting street.
@@ -370,7 +370,7 @@ async def analyze_hand(
     user_uuid = UUID(user_id)
     hand, players, actions = await _load_hand_for_analysis(session, hand_id, user_id)
 
-    prompt_hash = compute_prompt_hash(hand_id, body.street, body.scenario_hash)
+    prompt_hash = compute_prompt_hash(hand_id, body.street)
     cached = await find_cached_analysis(session, user_uuid, hand_id, prompt_hash)
 
     if cached is not None:
@@ -382,18 +382,11 @@ async def analyze_hand(
             media_type="text/event-stream",
         )
 
-    solver_summary = (
-        body.solver_summary.model_dump(exclude_none=True)
-        if body.solver_summary is not None
-        else None
-    )
     user_prompt = build_analysis_prompt(
         hand,
         players,
         actions,
         street=body.street,
-        scenario_hash=body.scenario_hash,
-        solver_summary=solver_summary,
     )
 
     if not stream:

@@ -8,6 +8,7 @@ from app.llm.anthropic import (
     StreamChunk,
 )
 from app.llm.prompts import (
+    GENERAL_COACHING_LABEL,
     SYSTEM_PROMPT,
     build_analysis_prompt,
     compute_prompt_hash,
@@ -34,6 +35,7 @@ __all__ = [
     "LLMClient",
     "AnalysisResult",
     "StreamChunk",
+    "GENERAL_COACHING_LABEL",
     "SYSTEM_PROMPT",
     "build_analysis_prompt",
     "compute_prompt_hash",

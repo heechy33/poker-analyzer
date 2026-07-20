@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any
 from uuid import UUID
 
 from sqlalchemy import desc
@@ -18,6 +17,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.llm import (
+    GENERAL_COACHING_LABEL,
     SYSTEM_PROMPT,
     LLMClient,
     build_analysis_prompt,
@@ -81,6 +81,7 @@ async def list_analyses_for_hand(
         select(LlmAnalysis)
         .where(LlmAnalysis.user_id == user_id)
         .where(LlmAnalysis.hand_id == hand_id)
+        .where(LlmAnalysis.analysis_text.startswith(GENERAL_COACHING_LABEL))
         .order_by(desc(LlmAnalysis.created_at))
     )
     result = await session.exec(stmt)
@@ -99,6 +100,9 @@ async def persist_analysis(
     input_tokens: int,
     output_tokens: int,
 ) -> LlmAnalysis:
+    if not analysis_text.startswith(GENERAL_COACHING_LABEL):
+        analysis_text = f"{GENERAL_COACHING_LABEL}\n\n{analysis_text}"
+
     row = LlmAnalysis(
         user_id=user_id,
         hand_id=hand_id,
@@ -121,8 +125,6 @@ async def get_or_create_analysis(
     user_id: UUID,
     hand_id: UUID,
     street: str,
-    scenario_hash: str | None,
-    solver_summary: dict[str, Any] | None,
     llm: LLMClient,
 ) -> AnalysisOutcome:
     """Cache-aware non-stream analysis.
@@ -130,7 +132,7 @@ async def get_or_create_analysis(
     Returns ``(LlmAnalysis, cached)``. Raises :class:`LookupError` if the
     hand doesn't exist or isn't owned by ``user_id``.
     """
-    prompt_hash = compute_prompt_hash(hand_id, street, scenario_hash)
+    prompt_hash = compute_prompt_hash(hand_id, street)
     cached = await find_cached_analysis(session, user_id, hand_id, prompt_hash)
     if cached is not None:
         return AnalysisOutcome(analysis=cached, cached=True)
@@ -145,8 +147,6 @@ async def get_or_create_analysis(
         players,
         actions,
         street=street,
-        scenario_hash=scenario_hash,
-        solver_summary=solver_summary,
     )
     result = await llm.analyze(system=SYSTEM_PROMPT, user_prompt=user_prompt)
     analysis_text, leak_tags = parse_llm_response(result.text)

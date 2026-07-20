@@ -135,7 +135,7 @@ export function fetchHands(params: HandsListParams = {}): Promise<HandSummary[]>
       position: params.position,
       since: params.since,
       only_losses: params.only_losses,
-      game_mode: params.game_mode,
+      table_format: params.table_format,
       stakes: params.stakes,
     })}`,
   );
@@ -147,7 +147,7 @@ export function fetchBiggestLosers(params: HandsLosersParams = {}): Promise<Hand
       limit: params.limit,
       since: params.since,
       position: params.position,
-      game_mode: params.game_mode,
+      table_format: params.table_format,
       stakes: params.stakes,
     })}`,
   );

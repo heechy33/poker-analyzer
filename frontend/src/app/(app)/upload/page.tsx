@@ -7,8 +7,10 @@ import {
   type UploadFileStatus,
   type UploadQueueItem,
 } from "@/components/UploadDropzone";
+import { OfflineStudyNotice } from "@/components/OfflineStudyNotice";
 import { completeUpload, fetchUpload, presignUpload } from "@/lib/api";
 import { sha256Hex } from "@/lib/format";
+import { canStartStudyAction } from "@/lib/offline-study";
 
 const POLL_MS = 2000;
 const MAX_POLL_MS = 5 * 60 * 1000;
@@ -18,6 +20,7 @@ export default function UploadPage() {
   const [items, setItems] = useState<UploadQueueItem[]>([]);
   const [devRawText, setDevRawText] = useState(IS_DEV);
   const [busy, setBusy] = useState(false);
+  const [clientClosed, setClientClosed] = useState(false);
 
   const updateItem = useCallback((id: string, patch: Partial<UploadQueueItem>) => {
     setItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
@@ -119,6 +122,8 @@ export default function UploadPage() {
 
   const onFilesSelected = useCallback(
     (files: File[]) => {
+      if (!canStartStudyAction(clientClosed)) return;
+
       const newItems: UploadQueueItem[] = files.map((file) => ({
         id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`,
         file,
@@ -133,7 +138,7 @@ export default function UploadPage() {
         setBusy(false);
       })();
     },
-    [processFile],
+    [clientClosed, processFile],
   );
 
   return (
@@ -142,6 +147,13 @@ export default function UploadPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Upload</h1>
         <p className="text-muted-foreground">Import CoinPoker hand history files</p>
       </div>
+
+      <OfflineStudyNotice
+        confirmed={clientClosed}
+        disabled={busy}
+        onConfirmedChange={setClientClosed}
+        requireConfirmation
+      />
 
       {IS_DEV && (
         <label className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -155,7 +167,11 @@ export default function UploadPage() {
         </label>
       )}
 
-      <UploadDropzone items={items} onFilesSelected={onFilesSelected} disabled={busy} />
+      <UploadDropzone
+        items={items}
+        onFilesSelected={onFilesSelected}
+        disabled={busy || !canStartStudyAction(clientClosed)}
+      />
     </div>
   );
 }

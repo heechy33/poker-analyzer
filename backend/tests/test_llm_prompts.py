@@ -11,8 +11,10 @@ from pathlib import Path
 from uuid import UUID
 
 import pytest
+from pydantic import ValidationError
 
 from app.llm.prompts import (
+    GENERAL_COACHING_LABEL,
     SYSTEM_PROMPT,
     build_analysis_prompt,
     compute_prompt_hash,
@@ -23,6 +25,7 @@ from app.services.ingest import (
     hand_from_parsed,
     players_from_parsed,
 )
+from app.schemas import AnalyzeHandRequest
 
 FIXTURE_DIR = Path(__file__).resolve().parent / "fixtures" / "coinpoker"
 USER_ID = UUID("00000000-0000-0000-0000-000000000001")
@@ -47,49 +50,33 @@ def _load_bundle(name: str):
 
 
 def test_prompt_hash_is_deterministic() -> None:
-    a = compute_prompt_hash(HAND_ID, "river", "abc123")
-    b = compute_prompt_hash(HAND_ID, "river", "abc123")
+    a = compute_prompt_hash(HAND_ID, "river")
+    b = compute_prompt_hash(HAND_ID, "river")
     assert a == b
 
 
 def test_prompt_hash_changes_with_street() -> None:
-    a = compute_prompt_hash(HAND_ID, "river", "abc")
-    b = compute_prompt_hash(HAND_ID, "turn", "abc")
-    assert a != b
-
-
-def test_prompt_hash_changes_with_scenario_hash() -> None:
-    a = compute_prompt_hash(HAND_ID, "river", "abc")
-    b = compute_prompt_hash(HAND_ID, "river", "xyz")
+    a = compute_prompt_hash(HAND_ID, "river")
+    b = compute_prompt_hash(HAND_ID, "turn")
     assert a != b
 
 
 def test_prompt_hash_changes_with_hand_id() -> None:
     other_hand = UUID("11111111-1111-1111-1111-111111111111")
-    a = compute_prompt_hash(HAND_ID, "river", "abc")
-    b = compute_prompt_hash(other_hand, "river", "abc")
+    a = compute_prompt_hash(HAND_ID, "river")
+    b = compute_prompt_hash(other_hand, "river")
     assert a != b
-
-
-def test_prompt_hash_handles_empty_scenario_hash() -> None:
-    """No scenario attached must still produce a stable, distinct hash."""
-    a = compute_prompt_hash(HAND_ID, "river", None)
-    b = compute_prompt_hash(HAND_ID, "river", "")
-    # Both empty-ish inputs collapse to the same key.
-    assert a == b
-    # Different from a populated scenario hash.
-    assert a != compute_prompt_hash(HAND_ID, "river", "abc")
 
 
 def test_prompt_hash_string_and_uuid_equal() -> None:
     """``hand_id`` may be passed either as UUID or its string form."""
-    assert compute_prompt_hash(HAND_ID, "river", "abc") == compute_prompt_hash(
-        str(HAND_ID), "river", "abc"
+    assert compute_prompt_hash(HAND_ID, "river") == compute_prompt_hash(
+        str(HAND_ID), "river"
     )
 
 
 def test_prompt_hash_is_hex_sha256() -> None:
-    digest = compute_prompt_hash(HAND_ID, "flop", None)
+    digest = compute_prompt_hash(HAND_ID, "flop")
     assert len(digest) == 64
     int(digest, 16)  # raises if not hex
 
@@ -101,15 +88,13 @@ def test_prompt_hash_is_hex_sha256() -> None:
 
 def test_build_prompt_includes_required_sections() -> None:
     hand, players, actions = _load_bundle("hand_004.txt")
-    prompt = build_analysis_prompt(
-        hand, players, actions, street="flop", scenario_hash=None
-    )
+    prompt = build_analysis_prompt(hand, players, actions, street="flop")
 
     assert "# Hand" in prompt
     assert "# Board" in prompt
     assert "# Seats" in prompt
     assert "# Action sequence" in prompt
-    assert "# Solver context" in prompt
+    assert "# Coaching mode" in prompt
     assert "# Allowed leak tags" in prompt
     assert "# Response schema" in prompt
     # JSON schema instruction is present.
@@ -117,12 +102,21 @@ def test_build_prompt_includes_required_sections() -> None:
     assert '"leak_tags"' in prompt
 
 
-def test_build_prompt_handles_missing_solver_summary() -> None:
+def test_build_prompt_is_explicitly_solver_free() -> None:
     hand, players, actions = _load_bundle("hand_004.txt")
-    prompt = build_analysis_prompt(
-        hand, players, actions, street="flop", scenario_hash=None
-    )
-    assert "no solver scenario attached" in prompt
+    prompt = build_analysis_prompt(hand, players, actions, street="flop")
+    assert GENERAL_COACHING_LABEL in prompt
+    assert "# Solver context" not in prompt
+    assert "solver_best_action" not in prompt
+    assert "ev_diff_bb" not in prompt
+
+
+@pytest.mark.parametrize("extra_field", ["solver_summary", "scenario_hash"])
+def test_analysis_request_rejects_solver_context(extra_field: str) -> None:
+    with pytest.raises(ValidationError):
+        AnalyzeHandRequest.model_validate(
+            {"street": "flop", extra_field: {"hero_action": "bet"}}
+        )
 
 
 def test_build_prompt_handles_no_river_card() -> None:
@@ -133,36 +127,9 @@ def test_build_prompt_handles_no_river_card() -> None:
         players,
         actions,
         street="flop",
-        scenario_hash=None,
-        solver_summary=None,
     )
     # Should not raise and should include the action sequence we have.
     assert "## preflop" in prompt
-
-
-def test_build_prompt_includes_solver_summary_fields() -> None:
-    hand, players, actions = _load_bundle("hand_004.txt")
-    summary = {
-        "hero_action": "bet 33%",
-        "solver_best_action": "check",
-        "ev_diff_bb": -1.85,
-        "action_frequencies": {"check": 0.6, "bet_33": 0.4},
-        "notes": "blockers heavy",
-    }
-    prompt = build_analysis_prompt(
-        hand,
-        players,
-        actions,
-        street="flop",
-        scenario_hash="deadbeef",
-        solver_summary=summary,
-    )
-    assert "scenario_hash: deadbeef" in prompt
-    assert "hero_action: bet 33%" in prompt
-    assert "solver_best_action: check" in prompt
-    assert "ev_diff_bb: -1.85" in prompt
-    assert "60.00%" in prompt
-    assert "blockers heavy" in prompt
 
 
 def test_build_prompt_includes_hero_position_and_cards() -> None:
@@ -188,6 +155,8 @@ def test_build_prompt_lists_all_leak_tags() -> None:
 def test_system_prompt_is_non_empty_string() -> None:
     assert isinstance(SYSTEM_PROMPT, str)
     assert "poker coach" in SYSTEM_PROMPT.lower()
+    assert "no verified solver result" in SYSTEM_PROMPT.lower()
+    assert "do not invent frequencies" in SYSTEM_PROMPT.lower()
     assert "json" in SYSTEM_PROMPT.lower()
 
 

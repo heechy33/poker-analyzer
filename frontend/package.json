@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
+    "test:e2e": "node scripts/run-p0-e2e.mjs",
     "build:wasm": "wasm-pack build ../solver-wasm --target web --release --no-default-features && node scripts/copy-wasm.mjs",
+    "build:wasm:release": "wasm-pack build ../solver-wasm --target web --release --no-default-features && node scripts/copy-wasm.mjs --release",
     "build:wasm:dev": "wasm-pack build ../solver-wasm --target web --dev --no-default-features && node scripts/copy-wasm.mjs"
   },
   "dependencies": {
@@ -38,6 +40,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/node": "^22.15.29",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",

@@ -4,10 +4,10 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Street = Literal["flop", "turn", "river"]
-GameMode = Literal["heads_up", "multiway"]
+TableFormat = Literal["hu_2max", "6max", "9max"]
 UploadStatus = Literal["queued", "parsing", "parsed", "error"]
 
 
@@ -36,7 +36,7 @@ class HandSummary(BaseModel):
     coinpoker_hand_id: int
     played_at: datetime
     table_name: str
-    table_size: int
+    table_format: TableFormat
     stake_sb: Decimal
     stake_bb: Decimal
     hero_position: str
@@ -106,7 +106,7 @@ class HandsListParams(BaseModel):
     position: str | None = None
     since: date | None = None
     only_losses: bool = False
-    game_mode: GameMode | None = None
+    table_format: TableFormat | None = None
     stakes: str | None = None
 
     @field_validator("order")
@@ -149,24 +149,10 @@ class PositionStatsRow(BaseModel):
 StatsResponse = StatsSummaryResponse
 
 
-class SolverSummary(BaseModel):
-    """Optional solver context attached to an analysis request.
-
-    Everything is optional so the analysis still works for hands that
-    haven't been solved yet.
-    """
-
-    hero_action: str | None = None
-    solver_best_action: str | None = None
-    ev_diff_bb: float | None = None
-    action_frequencies: dict[str, float] = Field(default_factory=dict)
-    notes: str | None = None
-
-
 class AnalyzeHandRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     street: Street
-    scenario_hash: str | None = Field(default=None, max_length=128)
-    solver_summary: SolverSummary | None = None
 
 
 class AnalyzeHandResponse(BaseModel):
@@ -200,7 +186,9 @@ class StakeOption(BaseModel):
 
 class FilterOptionsResponse(BaseModel):
     stakes: list[StakeOption]
-    game_modes: list[GameMode] = Field(default_factory=lambda: ["heads_up", "multiway"])
+    table_formats: list[TableFormat] = Field(
+        default_factory=lambda: ["hu_2max", "6max", "9max"]
+    )
 
 
 class LeakTagRow(BaseModel):

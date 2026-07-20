@@ -12,8 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchFilterOptions, fetchHand, fetchHands } from "@/lib/api";
 import { formatPot, POSITIONS } from "@/lib/format";
+import { formatTableFormat, isTableFormat, TABLE_FORMATS } from "@/lib/table-formats";
 import { useAmountDisplay } from "@/stores/amount-display";
-import type { FilterOptionsResponse, HandSummary } from "@/types/api";
+import type { FilterOptionsResponse, HandSummary, TableFormat } from "@/types/api";
 
 const PAGE_SIZE = 50;
 
@@ -39,6 +40,11 @@ function storeVal(key: string, value: string) {
   }
 }
 
+function loadTableFormat(): TableFormat | "" {
+  const value = loadStored("hands:table_format");
+  return isTableFormat(value) ? value : "";
+}
+
 export default function HandsPage() {
   const [offset, setOffset] = useState(0);
   const [position, setPosition] = useState<string>("");
@@ -49,7 +55,7 @@ export default function HandsPage() {
   const [selectedHandId, setSelectedHandId] = useState<string | null>(null);
 
   // New filter state
-  const [gameMode, setGameMode] = useState<string>(() => loadStored("hands:game_mode"));
+  const [tableFormat, setTableFormat] = useState<TableFormat | "">(loadTableFormat);
   const [stakes, setStakes] = useState<string>(() => loadStored("hands:stakes"));
   const { unit, setUnit } = useAmountDisplay();
 
@@ -61,7 +67,7 @@ export default function HandsPage() {
   });
 
   const query = useQuery({
-    queryKey: ["hands", { offset, position, onlyLosses, since, gameMode, stakes }],
+    queryKey: ["hands", { offset, position, onlyLosses, since, tableFormat, stakes }],
     queryFn: () =>
       fetchHands({
         limit: PAGE_SIZE,
@@ -70,7 +76,7 @@ export default function HandsPage() {
         position: position || undefined,
         since: since || undefined,
         only_losses: onlyLosses || undefined,
-        game_mode: (gameMode || undefined) as "heads_up" | "multiway" | undefined,
+        table_format: tableFormat || undefined,
         stakes: stakes || undefined,
       }),
   });
@@ -138,8 +144,8 @@ export default function HandsPage() {
     setPosition("");
     setOnlyLosses(false);
     setSince("");
-    setGameMode("");
-    storeVal("hands:game_mode", "");
+    setTableFormat("");
+    storeVal("hands:table_format", "");
     setStakes("");
     storeVal("hands:stakes", "");
     setOffset(0);
@@ -147,10 +153,11 @@ export default function HandsPage() {
 
   // Build active filter summary
   const activeFilters: string[] = [];
-  if (gameMode === "heads_up") activeFilters.push("2-max table");
-  if (gameMode === "multiway") activeFilters.push("6/9-max table");
+  if (tableFormat === "hu_2max") activeFilters.push("2-max table");
+  if (tableFormat === "6max") activeFilters.push("6-max table");
+  if (tableFormat === "9max") activeFilters.push("9-max table");
   if (stakes) activeFilters.push(stakes);
-  const hasFilters = Boolean(gameMode || stakes || position || onlyLosses || since);
+  const hasFilters = Boolean(tableFormat || stakes || position || onlyLosses || since);
 
   return (
     <div className="mx-auto max-w-[1600px] space-y-5">
@@ -161,26 +168,25 @@ export default function HandsPage() {
 
       {/* Filter bar */}
       <div className="flex flex-wrap items-end gap-4 rounded-lg border border-border bg-card p-4">
-        {/* Legacy API values represent table format, not postflop player count. */}
         <label className="space-y-1.5 text-sm">
           <span className="text-muted-foreground">Table Format</span>
           <div className="flex rounded-md border border-input bg-background">
-            {(["", "heads_up", "multiway"] as const).map((mode) => (
+            {(["", ...TABLE_FORMATS] as const).map((format) => (
               <button
-                key={mode}
+                key={format}
                 type="button"
                 onClick={() => {
-                  setGameMode(mode);
-                  storeVal("hands:game_mode", mode);
+                  setTableFormat(format);
+                  storeVal("hands:table_format", format);
                   setOffset(0);
                 }}
                 className={`px-3 py-1.5 text-xs font-medium first:rounded-l-md last:rounded-r-md transition-colors ${
-                  gameMode === mode
+                  tableFormat === format
                     ? "bg-zinc-700 text-zinc-100"
                     : "text-muted-foreground hover:bg-zinc-800"
                 }`}
               >
-                {mode === "" ? "All" : mode === "heads_up" ? "2-max" : "6/9-max"}
+                {format === "" ? "All" : formatTableFormat(format)}
               </button>
             ))}
           </div>

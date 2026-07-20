@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { OfflineStudyNotice } from "@/components/OfflineStudyNotice";
 import {
   Card,
   CardContent,
@@ -74,7 +75,8 @@ export function LoginForm() {
           Enter your email and we&apos;ll send you a magic link. No password required.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <OfflineStudyNotice compact />
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-zinc-300">
@@ -97,7 +99,7 @@ export function LoginForm() {
         </form>
         {message && (
           <p
-            className={`mt-4 rounded-lg border px-3 py-2 text-sm ${
+            className={`rounded-lg border px-3 py-2 text-sm ${
               message.type === "success"
                 ? "border-emerald-800 bg-emerald-950/50 text-emerald-300"
                 : "border-red-800 bg-red-950/50 text-red-300"

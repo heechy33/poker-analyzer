@@ -4,21 +4,20 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 
+import { OfflineStudyNotice } from "@/components/OfflineStudyNotice";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { fetchHandAnalyses, streamAnalyzeHand } from "@/lib/api";
 import { humanizeLeakTag } from "@/lib/format";
+import { canStartStudyAction } from "@/lib/offline-study";
 import { cn } from "@/lib/utils";
-import type { AnalysisListItem, SolverSummary, Street } from "@/types/api";
+import type { AnalysisListItem, Street } from "@/types/api";
 
 interface CoachTabProps {
   handId: string;
   selectedStreet: Street;
   availableStreets: Street[];
   onStreetChange: (street: Street) => void;
-  scenarioHash: string | null;
-  solverSummary: SolverSummary | null;
-  solverConfidence?: string | null;
 }
 
 function formatAnalysisDate(value: string): string {
@@ -38,20 +37,11 @@ function AlertBox({ children }: { children: React.ReactNode }) {
   );
 }
 
-function solverConfidenceBadgeClass(tier: string): string {
-  if (tier === "high") return "border-emerald-500/50 text-emerald-300";
-  if (tier === "medium") return "border-yellow-500/50 text-yellow-300";
-  return "border-amber-500/50 text-amber-300";
-}
-
 export function CoachTab({
   handId,
   selectedStreet,
   availableStreets,
   onStreetChange,
-  scenarioHash,
-  solverSummary,
-  solverConfidence,
 }: CoachTabProps) {
   const abortRef = useRef<AbortController | null>(null);
   const [analysis, setAnalysis] = useState("");
@@ -60,6 +50,7 @@ export function CoachTab({
   const [cached, setCached] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clientClosed, setClientClosed] = useState(false);
 
   const analyses = useQuery({
     queryKey: ["hand-analyses", handId],
@@ -79,11 +70,7 @@ export function CoachTab({
     try {
       await streamAnalyzeHand(
         handId,
-        {
-          street: selectedStreet,
-          scenario_hash: scenarioHash,
-          solver_summary: solverSummary,
-        },
+        { street: selectedStreet },
         (event) => {
           if (event.event === "token") {
             setAnalysis((current) => current + event.data.text);
@@ -127,6 +114,12 @@ export function CoachTab({
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
       <div className="space-y-4">
+        <OfflineStudyNotice
+          confirmed={clientClosed}
+          disabled={isStreaming}
+          onConfirmedChange={setClientClosed}
+          requireConfirmation
+        />
         <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-zinc-950/50 p-4">
           <label className="space-y-1.5 text-sm">
             <span className="text-muted-foreground">Street</span>
@@ -144,31 +137,19 @@ export function CoachTab({
             </select>
           </label>
 
-          <Button onClick={explain} disabled={isStreaming}>
+          <Button
+            onClick={explain}
+            disabled={isStreaming || !canStartStudyAction(clientClosed)}
+          >
             {isStreaming && <Loader2 className="h-4 w-4 animate-spin" />}
             Explain
           </Button>
           <Button variant="ghost" onClick={cancel} disabled={!isStreaming}>
             Cancel
           </Button>
-          {solverSummary ? (
-            <Badge
-              variant="outline"
-              className={solverConfidenceBadgeClass(solverConfidence ?? "low")}
-            >
-              Solver data:{" "}
-              {solverConfidence === "high"
-                ? "high"
-                : solverConfidence === "medium"
-                  ? "medium"
-                  : "low"}{" "}
-              confidence
-            </Badge>
-          ) : (
-            <Badge variant="outline" className="border-zinc-600 text-zinc-300">
-              LLM-only
-            </Badge>
-          )}
+          <Badge variant="outline" className="border-zinc-600 text-zinc-300">
+            General coaching—no verified solver result
+          </Badge>
           {cached && (
             <Badge variant="outline" className="border-emerald-500/50 text-emerald-300">
               Cached analysis

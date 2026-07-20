@@ -225,6 +225,8 @@ __marimo__/
 node_modules/
 frontend/.next/
 frontend/node_modules/
+frontend/playwright-report/
+frontend/test-results/
 frontend/tsconfig.tsbuildinfo
 backend/dev.db
 solver-wasm/pkg/
@@ -238,6 +240,8 @@ frontend/public/wasm/*.js
 frontend/public/wasm/*.d.ts
 frontend/public/wasm/*.cjs
 frontend/public/wasm/*.mjs
+frontend/public/wasm/LICENSE.txt
+frontend/public/wasm/SOURCE-OFFER.txt
 
 # Local / agent / planning artifacts (not part of the product tree)
 .agents/

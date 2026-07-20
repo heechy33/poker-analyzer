@@ -6,6 +6,7 @@ import { useEffect, useMemo } from "react";
 import { CoachTab } from "@/components/hand-review/CoachTab";
 import { ReplayerTab } from "@/components/hand-review/ReplayerTab";
 import { NetAmount } from "@/components/NetAmount";
+import { OfflineStudyNotice } from "@/components/OfflineStudyNotice";
 import { PositionBadge } from "@/components/PositionBadge";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -130,6 +131,7 @@ export function HandReviewModal() {
 
           {hand && (
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+              <OfflineStudyNotice compact />
               <div className="flex flex-wrap items-center gap-3">
                 <TabsList>
                   <TabsTrigger value="replayer">Replayer</TabsTrigger>
@@ -150,8 +152,6 @@ export function HandReviewModal() {
                   selectedStreet={selectedStreet}
                   availableStreets={streets}
                   onStreetChange={setStreet}
-                  scenarioHash={null}
-                  solverSummary={null}
                 />
               </TabsContent>
             </Tabs>

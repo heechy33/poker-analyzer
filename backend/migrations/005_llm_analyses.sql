@@ -7,7 +7,7 @@ CREATE TABLE llm_analyses (
   user_id         uuid        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   hand_id         uuid        REFERENCES hands(id) ON DELETE SET NULL,
   model           text        NOT NULL,               -- e.g. "claude-sonnet-4-6"
-  prompt_hash     text        NOT NULL,               -- SHA-256(hand_id + street + solver_scenario_hash)
+  prompt_hash     text        NOT NULL,               -- versioned SHA-256(hand_id + street + coaching mode)
   analysis_text   text        NOT NULL,
   leak_tags       text[]      NOT NULL DEFAULT '{}',  -- enumerated tags: {"overfold_vs_cbet", ...}
   input_tokens    integer,

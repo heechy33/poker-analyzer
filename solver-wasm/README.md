@@ -45,7 +45,7 @@ Optional legacy-envelope knobs:
 
 ```json
 {
-  "solver_version": "postflop-solver@3a64f855cf20",
+  "solver_version": "postflop-solver@a67bf3d9f43b",
   "iterations": 200,
   "exploitability_bb": 0.42,
   "finalized": true,
@@ -78,7 +78,7 @@ Key invariants (see `src/strategy_export.rs` for the full mapping doc):
 
 ### Prerequisites
 
-`postflop-solver` is a **git submodule** (pinned fork at `3a64f855cf20`). From the
+`postflop-solver` is a **git submodule** (pinned fork at `a67bf3d9f43b`). From the
 repo root:
 
 ```bash
@@ -122,6 +122,11 @@ npm run build:wasm
 #   wasm-pack build ../solver-wasm --target web --release --no-default-features \
 #     && node scripts/copy-wasm.mjs
 ```
+
+`npm run build:wasm` is for local development. It copies the AGPL license and
+marks output from a dirty tree as non-distributable. Release automation must use
+`npm run build:wasm:release`, which also refuses a dirty tree or a submodule
+checkout that differs from the recorded gitlink. See `THIRD_PARTY_NOTICES.md`.
 
 Artifacts land in `frontend/public/wasm/`:
 
