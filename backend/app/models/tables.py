@@ -109,6 +109,9 @@ class Hand(SQLModel, table=True):
         default_factory=dict,
         sa_column=Column(JSONB, nullable=False, server_default="{}"),
     )
+    ledger_status: str = Field(default="legacy_unbackfilled")
+    ledger_version: str | None = None
+    ledger_hash: str | None = None
     raw_text: str | None = None
     created_at: datetime = Field(
         default_factory=utc_now,
@@ -154,6 +157,10 @@ class HandAction(SQLModel, table=True):
     amount: Decimal | None = Field(default=None, sa_column=Column(Numeric(12, 4)))
     raise_to: Decimal | None = Field(default=None, sa_column=Column(Numeric(12, 4)))
     is_all_in: bool = Field(default=False)
+    ledger_event_index: int | None = Field(default=None, index=True)
+    contribution_delta: Decimal | None = Field(default=None, sa_column=Column(Numeric(12, 4)))
+    returned_delta: Decimal | None = Field(default=None, sa_column=Column(Numeric(12, 4)))
+    raise_increment: Decimal | None = Field(default=None, sa_column=Column(Numeric(12, 4)))
     created_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False),
@@ -175,6 +182,28 @@ class LlmAnalysis(SQLModel, table=True):
     )
     input_tokens: int | None = None
     output_tokens: int | None = None
+    created_at: datetime = Field(
+        default_factory=utc_now,
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+    )
+
+
+class HandLedger(SQLModel, table=True):
+    """One immutable canonical-ledger payload per imported hand."""
+
+    __tablename__ = "hand_ledgers"
+
+    hand_id: UUID = Field(foreign_key="hands.id", primary_key=True)
+    user_id: UUID = Field(index=True)
+    status: str
+    schema_version: str | None = None
+    ledger_hash: str | None = Field(default=None, index=True)
+    payload: dict[str, Any] | None = Field(default=None, sa_column=Column(JSONB))
+    summary_diff: dict[str, Any] = Field(
+        default_factory=dict,
+        sa_column=Column(JSONB, nullable=False, server_default="{}"),
+    )
+    failure_reason: str | None = None
     created_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False),

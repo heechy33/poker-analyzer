@@ -1,4 +1,4 @@
-name: Phase 0 CI
+name: Quality Gate CI
 
 on:
   push:

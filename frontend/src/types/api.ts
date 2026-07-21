@@ -32,6 +32,7 @@ export interface HandSummary {
   hero_net_bb: string;
   went_to_showdown: boolean;
   total_pot: string;
+  ledger_status: "valid" | "invalid_ledger" | "legacy_unbackfilled";
 }
 
 export interface HandDetail extends HandSummary {

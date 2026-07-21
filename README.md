@@ -2,22 +2,18 @@
 
 Poker Analyzer is an offline, post-session review tool for a player's own CoinPoker NLHE cash-game hand histories. It supports private hand-history upload, statistics, replay, and general coaching.
 
-## Current milestone
+## Current status
 
-The project is in **Phase 0: legacy solver teardown and rebuild boundary**. The authoritative roadmap and completion evidence live in [MASTER_SPEC.md](./MASTER_SPEC.md), section 17.
+The private upload, statistics, hand-list, replay, and general-coaching experience is functional. Solver-backed review and decision grading are intentionally disabled while the poker-state and eligibility contracts are rebuilt around auditable chip accounting, exact decision-time information, and fail-closed validation.
 
-The legacy solver-to-grade experience has been removed. In particular, the application does **not** currently expose solver tabs, action frequencies, decision grades, aggregate hand scores, solver-run routes, browser-submitted solver output, or MCP/external-agent access.
+Recent engineering work:
 
-Phase 0 completed work:
+- Removed an unreliable legacy solver-to-grade path instead of presenting approximate output as authoritative.
+- Preserved private hand-history ingestion, personal statistics, replay, authenticated REST APIs, and general coaching.
+- Added PostgreSQL-backed backend tests, frontend unit/lint/build checks, browser acceptance coverage, and native Rust/WASM checks to CI.
+- Pinned the retained two-player CFR engine and added licensing, source-offer, and artifact-distribution safeguards.
 
-- Removed the legacy solver, grading, cache-write, scenario, telemetry, range-library, and MCP contracts.
-- Archived/remediated legacy database objects through an allowlisted forward migration.
-- Removed regression fixtures that certified fallback ranges, multiway approximation, unfinished-node output, or numeric default scores.
-- Preserved the hand list, replay, private statistics, authenticated REST API, and general-coaching path.
-
-P0.6-P0.10 are complete. P0.9's published source, source-offer, artifact audit, and database purge have been verified. P0.11 awaits a green hosted PostgreSQL Actions rerun after its async fixture-loop fix. Phase 1 has not started: it will rebuild a canonical HUNL action ledger and eligibility boundary **without solving**.
-
-No solver caller may be restored until the Phase 1 exit review approves the next implementation checklist.
+Solver output will return only after the rebuilt state, fee, range, tree, accuracy, and exact-node contracts pass their acceptance gates.
 
 ## Scope and safety boundary
 
@@ -41,9 +37,7 @@ poker-analyzer/
 ├── frontend/         Next.js replay and review UI
 ├── backend/          FastAPI parser, storage, statistics, and coaching API
 ├── solver-wasm/      Rust/WASM engine boundary (not a current product solver path)
-├── postflop-solver/  Pinned two-player CFR engine
-├── MASTER_SPEC.md    Authoritative product and implementation specification
-└── AGENTS.md         Repository development guide
+└── postflop-solver/  Pinned two-player CFR engine
 ```
 
 ## Local development
@@ -83,10 +77,9 @@ cd solver-wasm && cargo check --tests
 
 Do not run full/ignored solver regressions locally unless explicitly requested; they are workstation/CI workloads.
 
-## Development rules
+## Engineering guardrails
 
-- Treat [MASTER_SPEC.md](./MASTER_SPEC.md) as the source of truth. Map every product or solver change to an approved Phase 0 or Phase 1 item and update its checklist evidence with the implementation.
-- Keep the canonical ledger, Python/TypeScript schemas, cache keys, and versioned paired range data aligned when the approved rebuild reaches those components.
+- Keep the canonical ledger, Python/TypeScript schemas, cache keys, and versioned paired range data aligned as the rebuild reaches those components.
 - Do not add multiway solving, six-max approximation, preflop solving, live assistance, MCP adapters, or a grading fallback.
 - Never commit secrets or `.env*` files.
 

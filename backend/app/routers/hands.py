@@ -77,6 +77,7 @@ def _to_summary(hand: Hand) -> HandSummary:
         hero_net_bb=hand.hero_net_bb,
         went_to_showdown=hand.went_to_showdown,
         total_pot=hand.total_pot,
+        ledger_status=hand.ledger_status,
     )
 
 

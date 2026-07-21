@@ -10,6 +10,7 @@ from app.stakes import format_stake
 
 Street = Literal["flop", "turn", "river"]
 TableFormat = Literal["hu_2max", "6max", "9max"]
+LedgerStatus = Literal["valid", "invalid_ledger", "legacy_unbackfilled"]
 UploadStatus = Literal["queued", "parsing", "parsed", "error"]
 
 
@@ -47,6 +48,7 @@ class HandSummary(BaseModel):
     hero_net_bb: Decimal
     went_to_showdown: bool
     total_pot: Decimal
+    ledger_status: LedgerStatus = "legacy_unbackfilled"
 
     @field_serializer("stake_sb", "stake_bb", when_used="json")
     def serialize_stake(self, value: Decimal) -> str:

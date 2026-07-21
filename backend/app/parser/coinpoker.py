@@ -9,7 +9,15 @@ from decimal import Decimal
 from typing import IO, Iterable, Iterator, Literal
 from zoneinfo import ZoneInfo
 
-from app.parser.models import Action, ParsedAction, ParsedHand, ParsedPlayer, Street
+from app.parser.models import (
+    Action,
+    ParsedAction,
+    ParsedHand,
+    ParsedPlayer,
+    ParsedReturn,
+    Street,
+    ParsedSplashDrop,
+)
 
 
 class ParseError(ValueError):
@@ -86,6 +94,7 @@ _UNCALLED_RE = re.compile(
 )
 _RETURN_RE = re.compile(r"^(?P<screen_name>.+?): RETURN (?P<amount>.+)$")
 _CARD_GROUP_RE = re.compile(r"\[([2-9TJQKA][cdhs](?:\s+[2-9TJQKA][cdhs])*)\]")
+_SPLASH_DROP_RE = re.compile(r"^SPLASH dropped (?P<amount>.+)$")
 
 _MONEY_RE = re.compile(
     r"(?:\u20ae|\u00e2\u201a\u00ae|\u00c3\u00a2\u00e2\u20ac"
@@ -147,7 +156,8 @@ def parse_hand(lines: list[str]) -> ParsedHand:
     state: _State = "HEADER"
     current_street: Street = "preflop"
     went_to_showdown = False
-    uncalled_returns: list[tuple[str, Decimal]] = []
+    uncalled_returns: list[ParsedReturn] = []
+    splash_drops: list[ParsedSplashDrop] = []
     flags: dict[str, object] = {
         "all_in": False,
         "bomb_pot": False,
@@ -174,6 +184,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         amount: Decimal | None = None,
         raise_to: Decimal | None = None,
         is_all_in: bool = False,
+        pot_award_id: str | None = None,
     ) -> None:
         seat = seats_by_name.get(screen_name)
         if seat is None:
@@ -192,6 +203,8 @@ def parse_hand(lines: list[str]) -> ParsedHand:
                 amount=amount,
                 raise_to=raise_to,
                 is_all_in=is_all_in,
+                line_number=line_no,
+                pot_award_id=pot_award_id,
             )
         )
 
@@ -314,6 +327,17 @@ def parse_hand(lines: list[str]) -> ParsedHand:
 
         if line.startswith("Board "):
             continue
+        splash_drop_match = _SPLASH_DROP_RE.match(line)
+        if splash_drop_match:
+            splash_drops.append(
+                ParsedSplashDrop(
+                    amount=_parse_money(splash_drop_match.group("amount"), line_no, line),
+                    line_number=line_no,
+                )
+            )
+            flags["splash_drop"] = True
+            continue
+
 
         if (
             line in {"Hand was run once", "Hand was run with two boards"}
@@ -359,13 +383,37 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         uncalled_match = _UNCALLED_RE.match(line)
         if uncalled_match:
             amount = _parse_money(uncalled_match.group("amount"), line_no, line)
-            uncalled_returns.append((uncalled_match.group("screen_name"), amount))
+            screen_name = uncalled_match.group("screen_name")
+            seat = seats_by_name.get(screen_name)
+            if seat is None:
+                raise error("return references an unknown player", line_no, line)
+            uncalled_returns.append(
+                ParsedReturn(
+                    street=current_street,
+                    seat=seat.seat,
+                    screen_name=screen_name,
+                    amount=amount,
+                    line_number=line_no,
+                )
+            )
             continue
 
         return_match = _RETURN_RE.match(line)
         if return_match:
             amount = _parse_money(return_match.group("amount"), line_no, line)
-            uncalled_returns.append((return_match.group("screen_name"), amount))
+            screen_name = return_match.group("screen_name")
+            seat = seats_by_name.get(screen_name)
+            if seat is None:
+                raise error("return references an unknown player", line_no, line)
+            uncalled_returns.append(
+                ParsedReturn(
+                    street=current_street,
+                    seat=seat.seat,
+                    screen_name=screen_name,
+                    amount=amount,
+                    line_number=line_no,
+                )
+            )
             continue
 
         collect_match = _COLLECT_RE.match(line)
@@ -385,6 +433,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
                 amount=amount,
                 line_no=line_no,
                 line=line,
+                pot_award_id=pot_name,
             )
             continue
 
@@ -393,7 +442,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
             add_action(
                 street="preflop",
                 screen_name=ante_post_match.group("screen_name"),
-                action="post_bb",
+                action="post_ante",
                 amount=_parse_money(ante_post_match.group("amount"), line_no, line),
                 line_no=line_no,
                 line=line,
@@ -504,6 +553,8 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         raw_text=raw_text,
         players=players,
         actions=actions,
+        uncalled_returns=uncalled_returns,
+        splash_drops=splash_drops,
     )
 
 
@@ -761,7 +812,7 @@ def _is_showdown_action(body: str) -> bool:
 def _hero_amounts(
     hero_screen_name: str,
     actions: list[ParsedAction],
-    uncalled_returns: list[tuple[str, Decimal]],
+    uncalled_returns: list[ParsedReturn],
 ) -> tuple[Decimal, Decimal]:
     invested = _ZERO
     collected = _ZERO
@@ -773,9 +824,9 @@ def _hero_amounts(
             invested += action.amount
         elif action.action == "collect" and action.amount is not None:
             collected += action.amount
-    for screen_name, amount in uncalled_returns:
-        if screen_name == hero_screen_name:
-            invested -= amount
+    for returned in uncalled_returns:
+        if returned.screen_name == hero_screen_name:
+            invested -= returned.amount
     return invested, collected
 
 

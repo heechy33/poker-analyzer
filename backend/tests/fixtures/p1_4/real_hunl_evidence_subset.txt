@@ -1,0 +1,65 @@
+CoinPoker Hand #9500000001: NLH (?0.02/?0.05) 2026/07/20 17:30:30 PDT
+Table 'p1-4-real-a' 2-max Seat #1 is the button
+Seat 1: Hero (?7.82 in chips)
+Seat 2: EvidenceVillainA (?3.01 in chips)
+Hero: posts small blind ?0.02
+EvidenceVillainA: posts big blind ?0.05
+*** HOLE CARDS ***
+Dealt to Hero [Kh 8d]
+Dealt to EvidenceVillainA
+Hero: calls ?0.03
+EvidenceVillainA: checks
+*** FLOP *** [5h Th 8s]
+EvidenceVillainA: checks
+Hero: bets ?0.05
+EvidenceVillainA: calls ?0.05
+*** TURN *** [5h Th 8s] [6h]
+EvidenceVillainA: checks
+Hero: bets ?0.10
+EvidenceVillainA: folds
+Hero: RETURN ?0.10
+*** SHOWDOWN ***
+Hero collected ?0.19 from pot
+*** SUMMARY ***
+Total pot ?0.20 | Rake ?0.01
+Hand was run once
+Board [ 5h Th 8s 6h ]
+Game ended: 2026/07/20 17:30:52 PDT
+Seat 1: Hero showed [Kh 8d] and won (?0.19)
+Seat 2: EvidenceVillainA folded on the Turn
+
+
+CoinPoker Hand #9500000002: NLH (?0.05/?0.10) 2026/07/20 17:33:46 PDT
+Table 'p1-4-real-b' 2-max Seat #1 is the button
+Seat 1: Hero (?7.99 in chips)
+Seat 2: EvidenceVillainB (?6.52 in chips)
+SPLASH dropped ?0.40
+Hero: posts small blind ?0.05
+EvidenceVillainB: posts big blind ?0.10
+*** HOLE CARDS ***
+Dealt to Hero [As 4h]
+Dealt to EvidenceVillainB
+Hero: calls ?0.05
+EvidenceVillainB: checks
+*** FLOP *** [Jd 2s Kh]
+EvidenceVillainB: checks
+Hero: bets ?0.10
+EvidenceVillainB: calls ?0.10
+*** TURN *** [Jd 2s Kh] [Jc]
+EvidenceVillainB: checks
+Hero: bets ?0.10
+EvidenceVillainB: calls ?0.10
+*** RIVER *** [Jd 2s Kh Jc] [Th]
+EvidenceVillainB: bets ?0.10
+Hero: calls ?0.10
+*** SHOWDOWN ***
+EvidenceVillainB: shows [5h Ks] (Two Pair)
+EvidenceVillainB collected ?0.75 from pot
+Hero: mucks hand
+*** SUMMARY ***
+Total pot ?1.20 | Rake ?0.04 | Splash Fee ?0.01
+Hand was run once
+Board [ Jd 2s Kh Jc Th ]
+Game ended: 2026/07/20 17:34:29 PDT
+Seat 1: Hero showed [As 4h] and lost with One Pair
+Seat 2: EvidenceVillainB showed [5h Ks] and won (?0.75) with Two Pair

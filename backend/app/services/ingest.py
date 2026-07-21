@@ -4,15 +4,19 @@ import logging
 import re
 from collections import defaultdict
 from collections.abc import Iterable, Iterator
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, or_
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models import Hand, HandAction, HandPlayer, Session, Upload
+from app.ledger.models import CanonicalLedgerV1, LEDGER_SCHEMA_V1
+from app.ledger.parsed import ParsedLedgerError, ledger_from_parsed
+from app.models import Hand, HandAction, HandLedger, HandPlayer, Session, Upload
 from app.parser.coinpoker import ParseError, parse_hand
 from app.parser.models import ParsedHand
 
@@ -37,7 +41,19 @@ def _json_safe(value: Any) -> Any:
     return value
 
 
-def hand_from_parsed(parsed: ParsedHand, user_id: UUID, upload_id: UUID) -> Hand:
+def hand_from_parsed(
+    parsed: ParsedHand,
+    user_id: UUID,
+    upload_id: UUID,
+    ledger: CanonicalLedgerV1 | None = None,
+    ledger_error: str | None = None,
+) -> Hand:
+    hero_invested, hero_collected, hero_net, hero_net_bb = _financial_summary(
+        parsed, ledger
+    )
+    flags = _json_safe(parsed.flags)
+    if ledger_error is not None:
+        flags = {**flags, "invalid_ledger": True}
     return Hand(
         user_id=user_id,
         upload_id=upload_id,
@@ -55,15 +71,18 @@ def hand_from_parsed(parsed: ParsedHand, user_id: UUID, upload_id: UUID) -> Hand
         turn=parsed.turn,
         river=parsed.river,
         total_pot=parsed.total_pot,
-        rake=parsed.rake,
-        splash_fee=parsed.splash_fee,
-        hero_invested=parsed.hero_invested,
-        hero_collected=parsed.hero_collected,
-        hero_net=parsed.hero_net,
-        hero_net_bb=parsed.hero_net_bb,
+        rake=_observed_rake(parsed, ledger),
+        splash_fee=_splash_fee(parsed, ledger),
+        hero_invested=hero_invested,
+        hero_collected=hero_collected,
+        hero_net=hero_net,
+        hero_net_bb=hero_net_bb,
         went_to_showdown=parsed.went_to_showdown,
         won_at_showdown=parsed.won_at_showdown,
-        flags=_json_safe(parsed.flags),
+        flags=flags,
+        ledger_status="valid" if ledger is not None else "invalid_ledger" if ledger_error else "legacy_unbackfilled",
+        ledger_version=LEDGER_SCHEMA_V1 if ledger is not None else None,
+        ledger_hash=ledger.ledger_hash if ledger is not None else None,
         raw_text=parsed.raw_text,
     )
 
@@ -104,6 +123,312 @@ def actions_from_parsed(
         )
         for action in parsed.actions
     ]
+
+
+def actions_from_ledger(
+    ledger: CanonicalLedgerV1, hand_id: UUID, user_id: UUID
+) -> list[HandAction]:
+    """Build the temporary replay/stats projection from canonical events only."""
+    aliases = {player.seat: player.alias for player in ledger.hand.players}
+    rows: list[HandAction] = []
+    for event in ledger.events:
+        if event.actor_seat is None or event.verb not in _PROJECTED_LEDGER_VERBS:
+            continue
+        rows.append(
+            HandAction(
+                hand_id=hand_id,
+                user_id=user_id,
+                street=event.street,
+                action_order=event.street_event_index or 0,
+                seat=event.actor_seat,
+                screen_name=aliases[event.actor_seat],
+                action=_PROJECTED_LEDGER_VERBS[event.verb],
+                amount=event.action_amount,
+                raise_to=event.raise_to,
+                is_all_in=event.is_all_in,
+                ledger_event_index=event.event_index,
+                contribution_delta=event.contribution_delta,
+                returned_delta=event.returned_delta,
+                raise_increment=event.raise_increment,
+            )
+        )
+    return rows
+
+
+def ledger_record_from_result(
+    *,
+    hand_id: UUID,
+    user_id: UUID,
+    ledger: CanonicalLedgerV1 | None,
+    failure_reason: str | None = None,
+    summary_diff: dict[str, Any] | None = None,
+) -> HandLedger:
+    if ledger is not None:
+        return HandLedger(
+            hand_id=hand_id,
+            user_id=user_id,
+            status="valid",
+            schema_version=ledger.schema_version,
+            ledger_hash=ledger.ledger_hash,
+            payload=ledger.model_dump(mode="json"),
+            summary_diff=summary_diff or {},
+        )
+    assert failure_reason is not None
+    return HandLedger(
+        hand_id=hand_id,
+        user_id=user_id,
+        status="invalid_ledger",
+        summary_diff=summary_diff or {},
+        failure_reason=failure_reason,
+    )
+
+
+_PROJECTED_LEDGER_VERBS = {
+    "post_small_blind": "post_sb",
+    "post_big_blind": "post_bb",
+    "post_ante": "post_ante",
+    "post_dead_blind": "post_dead_blind",
+    "post_straddle": "post_straddle",
+    "fold": "fold",
+    "check": "check",
+    "call": "call",
+    "bet": "bet",
+    "raise": "raise",
+    "return_uncalled": "return_uncalled",
+    "collect": "collect",
+}
+
+
+def _financial_summary(
+    parsed: ParsedHand, ledger: CanonicalLedgerV1 | None
+) -> tuple[Decimal, Decimal, Decimal, Decimal]:
+    if ledger is None or not ledger.events:
+        return (
+            parsed.hero_invested,
+            parsed.hero_collected,
+            parsed.hero_net,
+            parsed.hero_net_bb,
+        )
+    final_players = {state.seat: state for state in ledger.events[-1].state_after.player_states}
+    hero_invested = final_players[parsed.hero_seat].total_contribution
+    hero_collected = sum(
+        (
+            event.award_amount
+            for event in ledger.events
+            if event.verb == "collect" and event.actor_seat == parsed.hero_seat
+        ),
+        Decimal("0"),
+    )
+    hero_net = hero_collected - hero_invested
+    hero_net_bb = hero_net / parsed.stake_bb
+    return hero_invested, hero_collected, hero_net, hero_net_bb
+
+
+def _observed_rake(parsed: ParsedHand, ledger: CanonicalLedgerV1 | None) -> Decimal:
+    if ledger is None or not ledger.events:
+        return parsed.rake
+    return ledger.events[-1].state_after.fee_metadata.observed_rake
+
+
+def _splash_fee(parsed: ParsedHand, ledger: CanonicalLedgerV1 | None) -> Decimal:
+    if ledger is None or not ledger.events:
+        return parsed.splash_fee
+    return ledger.events[-1].state_after.fee_metadata.splash_fee
+
+
+@dataclass(frozen=True, slots=True)
+class LedgerBackfillResult:
+    """Outcome counts for an idempotent raw-history ledger backfill."""
+
+    scanned: int = 0
+    valid: int = 0
+    invalid: int = 0
+    unchanged: int = 0
+
+
+async def backfill_canonical_ledgers(
+    db: AsyncSession,
+    *,
+    user_id: UUID | None = None,
+    limit: int | None = None,
+) -> LedgerBackfillResult:
+    """Reparse legacy raw text and replace legacy action rows with a projection.
+
+    A current valid ledger is left untouched.  The operation is therefore safe
+    to repeat after interruption and never reconstructs accounting from the
+    old ``hand_actions`` rows.
+    """
+    needs_backfill = or_(
+        Hand.ledger_status != "valid",
+        Hand.ledger_version != LEDGER_SCHEMA_V1,
+        Hand.ledger_hash.is_(None),
+    )
+    stmt = select(Hand).where(needs_backfill).order_by(Hand.played_at, Hand.id)
+    if user_id is not None:
+        stmt = stmt.where(Hand.user_id == user_id)
+    if limit is not None:
+        if limit < 1:
+            raise ValueError("limit must be positive")
+        stmt = stmt.limit(limit)
+
+    hands = list((await db.exec(stmt)).all())
+    valid = invalid = 0
+    for hand in hands:
+        parsed, ledger, failure_reason = _backfill_ledger_input(hand)
+        if ledger is None:
+            await _persist_invalid_ledger(
+                db,
+                hand,
+                failure_reason or "canonical ledger reconstruction failed",
+            )
+            invalid += 1
+            continue
+
+        assert parsed is not None
+        summary_diff = _summary_diff(hand, parsed, ledger)
+        _apply_canonical_hand_values(hand, parsed, ledger)
+        await _replace_ledger_projection(db, hand, ledger)
+        await _upsert_ledger_record(
+            db,
+            ledger_record_from_result(
+                hand_id=hand.id,
+                user_id=hand.user_id,
+                ledger=ledger,
+                summary_diff=summary_diff,
+            ),
+        )
+        valid += 1
+
+    await db.flush()
+    return LedgerBackfillResult(scanned=len(hands), valid=valid, invalid=invalid)
+
+
+def _backfill_ledger_input(
+    hand: Hand,
+) -> tuple[ParsedHand | None, CanonicalLedgerV1 | None, str | None]:
+    if not hand.raw_text:
+        return None, None, "raw hand history is missing"
+    try:
+        parsed = parse_hand(hand.raw_text.splitlines())
+    except ParseError as exc:
+        return None, None, f"raw hand history no longer parses: {exc}"
+    if parsed.coinpoker_hand_id != hand.coinpoker_hand_id:
+        return None, None, "raw hand id does not match the stored hand id"
+    try:
+        return parsed, ledger_from_parsed(parsed), None
+    except (ParsedLedgerError, ValueError) as exc:
+        return parsed, None, str(exc)
+
+
+async def _persist_invalid_ledger(
+    db: AsyncSession,
+    hand: Hand,
+    failure_reason: str,
+) -> None:
+    hand.ledger_status = "invalid_ledger"
+    hand.ledger_version = None
+    hand.ledger_hash = None
+    hand.flags = {**(hand.flags or {}), "invalid_ledger": True}
+    await _upsert_ledger_record(
+        db,
+        ledger_record_from_result(
+            hand_id=hand.id,
+            user_id=hand.user_id,
+            ledger=None,
+            failure_reason=failure_reason,
+        ),
+    )
+
+
+async def _replace_ledger_projection(
+    db: AsyncSession,
+    hand: Hand,
+    ledger: CanonicalLedgerV1,
+) -> None:
+    await db.exec(delete(HandAction).where(HandAction.hand_id == hand.id))
+    for action in actions_from_ledger(ledger, hand.id, hand.user_id):
+        db.add(action)
+
+
+async def _upsert_ledger_record(db: AsyncSession, replacement: HandLedger) -> None:
+    existing = await db.get(HandLedger, replacement.hand_id)
+    if existing is None:
+        db.add(replacement)
+        return
+    existing.status = replacement.status
+    existing.schema_version = replacement.schema_version
+    existing.ledger_hash = replacement.ledger_hash
+    existing.payload = replacement.payload
+    existing.summary_diff = replacement.summary_diff
+    existing.failure_reason = replacement.failure_reason
+    db.add(existing)
+
+
+def _apply_canonical_hand_values(
+    hand: Hand,
+    parsed: ParsedHand,
+    ledger: CanonicalLedgerV1,
+) -> None:
+    canonical = hand_from_parsed(parsed, hand.user_id, hand.upload_id, ledger=ledger)
+    for field in _CANONICAL_HAND_FIELDS:
+        setattr(hand, field, getattr(canonical, field))
+    hand.flags = {
+        key: value
+        for key, value in {**(hand.flags or {}), **(canonical.flags or {})}.items()
+        if key != "invalid_ledger"
+    }
+
+
+_CANONICAL_HAND_FIELDS = (
+    "coinpoker_hand_id",
+    "played_at",
+    "table_name",
+    "table_size",
+    "stake_sb",
+    "stake_bb",
+    "button_seat",
+    "hero_seat",
+    "hero_position",
+    "hero_cards",
+    "flop",
+    "turn",
+    "river",
+    "total_pot",
+    "rake",
+    "splash_fee",
+    "hero_invested",
+    "hero_collected",
+    "hero_net",
+    "hero_net_bb",
+    "went_to_showdown",
+    "won_at_showdown",
+    "ledger_status",
+    "ledger_version",
+    "ledger_hash",
+    "raw_text",
+)
+_SUMMARY_FIELDS = (
+    "total_pot",
+    "rake",
+    "splash_fee",
+    "hero_invested",
+    "hero_collected",
+    "hero_net",
+    "hero_net_bb",
+)
+
+
+def _summary_diff(
+    hand: Hand,
+    parsed: ParsedHand,
+    ledger: CanonicalLedgerV1,
+) -> dict[str, dict[str, str]]:
+    canonical = hand_from_parsed(parsed, hand.user_id, hand.upload_id, ledger=ledger)
+    return {
+        field: {"stored": str(getattr(hand, field)), "canonical": str(getattr(canonical, field))}
+        for field in _SUMMARY_FIELDS
+        if getattr(hand, field) != getattr(canonical, field)
+    }
 
 
 async def existing_coinpoker_ids(
@@ -233,14 +558,41 @@ async def ingest_parsed_hands(
             skipped += 1
             continue
 
-        hand_row = hand_from_parsed(parsed, user_uuid, upload_uuid)
+        try:
+            ledger = ledger_from_parsed(parsed)
+            ledger_error = None
+        except (ParsedLedgerError, ValueError) as exc:
+            ledger = None
+            ledger_error = str(exc)
+            logger.warning("hand %s has invalid canonical ledger: %s", parsed.coinpoker_hand_id, exc)
+
+        hand_row = hand_from_parsed(
+            parsed,
+            user_uuid,
+            upload_uuid,
+            ledger=ledger,
+            ledger_error=ledger_error,
+        )
         db.add(hand_row)
         await db.flush()
 
         for player in players_from_parsed(parsed, hand_row.id, user_uuid):
             db.add(player)
-        for action in actions_from_parsed(parsed, hand_row.id, user_uuid):
+        action_rows = (
+            actions_from_ledger(ledger, hand_row.id, user_uuid)
+            if ledger is not None
+            else actions_from_parsed(parsed, hand_row.id, user_uuid)
+        )
+        for action in action_rows:
             db.add(action)
+        db.add(
+            ledger_record_from_result(
+                hand_id=hand_row.id,
+                user_id=user_uuid,
+                ledger=ledger,
+                failure_reason=ledger_error,
+            )
+        )
 
         inserted_hands.append(hand_row)
         existing.add(parsed.coinpoker_hand_id)

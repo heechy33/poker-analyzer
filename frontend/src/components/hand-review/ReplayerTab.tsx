@@ -54,6 +54,11 @@ export function ReplayerTab({ hand }: { hand: HandDetail }) {
 
   return (
     <div className="space-y-4">
+      {hand.ledger_status !== "valid" && (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
+          Replay fallback only — this hand has no valid canonical ledger and is not authoritative for statistics or any future solver review.
+        </div>
+      )}
       <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
         <div className="space-y-4">
           {STREET_ORDER.map((street) => {

@@ -12,6 +12,7 @@ Street = Literal["preflop", "flop", "turn", "river", "showdown"]
 Action = Literal[
     "post_sb",
     "post_bb",
+    "post_ante",
     "fold",
     "check",
     "call",
@@ -70,12 +71,41 @@ class ParsedAction(BaseModel):
     amount: Decimal | None = None
     raise_to: Decimal | None = None
     is_all_in: bool = False
+    line_number: int = Field(default=1, ge=1, exclude=True)
+    pot_award_id: str | None = Field(default=None, exclude=True)
 
     @field_validator("amount", "raise_to")
     @classmethod
     def _quantize_optional_money(cls, value: Decimal | None) -> Decimal | None:
         if value is None:
             return None
+        return quantize_money(value)
+
+
+class ParsedReturn(BaseModel):
+    """An uncalled-chip return retained as an ordered parser fact."""
+
+    street: Street
+    seat: int = Field(ge=1)
+    screen_name: str = Field(min_length=1)
+    amount: Decimal
+    line_number: int = Field(default=1, ge=1, exclude=True)
+
+    @field_validator("amount")
+    @classmethod
+    def _quantize_amount(cls, value: Decimal) -> Decimal:
+        return quantize_money(value)
+
+
+class ParsedSplashDrop(BaseModel):
+    """A non-player promotional pot inflow retained in raw source order."""
+
+    amount: Decimal
+    line_number: int = Field(default=1, ge=1, exclude=True)
+
+    @field_validator("amount")
+    @classmethod
+    def _quantize_amount(cls, value: Decimal) -> Decimal:
         return quantize_money(value)
 
 
@@ -106,7 +136,9 @@ class ParsedHand(BaseModel):
     raw_text: str
     players: list[ParsedPlayer]
     actions: list[ParsedAction]
+    uncalled_returns: list[ParsedReturn] = Field(default_factory=list, exclude=True)
 
+    splash_drops: list[ParsedSplashDrop] = Field(default_factory=list, exclude=True)
     @field_validator(
         "stake_sb",
         "stake_bb",
