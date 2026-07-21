@@ -443,7 +443,7 @@ async def existing_coinpoker_ids(
             Hand.coinpoker_hand_id.in_(ids),
         )
     )
-    return set(result.scalars().all())
+    return set(result.all())
 
 
 def cluster_hands(hands: list[Hand]) -> list[list[Hand]]:

@@ -1,0 +1,26 @@
+CoinPoker Hand #9300000011: NLH (₮0.02/₮0.05) - 2026/07/20 12:05:00 PDT
+Table 'sixmax-hu-postflop' 6-max Seat #1 is the button
+Seat 1: Hero (₮5.00 in chips)
+Seat 2: Villain001 (₮5.00 in chips)
+Seat 3: Seat3 (₮5.00 in chips)
+Seat 4: Seat4 (₮5.00 in chips)
+Seat 5: Seat5 (₮5.00 in chips)
+Seat 6: Seat6 (₮5.00 in chips)
+Villain001: posts small blind ₮0.02
+Seat3: posts big blind ₮0.05
+*** HOLE CARDS ***
+Dealt to Hero [As Kd]
+Seat4: folds
+Seat5: folds
+Seat6: folds
+Hero: raises ₮0.10 to ₮0.10
+Villain001: folds
+Seat3: calls ₮0.05
+*** FLOP *** [Ts 7d 2c]
+Seat3: checks
+Hero: bets ₮0.10
+Seat3: folds
+Uncalled bet (₮0.10) returned to Hero
+Hero collected ₮0.22 from pot
+*** SUMMARY ***
+Total pot ₮0.22 | Rake ₮0.00 | Splash Fee ₮0.00
