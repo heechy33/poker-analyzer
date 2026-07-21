@@ -53,7 +53,7 @@ class DecisionStateV1(LedgerModel):
     is selected from immutable hand facts, never from the observed summary.
     """
 
-    schema_version: Literal["hunl-decision-state/1"] = DECISION_STATE_SCHEMA_V1
+    schema_version: Literal["hunl-decision-state/1"]
     raw_hand_id: str = Field(min_length=1)
     played_at: datetime
     game: Literal["NLHE"]
@@ -63,7 +63,7 @@ class DecisionStateV1(LedgerModel):
     small_blind: Decimal
     big_blind: Decimal
     action_event_index: int = Field(ge=0)
-    action_street_event_index: int | None = Field(default=None, ge=0)
+    action_street_event_index: int | None = Field(ge=0)
     street: StreetV1
     players: tuple[DecisionPlayerV1, ...]
     hero_seat: int = Field(ge=1)
@@ -80,7 +80,7 @@ class DecisionStateV1(LedgerModel):
     legal_actions: tuple[DecisionActionV1, ...]
     player_contributed_pot: Decimal
     board_prefix: tuple[str, ...]
-    rake_schedule_id: str | None = None
+    rake_schedule_id: str | None
 
 
 def build_decision_state(
@@ -180,6 +180,7 @@ def _project_event(
         for player in hand.players
     )
     return DecisionStateV1(
+        schema_version=DECISION_STATE_SCHEMA_V1,
         raw_hand_id=hand.raw_hand_id,
         played_at=hand.played_at,
         game=hand.game,

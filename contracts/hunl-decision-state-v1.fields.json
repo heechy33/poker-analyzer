@@ -1,0 +1,33 @@
+{
+  "schema_version": "hunl-decision-state/1",
+  "required": [
+    "schema_version",
+    "raw_hand_id",
+    "played_at",
+    "game",
+    "table_marker",
+    "table_format",
+    "button_seat",
+    "small_blind",
+    "big_blind",
+    "action_event_index",
+    "action_street_event_index",
+    "street",
+    "players",
+    "hero_seat",
+    "hero_position",
+    "hero_combo",
+    "active_seats",
+    "folded_seats",
+    "all_in_seats",
+    "players_reached_flop",
+    "player_states",
+    "amount_to_call",
+    "last_full_raise",
+    "legal_raise_bounds",
+    "legal_actions",
+    "player_contributed_pot",
+    "board_prefix",
+    "rake_schedule_id"
+  ]
+}

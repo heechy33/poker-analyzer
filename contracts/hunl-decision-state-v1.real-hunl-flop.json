@@ -1,0 +1,70 @@
+{
+  "schema_version": "hunl-decision-state/1",
+  "raw_hand_id": "93840400001",
+  "played_at": "2026-07-21T00:19:28-07:00",
+  "game": "NLHE",
+  "table_marker": "200601",
+  "table_format": "hu_2max",
+  "button_seat": 2,
+  "small_blind": "0.0200",
+  "big_blind": "0.0500",
+  "action_event_index": 5,
+  "action_street_event_index": 0,
+  "street": "flop",
+  "players": [
+    {
+      "seat": 1,
+      "alias": "Hero",
+      "position": "BB",
+      "starting_stack": "5.0000",
+      "is_hero": true,
+      "dealt_in": true
+    },
+    {
+      "seat": 2,
+      "alias": "88e1f1df",
+      "position": "BTN/SB",
+      "starting_stack": "5.0000",
+      "is_hero": false,
+      "dealt_in": true
+    }
+  ],
+  "hero_seat": 1,
+  "hero_position": "BB",
+  "hero_combo": ["Ac", "Ts"],
+  "active_seats": [1, 2],
+  "folded_seats": [],
+  "all_in_seats": [],
+  "players_reached_flop": [1, 2],
+  "player_states": [
+    {
+      "seat": 1,
+      "active": true,
+      "folded": false,
+      "all_in": false,
+      "street_contribution": "0",
+      "total_contribution": "0.1200",
+      "remaining_stack": "4.8800"
+    },
+    {
+      "seat": 2,
+      "active": true,
+      "folded": false,
+      "all_in": false,
+      "street_contribution": "0",
+      "total_contribution": "0.1200",
+      "remaining_stack": "4.8800"
+    }
+  ],
+  "amount_to_call": "0",
+  "last_full_raise": "0.0500",
+  "legal_raise_bounds": {
+    "min_raise_to": "0.0500",
+    "max_raise_to": "4.8800",
+    "action_reopened": true
+  },
+  "legal_actions": ["check", "bet"],
+  "player_contributed_pot": "0.2400",
+  "board_prefix": ["As", "5d", "2d"],
+  "rake_schedule_id": "coinpoker-hu-nlhe-0.02-0.05-observed-2026-07-20/1"
+}
