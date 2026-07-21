@@ -20,9 +20,12 @@ from app.rake import (
 )
 
 
-PRIVATE_EVIDENCE = (
-    Path(__file__).resolve().parents[2]
-    / "CoinPoker_boblove_2026-07-20_to_2026-07-20_Cash (1).txt"
+EVIDENCE_FILES = tuple(
+    sorted(
+        (Path(__file__).resolve().parents[2] / "docs").glob(
+            "*_2026-07-20_to_2026-07-20_Cash*.txt"
+        )
+    )
 )
 
 
@@ -121,9 +124,10 @@ def test_splash_fee_and_drop_are_explicitly_excluded() -> None:
     assert drop.value.code == "excluded_splash_drop"
 
 
-@pytest.mark.skipif(not PRIVATE_EVIDENCE.exists(), reason="private 85-hand evidence is not checked in")
+@pytest.mark.skipif(not EVIDENCE_FILES, reason="private 85-hand evidence is not available")
 def test_private_85_hand_evidence_reconciles_supported_row_and_fails_other_stake_closed() -> None:
-    hands = list(parse_hands(PRIVATE_EVIDENCE.read_text(encoding="utf-8").splitlines()))
+    evidence = EVIDENCE_FILES[0]
+    hands = list(parse_hands(evidence.read_text(encoding="utf-8").splitlines()))
     assert len(hands) == 85
     assert sum(hand.flop is not None for hand in hands) == 50
     assert sum(hand.flop is None for hand in hands) == 35
@@ -132,6 +136,7 @@ def test_private_85_hand_evidence_reconciles_supported_row_and_fails_other_stake
     assert len(supported) == 52
     assert sum(hand.flop is not None for hand in supported) == 30
     assert sum(hand.flop is None for hand in supported) == 22
+    assert sum(bool(hand.splash_drops) for hand in hands) == 1
 
     for hand in supported:
         schedule = resolve_rake_schedule(

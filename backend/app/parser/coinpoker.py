@@ -168,6 +168,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
     seats: dict[int, _Seat] = {}
     seats_by_name: dict[str, _Seat] = {}
     actions: list[ParsedAction] = []
+    dealt_player_lines: dict[str, int] = {}
     action_orders: defaultdict[Street, int] = defaultdict(int)
     collect_winners_by_pot: defaultdict[str, set[str]] = defaultdict(set)
 
@@ -354,6 +355,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         if dealt_match:
             screen_name = dealt_match.group("screen_name").strip()
             cards = dealt_match.group("cards")
+            dealt_player_lines.setdefault(screen_name, line_no)
             if hero_screen_name is None:
                 if screen_name == "Hero":
                     hero_screen_name = "Hero"
@@ -553,6 +555,7 @@ def parse_hand(lines: list[str]) -> ParsedHand:
         raw_text=raw_text,
         players=players,
         actions=actions,
+        dealt_player_lines=dealt_player_lines,
         uncalled_returns=uncalled_returns,
         splash_drops=splash_drops,
     )

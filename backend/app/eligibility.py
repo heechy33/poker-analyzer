@@ -1,9 +1,9 @@
 """Fail-closed Phase 1 HUNL cohort eligibility.
 
-This policy intentionally establishes *eligibility only*.  A supported result
+This policy intentionally establishes *eligibility only*. A supported result
 would permit a later, separately approved solve-spec gate; it never means a
-hand was solved or can be graded.  The initial configuration deliberately has
-no approved open size, so every current result is unsupported.
+hand was solved or can be graded. The initial cohort is fixed to the evidenced
+2.4 BB BTN/SB open; it still has no paired range data or solver authorization.
 """
 
 from __future__ import annotations
@@ -113,8 +113,10 @@ class CohortConfigurationV1(BaseModel):
     supported_stake_sb: Decimal = Decimal("0.02")
     supported_stake_bb: Decimal = Decimal("0.05")
     effective_stack_bb: Decimal = Decimal("100")
-    # Phase 2 range acquisition must approve this value before support is possible.
-    open_to_bb: Decimal | None = None
+    # P1.8: exact 2.4 BB native-chip open, evidenced by three real 100 BB
+    # HUNL open/call flop hands. This identifies the state cohort only; a
+    # future paired range pack must match it before any solve path may exist.
+    open_to_bb: Decimal = Decimal("2.4")
     native_chip_tolerance: Decimal = Decimal("0.00")
 
 

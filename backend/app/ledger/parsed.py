@@ -125,9 +125,8 @@ def ledger_from_parsed(parsed: ParsedHand):
 
 
 def _player_from_parsed(player, parsed: ParsedHand) -> LedgerPlayerV1:
-    # CoinPoker explicitly deals the hero only.  Other seated players are
-    # inferred dealt-in until parser provenance is expanded in P1.4.
-    source = _source(1, "derived")
+    dealt_line = parsed.dealt_player_lines.get(player.screen_name)
+    source = _source(dealt_line, "dealt") if dealt_line is not None else _source(1, "derived")
     return LedgerPlayerV1(
         seat=player.seat,
         alias=player.screen_name,
@@ -137,7 +136,7 @@ def _player_from_parsed(player, parsed: ParsedHand) -> LedgerPlayerV1:
         dealt=DealtProvenanceV1(
             dealt_in=True,
             source=source,
-            inferred=not player.is_hero,
+            inferred=dealt_line is None,
         ),
         decision_cards=tuple(parsed.hero_cards) if player.is_hero else None,
     )

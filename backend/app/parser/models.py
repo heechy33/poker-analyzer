@@ -136,6 +136,10 @@ class ParsedHand(BaseModel):
     raw_text: str
     players: list[ParsedPlayer]
     actions: list[ParsedAction]
+    # Raw CoinPoker exports may explicitly list every dealt player without
+    # revealing opponents' cards. Keep this provenance out of legacy parser
+    # serialization while making it available to the canonical ledger.
+    dealt_player_lines: dict[str, int] = Field(default_factory=dict, exclude=True)
     uncalled_returns: list[ParsedReturn] = Field(default_factory=list, exclude=True)
 
     splash_drops: list[ParsedSplashDrop] = Field(default_factory=list, exclude=True)

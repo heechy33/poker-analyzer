@@ -272,6 +272,13 @@ def test_parse_hand_with_placeholder_dealt_lines_for_other_players() -> None:
     )
 
     assert hand.hero_cards == ["Js", "8h"]
+    assert hand.dealt_player_lines == {
+        "f75b28c7": 11,
+        "d0df9435": 12,
+        "3493fca0": 13,
+        "Hero": 14,
+        "ab2a4e05": 15,
+    }
     hero = next(player for player in hand.players if player.is_hero)
     assert hero.screen_name == "Hero"
 

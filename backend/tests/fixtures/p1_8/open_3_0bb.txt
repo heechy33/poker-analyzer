@@ -1,0 +1,23 @@
+CoinPoker Hand #9601000002: NLH (?0.02/?0.05) 2026/07/21 00:19:28 PDT
+Table 'p1-8-open-size' 2-max Seat #2 is the button
+Seat 1: Hero (?5.00 in chips)
+Seat 2: P1EightVillain (?5.00 in chips)
+P1EightVillain: posts small blind ?0.02
+Hero: posts big blind ?0.05
+*** HOLE CARDS ***
+Dealt to Hero [Ac Ts]
+Dealt to P1EightVillain
+P1EightVillain: raises ?0.10 to ?0.15
+Hero: calls ?0.10
+*** FLOP *** [As 5d 2d]
+Hero: checks
+P1EightVillain: checks
+*** SHOWDOWN ***
+Hero collected ?0.28 from pot
+*** SUMMARY ***
+Total pot ?0.30 | Rake ?0.02
+Hand was run once
+Board [ As 5d 2d ]
+Game ended: 2026/07/21 00:20:01 PDT
+Seat 1: Hero showed [Ac Ts] and won (?0.28)
+Seat 2: P1EightVillain folded on the Flop
